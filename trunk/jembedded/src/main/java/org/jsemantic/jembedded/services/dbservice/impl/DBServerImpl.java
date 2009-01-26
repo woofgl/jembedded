@@ -12,8 +12,9 @@ import java.sql.Statement;
 
 import org.jsemantic.jembedded.services.dbservice.DBServer;
 import org.jsemantic.jembedded.services.dbservice.exception.DBServerException;
+import org.jsemantic.services.core.service.skeletal.AbstractService;
 
-public class DBServerImpl implements DBServer {
+public class DBServerImpl extends AbstractService implements DBServer {
 
 	private Connection connection;
 
@@ -32,12 +33,19 @@ public class DBServerImpl implements DBServer {
 	public DBServerImpl() {
 
 	}
-
-	public void start() throws DBServerException {
+	
+	public void init() {
+	}
+	
+	public void run() throws DBServerException {
 		this.connection = getConnection();
 	}
-
-	public void stop() throws DBServerException {
+	
+	public void pause() throws DBServerException  {
+		dispose();
+	}
+	
+	public void dispose() throws DBServerException {
 		try {
 			this.executeQuery("SHUTDOWN");
 			if (!this.isMemoryDBServer) {
@@ -124,5 +132,6 @@ public class DBServerImpl implements DBServer {
 			f.delete();
 		}
 	}
+
 
 }

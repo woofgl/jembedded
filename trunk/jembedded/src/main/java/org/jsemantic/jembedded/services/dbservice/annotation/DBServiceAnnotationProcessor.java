@@ -32,7 +32,7 @@ public class DBServiceAnnotationProcessor {
 	public static DBServer processAnnotation(Class service) {
 		
 		if (service.isAnnotationPresent(DBService.class)) {
-			DBServer dbServer = (DBServer) Container.getService("dbServer");
+			DBServer dbServer = (DBServer) Container.getService("dbService");
 			if (service.isAnnotationPresent(DBServiceConfiguration.class)) {
 				Annotation ann = service.getAnnotation(DBServiceConfiguration.class);
 				return DBServerFactory.getInstance(dbServer, ann);

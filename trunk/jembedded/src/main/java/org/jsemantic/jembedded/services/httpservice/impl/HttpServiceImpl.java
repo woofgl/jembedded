@@ -3,6 +3,8 @@ package org.jsemantic.jembedded.services.httpservice.impl;
 import javax.servlet.ServletContext;
 
 import org.jsemantic.jembedded.services.httpservice.HttpService;
+import org.jsemantic.services.core.service.exception.ServiceException;
+import org.jsemantic.services.core.service.skeletal.AbstractService;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.handler.DefaultHandler;
@@ -10,7 +12,7 @@ import org.mortbay.jetty.handler.HandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-public class HttpServiceImpl implements HttpService {
+public class HttpServiceImpl extends AbstractService implements HttpService {
 
 	private org.mortbay.jetty.Server embeddedServer = null;
 
@@ -30,18 +32,7 @@ public class HttpServiceImpl implements HttpService {
 	
 	public HttpServiceImpl() {
 	}
-	/*
-	public HttpServiceImpl(String rootContext, String webApp) {
-		this.rootContext = rootContext;
-		this.webApplication =  webApp;
-	}
-	
-	public HttpServiceImpl(String rootContext, String webApp, String host, int port) {
-		this(rootContext, webApp);
-		this.host = host;
-		this.port = port;
-	}
-	*/
+
 	public void setHost(String host) {
 		this.host = host;
 	}
@@ -54,9 +45,11 @@ public class HttpServiceImpl implements HttpService {
 		this.webApplication = webApplication;
 	}
 	
-	private void init() {
+	public void init() {
 		embeddedServer = new org.mortbay.jetty.Server();
-
+	}
+	
+	public void run()  {
 		if (connectors != null) {
 			embeddedServer.setConnectors(connectors);
 		} else {
@@ -65,17 +58,24 @@ public class HttpServiceImpl implements HttpService {
 		this.webApplicationContext = createWebApplicationContext();
 		this.handlers = createDefaultHandlers(webApplicationContext);
 		this.embeddedServer.setHandler(this.handlers);
+		try {
+			this.embeddedServer.start();
+		} catch (Exception e) {
+			throw new ServiceException(e);
+		}
 	}
-
-	public void start() throws Exception {
-		init();
-		this.embeddedServer.start();
+	
+	public void pause() {
+		try {
+			this.embeddedServer.stop();
+		} catch (Exception e) {
+			throw new ServiceException(e);
+		}
+		finally {
+			dispose();
+		}
 	}
-
-	public void stop() throws Exception {
-		this.embeddedServer.stop();
-	}
-
+	
 	public void dispose() {
 		this.embeddedServer.destroy();
 		this.embeddedServer = null;

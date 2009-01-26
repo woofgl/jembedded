@@ -4,33 +4,32 @@ import java.sql.ResultSet;
 
 import org.jsemantic.jembedded.services.dbservice.exception.DBServerException;
 import org.jsemantic.jembedded.services.dbservice.impl.DBServerConfiguration;
+import org.jsemantic.services.core.service.Service;
 
-public interface DBServer {
-	/**
-	 * 
-	 * @throws Throwable
-	 */
-	public void start() throws DBServerException;
-	/**
-	 * 
-	 * @throws Throwable
-	 */
-	public void stop() throws DBServerException;
+public interface DBServer extends Service {
 	/**
 	 * 
 	 * @param isMemoryDBServer
 	 */
 	public void setMemoryDBServer(boolean isMemoryDBServer);
+
 	/**
 	 * 
 	 * @return
 	 */
 	public boolean isMemoryDBServer();
-	
-	public void setDbServerConfiguration(DBServerConfiguration dbServerConfiguration);
-	
+	/**
+	 * 
+	 * @param dbServerConfiguration
+	 */
+	public void setDbServerConfiguration(
+			DBServerConfiguration dbServerConfiguration);
+	/**
+	 * 
+	 * @return
+	 */
 	public DBServerConfiguration getDbServerConfiguration();
-	
+
 	/**
 	 * 
 	 * @param pExpression
@@ -38,6 +37,7 @@ public interface DBServer {
 	 * @throws Throwable
 	 */
 	public ResultSet executeQuery(String pExpression) throws DBServerException;;
+
 	/**
 	 * 
 	 * @param query

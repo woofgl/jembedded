@@ -9,25 +9,18 @@ import javax.servlet.ServletContext;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.jsemantic.jembedded.core.skeletal.AbstractServerEmbeddTest;
+import org.jsemantic.jembedded.core.skeletal.AbstractEmbeddTest;
 import org.jsemantic.jembedded.integration.http.HttpEmbeddTest;
 import org.jsemantic.jembedded.services.httpservice.HttpService;
-import org.jsemantic.jembedded.services.httpservice.annotation.HttpServiceAnnotationProcessor;
 import org.jsemantic.jembedded.services.httpservice.client.HttpTestClient;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.springframework.util.StringUtils;
 
-public abstract class AbstractHttpEmbeddTest extends AbstractServerEmbeddTest
+public abstract class AbstractHttpEmbeddTest extends AbstractEmbeddTest
 		implements HttpEmbeddTest {
 
-	private HttpService httpService = null;
-
-	public HttpService getHttpService() {
-		return httpService;
-	}
-
 	private HttpTestClient httpTestClient = null;
-	
+
 	protected void setUp() throws Exception {
 		init();
 	}
@@ -35,53 +28,47 @@ public abstract class AbstractHttpEmbeddTest extends AbstractServerEmbeddTest
 	protected void tearDown() throws Exception {
 		release();
 	}
-	
+
 	protected void init() throws Exception {
 		super.init();
-		Class<?> serviceClass = getClass().getMethod("test", new Class[] {})
-		.getDeclaringClass();
-
-		httpService = HttpServiceAnnotationProcessor
-				.processAnnotation(serviceClass);
-
-		httpTestClient = (HttpTestClient) super.getService("httpClient");
-		this.httpService.start();
+		httpTestClient = (HttpTestClient) super.getComponent("httpClient");
 	}
 
 	protected void release() throws Exception {
 		super.release();
-		httpService.stop();
-		httpService.dispose();
-		httpService = null;
+	}
+
+	protected HttpService getHttpService() {
+		return ((HttpService) super.getService("httpService"));
 	}
 
 	public void assertEqualsContextPath(String contextPath) {
-		super.assertEquals(
-				httpService.getApplicationContext().getContextPath(),
-				contextPath);
+		super.assertEquals(getHttpService().getApplicationContext()
+				.getContextPath(), contextPath);
 	}
 
 	public void assertNotNullContextPath() {
-		super.assertNotNull(httpService.getApplicationContext()
+		super.assertNotNull(getHttpService().getApplicationContext()
 				.getContextPath());
 	}
 
 	public void assertEqualsAttribute(String attribute, Object value) {
-		super.assertEquals(httpService.getApplicationContext().getAttribute(
-				attribute), value);
+		super.assertEquals(getHttpService().getApplicationContext()
+				.getAttribute(attribute), value);
 	}
 
 	public void assertInitParameterNotNull(String initParameter) {
-		super.assertNotNull(httpService.getApplicationContext()
+		super.assertNotNull(getHttpService().getApplicationContext()
 				.getInitParameter(initParameter));
 	}
 
 	public WebAppContext getWebApplicationContext() {
-		return httpService.getApplicationContext();
+		return getHttpService().getApplicationContext();
 	}
 
 	public ServletContext getServletContext() {
-		return httpService.getServerContext();
+		return ((HttpService) super.getService("httpService"))
+				.getServerContext();
 	}
 
 	public void assertContentNotEmpty(String uri) {

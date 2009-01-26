@@ -2,9 +2,10 @@ package org.jsemantic.jembedded.services.httpservice;
 
 import javax.servlet.ServletContext;
 
+import org.jsemantic.services.core.service.Service;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-public interface HttpService {
+public interface HttpService extends Service {
 	/**
 	 * 
 	 * @return
@@ -16,20 +17,5 @@ public interface HttpService {
 	 */
 	public WebAppContext getApplicationContext();
 		
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public void start() throws Exception;
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public void stop() throws Exception;
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public void dispose() throws Exception;
 	
 }
