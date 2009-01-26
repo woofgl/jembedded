@@ -2,10 +2,9 @@ package org.jsemantic.jembedded.integration.http;
 
 import javax.servlet.ServletContext;
 
-import org.jsemantic.jembedded.core.SeverEmbeddTest;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-public interface HttpEmbeddTest extends SeverEmbeddTest {
+public interface HttpEmbeddTest {
 	
 	void assertEqualsContextPath(String contextPath);
 	

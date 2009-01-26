@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
-	<bean id="dbServer" class="org.jsemantic.jembedded.services.dbservice.impl.DBServerImpl" autowire="autodetect" lazy-init="true" scope="prototype"/>
+	<bean id="dbService" name="dbService" class="org.jsemantic.jembedded.services.dbservice.impl.DBServerImpl" autowire="autodetect" lazy-init="true" scope="prototype"/>
 	
 	<bean id="dbServerConfiguration" class="org.jsemantic.jembedded.services.dbservice.impl.DBServerConfiguration">
 		<property name="dbPath" value="mem:test;sql.enforce_strict_size=true"/>

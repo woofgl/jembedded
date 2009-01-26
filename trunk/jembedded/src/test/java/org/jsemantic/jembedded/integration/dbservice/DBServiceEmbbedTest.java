@@ -1,10 +1,10 @@
 package org.jsemantic.jembedded.integration.dbservice;
 
-import org.jsemantic.jembedded.core.skeletal.AbstractServerEmbeddTest;
+import org.jsemantic.jembedded.core.skeletal.AbstractEmbeddTest;
 import org.jsemantic.jembedded.services.dbservice.annotation.DBService;
 
 @DBService
-public class DBServiceEmbbedTest extends AbstractServerEmbeddTest {
+public class DBServiceEmbbedTest extends AbstractEmbeddTest {
 	
 	@Override
 	public void test() throws Exception {

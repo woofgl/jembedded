@@ -20,6 +20,7 @@ public class HttpServiceTest extends TestCase {
 		HttpService server = null;
 		try {
 			server =  new HttpServiceImpl();
+			((HttpServiceImpl)server).init();
 			super.assertNotNull(server);
 			server.start();
 		}
@@ -28,7 +29,6 @@ public class HttpServiceTest extends TestCase {
 		}
 		finally {
 			server.stop();
-			server.dispose();
 			server = null;
 		}
 	}
