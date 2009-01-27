@@ -8,6 +8,6 @@
 	
 	<import resource="classpath:META-INF/default/configuration/services/dbserver-service/db-service.xml"/>
 	
-	<import resource="classpath:META-INF/default/configuration/services/webserver-service/webserver-service.xml"/>
+	<import resource="classpath:META-INF/default/configuration/services/http-service/http-service.xml"/>
 	
 </beans>
