@@ -18,7 +18,7 @@ package org.jsemantic.jembedded.services.httpservice.annotation;
 
 import java.lang.annotation.Annotation;
 
-import org.jsemantic.jembedded.core.container.Container;
+import org.jsemantic.jcontenedor.lite.core.ContenedorLite;
 import org.jsemantic.jembedded.services.httpservice.HttpService;
 import org.jsemantic.jembedded.services.httpservice.factory.HttpServiceFactory;
 import org.jsemantic.services.core.service.Service;
@@ -30,10 +30,10 @@ public class HttpServiceAnnotationProcessor {
 			.getLogger(HttpServiceAnnotationProcessor.class);
 
 	@SuppressWarnings("unchecked")
-	public static Service processAnnotation(Class service) {
-		HttpService httpService = null;
+	public static Service processAnnotation(ContenedorLite contenedor, Class service) {
+		Service httpService = null;
 		if (service.isAnnotationPresent(HttpServiceConfiguration.class)) {
-			httpService = (HttpService) Container
+			httpService =  contenedor
 			.getService("httpService");
 			Annotation ann = service
 					.getAnnotation(HttpServiceConfiguration.class);

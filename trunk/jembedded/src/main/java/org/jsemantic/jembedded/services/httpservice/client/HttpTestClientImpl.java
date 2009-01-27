@@ -11,8 +11,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.jsemantic.jembedded.services.httpservice.exception.HttpTestClientException;
+import org.jsemantic.services.core.skeletal.AbstractComponent;
 
-public class HttpTestClientImpl implements HttpTestClient {
+public class HttpTestClientImpl extends AbstractComponent implements HttpTestClient {
 
 	private HttpClient httpclient = null;
 
@@ -21,9 +22,13 @@ public class HttpTestClientImpl implements HttpTestClient {
 	}
 
 	public HttpTestClientImpl() {
-		init(null);
+		init();
 	}
-
+	
+	public void init() {
+		httpclient = new DefaultHttpClient();
+	}
+	
 	public void dispose() {
 		httpclient = null;
 	}

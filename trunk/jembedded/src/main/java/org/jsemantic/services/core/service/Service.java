@@ -1,7 +1,5 @@
 package org.jsemantic.services.core.service;
 
-import org.jsemantic.services.core.Component;
-
 
 /**
  * 
@@ -9,12 +7,17 @@ import org.jsemantic.services.core.Component;
  * @version 1.0
  * @since 1.0
  */
-public interface Service extends Component {
+public interface Service extends ServiceCycle {
 
 	/**
 	 * 
 	 * @return
 	 */
 	public Object getContext();
+	/**
+	 * 
+	 * @return
+	 */
+	public String getId();
 
 }

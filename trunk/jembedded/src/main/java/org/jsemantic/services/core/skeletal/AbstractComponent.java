@@ -1,8 +1,6 @@
 package org.jsemantic.services.core.skeletal;
 
 import org.jsemantic.services.core.Component;
-import org.jsemantic.services.core.Cycle;
-import org.jsemantic.services.core.Cycle.STATE;
 import org.jsemantic.services.core.exception.ComponentException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,11 +16,7 @@ public abstract class AbstractComponent implements Component, InitializingBean,
 	public AbstractComponent() {
 	}
 
-	public AbstractComponent(String id) {
-		this.id = id;
-	}
-
-	private STATE state = STATE.NOT_INITIALIZED;
+	protected STATE state = STATE.NOT_INITIALIZED;
 
 	private String id = null;
 
@@ -30,22 +24,8 @@ public abstract class AbstractComponent implements Component, InitializingBean,
 		this.id = id;
 	}
 	
-	public void start() {
-		this.state = STATE.STARTED;
-		run();
-	}
-
-	public void stop() {
-		this.state = STATE.STOPPED;
-		pause();
-	}
-	
 	public String getId() {
 		return this.id;
-	}
-
-	public boolean isStarted() {
-		return this.state == STATE.STARTED;
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -62,9 +42,9 @@ public abstract class AbstractComponent implements Component, InitializingBean,
 		return this.state;
 	}
 	
-	public abstract void run() throws ComponentException;
-	
-	public abstract void pause() throws ComponentException;
+	public boolean isInitialized() {
+		return this.state == STATE.INITIALIZED;
+	}
 	
 	public abstract void init() throws ComponentException;
 

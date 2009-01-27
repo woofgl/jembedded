@@ -18,9 +18,9 @@ package org.jsemantic.jembedded.services.dbservice.annotation;
 
 import java.lang.annotation.Annotation;
 
-import org.jsemantic.jembedded.core.container.Container;
-import org.jsemantic.jembedded.services.dbservice.DBServer;
+import org.jsemantic.jcontenedor.lite.core.ContenedorLite;
 import org.jsemantic.jembedded.services.dbservice.factory.DBServerFactory;
+import org.jsemantic.services.core.service.Service;
 
 public class DBServiceAnnotationProcessor {
 
@@ -29,10 +29,10 @@ public class DBServiceAnnotationProcessor {
 			.getLogger(DBServiceAnnotationProcessor.class);
 
 	@SuppressWarnings("unchecked")
-	public static DBServer processAnnotation(Class service) {
+	public static Service processAnnotation(ContenedorLite contenedor, Class service) {
 		
 		if (service.isAnnotationPresent(DBService.class)) {
-			DBServer dbServer = (DBServer) Container.getService("dbService");
+			Service dbServer = contenedor.getService("dbService");
 			if (service.isAnnotationPresent(DBServiceConfiguration.class)) {
 				Annotation ann = service.getAnnotation(DBServiceConfiguration.class);
 				return DBServerFactory.getInstance(dbServer, ann);

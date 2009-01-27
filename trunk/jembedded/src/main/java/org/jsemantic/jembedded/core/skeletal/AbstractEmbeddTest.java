@@ -1,30 +1,28 @@
 package org.jsemantic.jembedded.core.skeletal;
 
 import java.sql.ResultSet;
-import java.util.Map;
-
 import org.jsemantic.jembedded.core.EmbeddTest;
-import org.jsemantic.jembedded.core.annotation.ServiceAnnotationProcessor;
-import org.jsemantic.jembedded.core.container.Container;
+import org.jsemantic.jembedded.core.manager.ServiceManager;
 import org.jsemantic.jembedded.integration.db.DBEmbeddTest;
 import org.jsemantic.jembedded.services.dbservice.DBServer;
+import org.jsemantic.services.core.Component;
 import org.jsemantic.services.core.service.Service;
 
 import junit.framework.TestCase;
 
 public abstract class AbstractEmbeddTest extends TestCase implements
 		EmbeddTest, DBEmbeddTest {
-
-	private Map<String, Service> services = null;
+	
+	private ServiceManager serviceManager = null;
 
 	public Service getService(String id) {
-		return services.get(id);
+		return serviceManager.getService(id);
 	}
 
-	public Object getComponent(String id) {
-		return Container.getService(id);
+	public Component getComponent(String id) {
+		return serviceManager.getComponent(id);
 	}
-
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		init();
@@ -36,22 +34,17 @@ public abstract class AbstractEmbeddTest extends TestCase implements
 	}
 
 	protected void init() throws Exception {
-		Container.getInstance();
 		Class<?> testClass = getClass().getMethod("test", new Class[] {})
 				.getDeclaringClass();
-		this.services = ServiceAnnotationProcessor.processAnnotation(testClass);
-
-		for (String id : services.keySet()) {
-			getService(id).start();
-		}
+		serviceManager = ServiceManager.getInstance();
+		serviceManager.processServices(testClass);
+		serviceManager.startServices();
 	}
-
 	protected void release() throws Exception {
-		for (String id : services.keySet()) {
-			getService(id).stop();
-		}
+		serviceManager.stopServices();
+		serviceManager.destroy();
 	}
-
+	
 	protected DBServer getDBService() {
 		return ((DBServer) getService("dbService"));
 	}

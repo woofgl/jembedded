@@ -1,17 +1,19 @@
 package org.jsemantic.services.core;
 
+import org.jsemantic.services.core.exception.ComponentException;
+
 public interface Cycle {
 
 	public enum STATE {
-		NOT_INITIALIZED, INITIALIZED, STARTED, STOPPED, DISPOSED, DESTROYED,
+		NOT_INITIALIZED, INITIALIZED,  STARTED, STOPPED, DISPOSED
 	};
 
-	public void start();
+	public void init() throws ComponentException;
+	
+	public void dispose() throws ComponentException;
 
-	public void stop();
-
-	public boolean isStarted();
-
+	public boolean isInitialized();
+	
 	public STATE getState();
 
 }

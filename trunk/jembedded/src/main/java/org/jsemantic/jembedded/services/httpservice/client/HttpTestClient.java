@@ -4,8 +4,9 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.jsemantic.jembedded.services.httpservice.exception.HttpTestClientException;
+import org.jsemantic.services.core.Component;
 
-public interface HttpTestClient {
+public interface HttpTestClient extends Component {
 
 	/**
 	 * 
@@ -44,10 +45,6 @@ public interface HttpTestClient {
 	
 	
 	public void consumeContent(HttpResponse response);
-	
-	/**
-	 * 
-	 */
-	public void dispose();
+
 
 }

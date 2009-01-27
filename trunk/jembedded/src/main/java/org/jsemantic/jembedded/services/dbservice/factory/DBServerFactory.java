@@ -6,6 +6,7 @@ import org.jsemantic.jembedded.services.dbservice.DBServer;
 import org.jsemantic.jembedded.services.dbservice.annotation.DBServiceConfiguration;
 import org.jsemantic.jembedded.services.dbservice.impl.DBServerConfiguration;
 import org.jsemantic.jembedded.services.dbservice.impl.DBServerImpl;
+import org.jsemantic.services.core.service.Service;
 import org.springframework.util.StringUtils;
 
 public class DBServerFactory {
@@ -19,15 +20,16 @@ public class DBServerFactory {
 		return dbServer;
 	}
 
-	public static DBServer getInstance(DBServer dbServer, Annotation ann) {
+	public static Service getInstance(Service dbServer, Annotation ann) {
 
 		if (ann instanceof DBServiceConfiguration) {
 			String dbPath = ((DBServiceConfiguration) ann).dbPath();
 			String user = ((DBServiceConfiguration) ann).user();
 			String password = ((DBServiceConfiguration) ann).password();
-			boolean isMemoryModel = ((DBServiceConfiguration) ann).isMemoryMode();
+			boolean isMemoryModel = ((DBServiceConfiguration) ann)
+					.isMemoryMode();
 
-			DBServerConfiguration configuration = dbServer
+			DBServerConfiguration configuration = ((DBServer) dbServer)
 					.getDbServerConfiguration();
 
 			if (StringUtils.hasText(dbPath)) {
@@ -43,8 +45,7 @@ public class DBServerFactory {
 			}
 
 			((DBServerImpl) dbServer).setDbServerConfiguration(configuration);
-			dbServer.setMemoryDBServer(isMemoryModel);
-
+			((DBServerImpl) dbServer).setMemoryDBServer(isMemoryModel);
 		}
 
 		return dbServer;
