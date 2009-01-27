@@ -76,7 +76,8 @@ public abstract class AbstractHttpEmbeddTest extends AbstractEmbeddTest
 		try {
 			response = httpTestClient.executeHttpGetRequest(uri);
 			super.assertTrue(response.getEntity().getContentLength() > 0);
-			String content = getContent(response.getEntity().getContent());
+			String content = getContent(response.getEntity().getContent())
+					.toString();
 			super.assertTrue(StringUtils.hasText(content));
 		} catch (Throwable e) {
 			super.fail(e.getMessage());
@@ -90,7 +91,8 @@ public abstract class AbstractHttpEmbeddTest extends AbstractEmbeddTest
 		try {
 			response = httpTestClient.executeHttpGetRequest(uri);
 			super.assertTrue(response.getEntity().getContentLength() == 0);
-			String content = getContent(response.getEntity().getContent());
+			String content = getContent(response.getEntity().getContent())
+					.toString();
 			super.assertFalse(StringUtils.hasText(content));
 		} catch (Throwable e) {
 			super.fail(e.getMessage());
@@ -124,7 +126,21 @@ public abstract class AbstractHttpEmbeddTest extends AbstractEmbeddTest
 		}
 	}
 
-	private String getContent(InputStream stream) throws IOException {
+	public StringBuffer getResponse(String uri) {
+		HttpResponse response = null;
+		StringBuffer content = null;
+		try {
+			response = httpTestClient.executeHttpGetRequest(uri);
+			content = getContent(response.getEntity().getContent());
+		} catch (Throwable e) {
+			super.fail(e.getMessage());
+		} finally {
+			httpTestClient.consumeContent(response);
+		}
+		return content;
+	}
+
+	private StringBuffer getContent(InputStream stream) throws IOException {
 		StringBuffer content = new StringBuffer();
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 
@@ -136,7 +152,7 @@ public abstract class AbstractHttpEmbeddTest extends AbstractEmbeddTest
 				break;
 			}
 		}
-		return content.toString();
+		return content;
 	}
 
 }

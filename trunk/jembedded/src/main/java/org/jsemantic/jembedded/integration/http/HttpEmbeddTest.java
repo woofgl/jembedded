@@ -22,6 +22,8 @@ public interface HttpEmbeddTest {
 	
 	void assertResponseNotNull(String uri);
 	
+	StringBuffer getResponse(String uri);
+	
 	WebAppContext getWebApplicationContext();
 	
 	ServletContext getServletContext();
