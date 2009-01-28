@@ -1,5 +1,7 @@
 package org.jsemantic.services.core;
 
+import org.jsemantic.services.core.context.Context;
+
 
 /**
  * 
@@ -13,5 +15,14 @@ public interface Component extends Cycle {
 	 * @return
 	 */
 	public String getId();
-	
+	/**
+	 * 
+	 * @param applicationContext
+	 */
+	public void setContext(Context context);
+	/**
+	 * 
+	 * @return
+	 */
+	public Context getContext();
 }
