@@ -12,6 +12,6 @@
 	
 	<import resource="classpath:META-INF/default/configuration/services/contenedor-service/contenedor-service.xml"/>
 	
-	<!--import resource="classpath:META-INF/default/configuration/services/webservice-engine/webservice-http-engine.xml"/-->
+	<import resource="classpath:META-INF/default/configuration/services/webservice-engine/webservice-http-engine.xml"/>
 	
 </beans>
