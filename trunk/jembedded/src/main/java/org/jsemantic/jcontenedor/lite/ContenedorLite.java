@@ -1,12 +1,12 @@
-package org.jsemantic.jcontenedor.lite.core;
+package org.jsemantic.jcontenedor.lite;
 
-import org.jsemantic.jcontenedor.lite.core.context.Context;
 import org.jsemantic.services.core.Component;
+import org.jsemantic.services.core.context.Context;
 import org.jsemantic.services.core.exception.ComponentException;
 import org.jsemantic.services.core.service.Service;
 import org.jsemantic.services.core.service.exception.ServiceException;
 
-public interface ContenedorLite {
+public interface ContenedorLite extends Service {
 	/**
 	 * 
 	 * @param id
