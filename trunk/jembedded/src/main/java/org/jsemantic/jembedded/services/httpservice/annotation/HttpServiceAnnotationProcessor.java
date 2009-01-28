@@ -18,8 +18,7 @@ package org.jsemantic.jembedded.services.httpservice.annotation;
 
 import java.lang.annotation.Annotation;
 
-import org.jsemantic.jcontenedor.lite.core.ContenedorLite;
-import org.jsemantic.jembedded.services.httpservice.HttpService;
+import org.jsemantic.jcontenedor.lite.ContenedorLite;
 import org.jsemantic.jembedded.services.httpservice.factory.HttpServiceFactory;
 import org.jsemantic.services.core.service.Service;
 

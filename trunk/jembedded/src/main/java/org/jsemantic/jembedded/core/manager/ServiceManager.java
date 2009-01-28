@@ -2,8 +2,8 @@ package org.jsemantic.jembedded.core.manager;
 
 import java.util.Map;
 
-import org.jsemantic.jcontenedor.lite.core.ContenedorLite;
-import org.jsemantic.jcontenedor.lite.core.configuration.ContenedorLiteFactory;
+import org.jsemantic.jcontenedor.lite.ContenedorLite;
+import org.jsemantic.jcontenedor.lite.configuration.ContenedorLiteFactory;
 import org.jsemantic.jembedded.core.annotation.ServiceAnnotationProcessor;
 import org.jsemantic.services.core.Component;
 import org.jsemantic.services.core.exception.ComponentException;
@@ -11,9 +11,11 @@ import org.jsemantic.services.core.service.Service;
 import org.jsemantic.services.core.skeletal.AbstractComponent;
 
 public class ServiceManager extends AbstractComponent implements Component {
-
-	private static ContenedorLite contenedor = ContenedorLiteFactory
-			.getDefaultInstance();
+	private static ContenedorLite contenedor = null;
+	static {
+		contenedor = ContenedorLiteFactory.getDefaultInstance();
+		contenedor.start();
+	}
 
 	private Map<String, Service> services = null;
 
@@ -34,6 +36,7 @@ public class ServiceManager extends AbstractComponent implements Component {
 
 	@Override
 	public void init() throws ComponentException {
+		
 	}
 
 	public void processServices(Class<?> testClass) throws Exception {

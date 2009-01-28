@@ -18,7 +18,7 @@ package org.jsemantic.jembedded.services.dbservice.annotation;
 
 import java.lang.annotation.Annotation;
 
-import org.jsemantic.jcontenedor.lite.core.ContenedorLite;
+import org.jsemantic.jcontenedor.lite.ContenedorLite;
 import org.jsemantic.jembedded.services.dbservice.factory.DBServerFactory;
 import org.jsemantic.services.core.service.Service;
 

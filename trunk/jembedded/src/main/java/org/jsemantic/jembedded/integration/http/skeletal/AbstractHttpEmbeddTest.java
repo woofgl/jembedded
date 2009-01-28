@@ -108,7 +108,8 @@ public abstract class AbstractHttpEmbeddTest extends AbstractEmbeddTest
 			StatusLine status = response.getStatusLine();
 			super.assertEquals(200, status.getStatusCode());
 		} catch (Throwable e) {
-			httpTestClient.consumeContent(response);
+			super.fail(e.getMessage());
+			//httpTestClient.consumeContent(response);
 		} finally {
 			httpTestClient.consumeContent(response);
 		}

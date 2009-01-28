@@ -1,5 +1,7 @@
 package org.jsemantic.services.core.service;
 
+import org.jsemantic.services.core.context.Context;
+
 
 /**
  * 
@@ -8,12 +10,18 @@ package org.jsemantic.services.core.service;
  * @since 1.0
  */
 public interface Service extends ServiceCycle {
-
+	
+	/**
+	 * 
+	 * @param applicationContext
+	 */
+	public void setContext(Context context);
+	
 	/**
 	 * 
 	 * @return
 	 */
-	public Object getContext();
+	public Context getContext();
 	/**
 	 * 
 	 * @return
