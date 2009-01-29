@@ -11,9 +11,11 @@ import org.jsemantic.services.core.service.Service;
 import org.jsemantic.services.core.skeletal.AbstractComponent;
 
 public class ServiceManager extends AbstractComponent implements Component {
+	public final static String CONFIGURATION_FILE = "classpath:META-INF/jembedded/contenedor-configuration.xml";
+
 	private static ContenedorLite contenedor = null;
 	static {
-		contenedor = ContenedorLiteFactory.getDefaultInstance();
+		contenedor = ContenedorLiteFactory.getInstance(CONFIGURATION_FILE);
 		contenedor.start();
 	}
 
@@ -36,7 +38,7 @@ public class ServiceManager extends AbstractComponent implements Component {
 
 	@Override
 	public void init() throws ComponentException {
-		
+
 	}
 
 	public void processServices(Class<?> testClass) throws Exception {
