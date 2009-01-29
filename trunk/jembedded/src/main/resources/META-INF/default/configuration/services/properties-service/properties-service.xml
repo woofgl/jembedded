@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<bean id="ppc" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:/jembeddtest.properties"/>
+		<property name="location" value="classpath:/jembedded.properties"/>
 	</bean>
 	
 </beans>
