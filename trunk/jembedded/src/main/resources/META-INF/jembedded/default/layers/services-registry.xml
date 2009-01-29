@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<import resource="classpath:META-INF/jembedded/default/services/properties-service/properties-service.xml"/>
+	
+	<import resource="classpath:META-INF/jembedded/default/services/db-service/db-service.xml"/>
+	
+	<import resource="classpath:META-INF/jembedded/default/services/http-service/http-service.xml"/>
+	
+	<import resource="classpath:META-INF/jembedded/default/services/contenedor-service/contenedor-service.xml"/>
+	
+	<import resource="classpath:META-INF/jembedded/default/services/web-service/web-service.xml"/>
+	
+</beans>
