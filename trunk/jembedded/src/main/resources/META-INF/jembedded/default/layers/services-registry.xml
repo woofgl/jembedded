@@ -10,7 +10,7 @@
 	
 	<import resource="classpath:META-INF/jembedded/default/services/http-service/http-service.xml"/>
 	
-	<import resource="classpath:META-INF/jembedded/default/services/contenedor-service/contenedor-service.xml"/>
+	<import resource="classpath:META-INF/jembedded/default/services/embedded-contenedor-service/contenedor-service.xml"/>
 	
 	<import resource="classpath:META-INF/jembedded/default/services/web-service/web-service.xml"/>
 	

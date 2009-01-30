@@ -14,7 +14,7 @@
 
 	 <context-param>
   		<param-name>jLiteConfigLocation</param-name>
-  		<param-value>/WEB-INF/contenedor-configuration.xml</param-value>
+  		<param-value>classpath:META-INF/jembedded/default/services/embedded-contenedor-service/contenedor-service.xml</param-value>
 	</context-param>
 	
 	<servlet>
