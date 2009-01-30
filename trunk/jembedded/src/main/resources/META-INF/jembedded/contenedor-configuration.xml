@@ -16,8 +16,8 @@
 	<bean id="layerManager" class="org.jsemantic.jcontenedor.lite.layer.manager.LayerManagerImpl" depends-on="context" autowire="autodetect">
 		<property name="layerFiles">
 			<list>
-				<value>classpath:META-INF/jembedded/default/layers/services-registry.xml</value>
-				<!--value>${layer.application}</value-->
+				<value>${layer.registry}</value>
+				<value>${layer.application}</value>
 			</list>
 		</property>
 	</bean>
