@@ -9,10 +9,11 @@ import org.jsemantic.services.core.service.exception.ServiceException;
 import org.jsemantic.services.core.service.skeletal.AbstractService;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-public class WebServiceEngineImpl extends AbstractService implements WebServiceEngine {
-	
+public class WebServiceEngineImpl extends AbstractService implements
+		WebServiceEngine {
+
 	private HttpService webHttpService = null;
-	
+
 	public void setWebHttpService(HttpService webHttpService) {
 		this.webHttpService = webHttpService;
 	}
@@ -42,6 +43,22 @@ public class WebServiceEngineImpl extends AbstractService implements WebServiceE
 
 	public ServletContext getServerContext() {
 		return webHttpService.getServerContext();
+	}
+
+	public void setHost(String host) {
+		webHttpService.setHost(host);
+	}
+
+	public void setRootContext(String rootContext) {
+		webHttpService.setRootContext(rootContext);
+	}
+
+	public void setWebApplication(String webApplication) {
+		webHttpService.setWebApplication(webApplication);
+	}
+
+	public void setPort(int port) {
+		webHttpService.setPort(port);
 	}
 
 }

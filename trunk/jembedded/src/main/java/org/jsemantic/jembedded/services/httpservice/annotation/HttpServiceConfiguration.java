@@ -7,14 +7,29 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.TYPE})
+/**
+ * 
+ */
 public @interface HttpServiceConfiguration {
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public int port();
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public String host();
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public String root();
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public String webApplication();
 
 }

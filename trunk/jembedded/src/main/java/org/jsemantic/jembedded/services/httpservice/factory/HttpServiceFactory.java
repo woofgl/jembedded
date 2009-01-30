@@ -2,8 +2,8 @@ package org.jsemantic.jembedded.services.httpservice.factory;
 
 import java.lang.annotation.Annotation;
 
+import org.jsemantic.jembedded.services.httpservice.HttpService;
 import org.jsemantic.jembedded.services.httpservice.annotation.HttpServiceConfiguration;
-import org.jsemantic.jembedded.services.httpservice.impl.HttpServiceImpl;
 import org.jsemantic.services.core.service.Service;
 import org.springframework.util.StringUtils;
 
@@ -23,19 +23,19 @@ public class HttpServiceFactory {
 			int port = ((HttpServiceConfiguration) ann).port();
 
 			if (StringUtils.hasText(host)) {
-				((HttpServiceImpl) httpService).setHost(host);
+				((HttpService) httpService).setHost(host);
 			}
 
 			if (StringUtils.hasText(root)) {
-				((HttpServiceImpl) httpService).setRootContext(root);
+				((HttpService) httpService).setRootContext(root);
 			}
 
 			if (StringUtils.hasText(webApplication)) {
-				((HttpServiceImpl) httpService)
+				((HttpService) httpService)
 						.setWebApplication(webApplication);
 			}
 			if (port > 0) {
-				((HttpServiceImpl) httpService).setPort(port);
+				((HttpService) httpService).setPort(port);
 			}
 
 		}

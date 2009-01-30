@@ -35,6 +35,11 @@ public class WebServiceEngineAnnotationProcessor {
 		if (service.isAnnotationPresent(WebServiceEngine.class)) {
 			webHttpService =  contenedor
 			.getService("webHttpService");
+			
+			if (service.isAnnotationPresent(WebServiceEngineConfiguration.class)) {
+				
+			}
+			
 		}
 		return webHttpService;
 	}
