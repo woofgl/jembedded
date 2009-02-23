@@ -8,8 +8,9 @@
 	<name>jembedded</name>
 	<description></description>
 	<properties>
-		<jembedded.version>0.3.5-SNAPSHOT</jembedded.version>
-		<jlite.version>0.2.0-SNAPSHOT</jlite.version>
+		<jembedded.version>0.4.0-SNAPSHOT</jembedded.version>
+		<jcontenedor.version>0.3.1-SNAPSHOT
+		</jcontenedor.version>
 		<spring.version>2.5.6</spring.version>
 	</properties>
 	<repositories>
@@ -120,8 +121,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jsemantic.contenedor</groupId>
-			<artifactId>jlite</artifactId>
-			<version>${jlite.version}</version>
+			<artifactId>jcontenedor-core</artifactId>
+			<version>${jcontenedor.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
