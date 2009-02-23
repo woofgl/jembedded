@@ -8,12 +8,12 @@
 	
 	<import resource="classpath:META-INF/jembedded/services/properties-service/properties-service.xml"/>
 	
-	<bean id="container" class="org.jsemantic.jcontenedor.lite.impl.ContenedorLiteImpl" autowire="autodetect"/>
+	<bean id="container" class="org.jsemantic.jcontenedor.core.impl.ContenedorLiteImpl" autowire="autodetect"/>
 	
-	<bean id="context" class="org.jsemantic.jcontenedor.lite.context.impl.ContextImpl"/>
+	<bean id="context" class="org.jsemantic.jcontenedor.core.context.impl.ContextImpl"/>
 	
 		<!--  core container services&app -->
-	<bean id="layerManager" class="org.jsemantic.jcontenedor.lite.layer.manager.LayerManagerImpl" depends-on="context" autowire="autodetect">
+	<bean id="layerManager" class="org.jsemantic.jcontenedor.core.layer.manager.LayerManagerImpl" depends-on="context" autowire="autodetect">
 		<property name="layerFiles">
 			<list>
 				<value>${layer.registry}</value>
