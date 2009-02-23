@@ -2,8 +2,8 @@ package org.jsemantic.jembedded.core.manager;
 
 import java.util.Map;
 
-import org.jsemantic.jcontenedor.lite.ContenedorLite;
-import org.jsemantic.jcontenedor.lite.configuration.ContenedorLiteFactory;
+import org.jsemantic.jcontenedor.core.ContenedorLite;
+import org.jsemantic.jcontenedor.core.configuration.ContenedorLiteFactory;
 import org.jsemantic.jembedded.core.annotation.ServiceAnnotationProcessor;
 import org.jsemantic.jservice.core.component.Component;
 import org.jsemantic.jservice.core.component.exception.ComponentException;

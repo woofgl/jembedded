@@ -3,7 +3,8 @@ package org.jsemantic.jembedded.core.annotation;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.jsemantic.jcontenedor.lite.ContenedorLite;
+import org.jsemantic.jcontenedor.core.ContenedorLite;
+import org.jsemantic.jservice.core.annotation.AnnotationProcessor;
 import org.jsemantic.jservice.core.service.Service;
 
 public class ServiceAnnotationProcessor {
