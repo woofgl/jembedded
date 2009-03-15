@@ -1,13 +1,39 @@
 #summary Web application Integration Test.
+#labels Featured,Phase-Implementation
 
 = Introduction =
 
-Add your content here.
+To test a web application all is needed is a class that extends from AbstractIntegrationHttpTest and a minimal annotation configuration:
 
+@HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/test")
+
+port: embedded web server listener port.
+
+root: web application root context.
+
+src: actual location of the web application.
+
+Can be executed as a standard JUnit test from Eclipse or from Maven or Ant.
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+{{{
+@HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/test")
+public class EmbeddedIntegrationHttpTest extends AbstractIntegrationHttpTest {
+	
+	public void test() {
+		assertNotNull(super.getWebApplicationContext());
+		assertNotNullContextPath();
+		assertEqualsContextPath("/test");
+	}
+
+	public void testRequest() {
+		String uri = "http://localhost:9006/test/index.html";
+		assertResponseStatusOK(uri);
+		assertContentNotEmpty(uri);
+	}
+}
+}}}
+
+That's all is needed to implement and execute the integration test. No need to have installed web server as a embedded one is used.
+
