@@ -1,13 +1,26 @@
 #summary One-sentence summary of this page.
+#labels Featured,Phase-Implementation
 
 = Introduction =
 
-Add your content here.
+- A Integration Test Unit for Spring MVC.
 
+Several components are checked:  controller, response from the application etc...
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+{{{
+HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/spring")
+
+public class SpringMVCIntegrationTest extends AbstractSpringMVCIntegrationTest {
+	
+	
+	public void test() {
+		String uri = "http://localhost:9006/test/controller";
+		assertExistBeanInDispatcherServlet("controller");
+		assertExistBeanInApplicationContext("service");
+		
+		assertResponseStatusOK(uri);
+		assertResponseContentEmpty(uri);
+	}
+}}
