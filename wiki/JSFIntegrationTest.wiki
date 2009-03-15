@@ -1,13 +1,24 @@
 #summary MyFaces Integration Test
+#labels Featured,Phase-Implementation
 
 = Introduction =
 
-JSF integration tests using MYFaces Implementation.
+- A Integration test unit for JSF (MyFaces implementation). In this case, the creation of a managed bean is tested: ("testBean").
+
 
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+{{{
+@HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/myfaces")
+
+
+public class MyFacesTest extends AbstractMyFacesIntegrationTest {
+
+	@Override
+	public void test() throws Exception {
+
+	super.assertManagedBeanNotNull("testBean");
+	}
+}
+}}}
