@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jsemantic</groupId>
+		<artifactId>jintegration-test</artifactId>
+		<version>1.0</version>
+	</parent>
+	<groupId>org.jsemantic.jintegration.test</groupId>
+	<artifactId>integration-jms-test</artifactId>
+	<version>${integration-jms-test.version}
+	</version>
+	<packaging>jar</packaging>
+	<name>integration-jms-test</name>
+	<description>integration-jms-test</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jsemantic.jintegration.test</groupId>
+			<artifactId>jintegration-test-core</artifactId>
+			<version>${jintegration-test-core.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>activemq-service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+	</dependencies>
+</project>

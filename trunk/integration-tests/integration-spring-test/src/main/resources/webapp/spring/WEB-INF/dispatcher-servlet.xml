@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->		
+	
+	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+	
+    <!-- ========================= VIEWS DEFINITIONS ========================= -->		
+     
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  		<!--property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/-->
+  		<property name="prefix" value="/"/>
+  		<property name="suffix" value=".html"/>
+  		<property name="order" value="1"/>
+	</bean>
+  	
+  	<bean id="controller" name="/controller" class="org.jsemantic.jintegration.test.common.spring.Controller" autowire="autodetect"/>
+ 
+</beans>
