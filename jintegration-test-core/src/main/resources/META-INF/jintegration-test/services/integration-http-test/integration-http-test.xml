@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="httpService" name="httpService"
+		class="org.jsemantic.services.httpservice.impl.HttpServiceImpl"
+		autowire="byName" lazy-init="true" scope="prototype">
+		<property name="port" value="9005" />
+		<property name="host" value="localhost" />
+		<property name="rootContext" value="/" />
+		<property name="webApplication" value="src/main/resources/webapp/test" />
+	</bean>
+	<bean id="httpClient"
+		class="org.jsemantic.services.httpservice.client.HttpTestClientImpl"
+		lazy-init="true" scope="prototype" />
+	<bean id="httpTestAnnotationProcessor"
+		class="org.jsemantic.jintegration.test.http.annotation.HttpIntegrationTestAnnotationProcessor" />
+</beans>

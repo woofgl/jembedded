@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jcontenedor="http://www.jsemantic.jcontenedor/schema/contenedor"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.jsemantic.jcontenedor/schema/contenedor http://www.jsemantic.jcontenedor/schema/contenedor/jcontenedor.xsd">
+	
+	<!-- core container manager services -->
+	<import resource="classpath:META-INF/integration-cxf-test/services/properties-service/properties-service.xml"/>
+	
+	<jcontenedor:contenedor id="contenedor">
+		<jcontenedor:layer>${layer.registry}</jcontenedor:layer>
+		<jcontenedor:layer>${layer.webservices}</jcontenedor:layer>
+	</jcontenedor:contenedor>
+	
+</beans>
