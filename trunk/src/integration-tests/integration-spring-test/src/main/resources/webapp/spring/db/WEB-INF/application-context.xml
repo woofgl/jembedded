@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="service" class="org.jsemantic.jintegration.test.common.BusinessServiceImpl"/>
+	
+	<bean id="dataSource" class="org.hsqldb.jdbc.jdbcDataSource" autowire-candidate="true">
+        <property name="database" value="jdbc:hsqldb:mem:test"/>
+        <property name="user" value="sa"/>
+        <property name="password" value=""/>
+	</bean>
+	
+	<bean id="testRepository" class="org.jsemantic.jintegration.test.common.spring.repository.TestRepository"  autowire="autodetect"/>
+	
+</beans>

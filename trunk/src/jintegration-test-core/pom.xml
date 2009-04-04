@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jsemantic</groupId>
+		<artifactId>jintegration-test</artifactId>
+		<version>1.0</version>
+	</parent>
+	<version>${jintegration-test-core.version}
+	</version>
+	<groupId>org.jsemantic.jintegration.test
+	</groupId>
+	<artifactId>jintegration-test-core</artifactId>
+	<packaging>jar</packaging>
+	<name>jintegration-test</name>
+	<description>jintegration-test</description>
+	<properties>
+		<jiservice.version>0.4.0-SNAPSHOT</jiservice.version>
+		<jintegration-test-core.version>0.7-SNAPSHOT</jintegration-test-core.version>
+		<jicontenedor-core.version>0.7.0-SNAPSHOT</jicontenedor-core.version>
+		<jetty-service.version>0.3.0-SNAPSHOT</jetty-service.version>
+		<hsqldb-service.version>0.4.0-SNAPSHOT</hsqldb-service.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.jsemantic</groupId>
+			<artifactId>jiservice</artifactId>
+			<version>${jiservice.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsemantic.jicontenedor
+			</groupId>
+			<artifactId>jicontenedor-core</artifactId>
+			<version>${jicontenedor-core.version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>jetty-service</artifactId>
+			<version>${jetty-service.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>hsqldb-service</artifactId>
+			<version>${hsqldb-service.version}</version>
+		</dependency>
+	</dependencies>
+</project>
