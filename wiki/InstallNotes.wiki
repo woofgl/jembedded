@@ -43,7 +43,7 @@ For example to use the ActiveMQ Integration test:
 
 Also to use the jms module you are going to need to produce a integration-test.xml file
 
-and put it the resource/META-INF/ directory of your project:
+and put it the {{{resource/META-INF/}}} directory of your project:
 
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
