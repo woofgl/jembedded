@@ -1,24 +1,17 @@
-#summary Basic Install Notes.
 #labels Featured,Phase-Implementation,Phase-Deploy
-
 = Introduction =
 
-- You would need MAVEN 2.x installed in your system.
+- You will need MAVEN 2.x installed in your system.
 
-- Copy the contains of lib-mvn\repository in your own maven repository. It contains 
+- Copy the contains of lib-mvn\repository folder in your own maven repository. It contains the dependencies that you can't download from other sites (jiservice, jicontainer..). It does not contain Spring or other dependencies.
 
-dependencies that you can't download from other sites (jiservice, jicontainer..).
-
-
-It does not contain Spring or other dependencies.
-
-- Go to the src directory and type mvn clean install.
+- Go to the src directory and type {{{mvn clean install}}}.
 
 - It will download the needed dependencies from various sites.
 
-- If you want to generate the eclipse projects type: mvn eclipse:eclipse.
+- If you want to generate the eclipse projects type: {{{mvn eclipse:eclipse}}}.
 
-- In order to user the framework (core) declare the following in your pom:
+- In order to user the framework (core) declare the following dependency in your pom:
 
 {{{
 		<dependency>
@@ -30,7 +23,7 @@ It does not contain Spring or other dependencies.
 
 		
 		
-- That's enough if you are only planning to use the HTTP or DB integration tests only.
+- That's all you need if you are planning only to use the HTTP or DB integration tests only.
 
 
 == ADDITIONAL CONFIGURATION. ==
@@ -38,6 +31,7 @@ It does not contain Spring or other dependencies.
 In order to use the rest of modules you just need  to add module to the pom.
 
 For example to use the ActiveMQ Integration test:
+
 {{{		
 		
 		<dependency>
@@ -65,4 +59,4 @@ and put it the resource/META-INF/ directory of your project:
 
 You can get it from the config folder. This file is not needed neither for the core or the cxf/jsf/spring modules.
 
-You can review the test from each module for examples of use and additionally a web example (in the examples folder).
+You can review the tests from each module for examples of use and additionally a web example (in the examples folder).
