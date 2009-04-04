@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+	
+	<listener>
+		<listener-class>
+			org.jsemantic.jicontenedor.core.contenedor.configuration.web.ContainerListener
+		</listener-class>
+	</listener>
+
+	 <context-param>
+  		<param-name>ContainerConfigurationLocation</param-name>
+  		<param-value>classpath:META-INF/integration-cxf-test/embedded-jcontenedor-service.xml</param-value>
+	</context-param>
+	
+	<servlet>
+    	<servlet-name>dispatcher</servlet-name>
+    	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+   		 		
+   		<init-param>
+   			<param-name>contextAttribute</param-name>
+   			<param-value>org.springframework.web.context.WebApplicationContext.ROOT</param-value>
+   			<description></description>
+   		</init-param>
+   		
+   		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+    	<servlet-name>dispatcher</servlet-name>
+    	<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>CXFServlet</servlet-name>
+		<display-name>CXF Servlet</display-name>
+		<servlet-class>
+			org.apache.cxf.transport.servlet.CXFServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CXFServlet</servlet-name>
+		<url-pattern>/cxf/*</url-pattern>
+	</servlet-mapping>	
+	
+</web-app>
+<!-- END SNIPPET: webxml -->
