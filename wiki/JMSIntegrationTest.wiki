@@ -1,0 +1,15 @@
+#summary One-sentence summary of this page.
+#labels Featured,Phase-Implementation
+
+= Introduction =
+
+@JMSIntegrationConfigurationTest(connector = "tcp://localhost:61667", jmx = "false")
+public class EmbeddedJMSIntegrationTest extends AbstractJMSIntegrationTest {
+
+	public void testDestinationCreation() {
+		testDestinationCreation("TEST.TEST", "tcp://localhost:61667");		
+	}
+}
+}}}
+
+= Details =
