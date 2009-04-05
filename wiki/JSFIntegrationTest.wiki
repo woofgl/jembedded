@@ -15,8 +15,8 @@
 
 public class MyFacesTest extends AbstractMyFacesIntegrationTest {
 
-	@Override
-	public void test() throws Exception {
+	
+	public void testMangedBean() throws Exception {
 
 	super.assertManagedBeanNotNull("testBean");
 	}
