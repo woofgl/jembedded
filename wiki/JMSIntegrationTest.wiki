@@ -3,6 +3,8 @@
 
 = Introduction =
 
+{{{
+
 @JMSIntegrationConfigurationTest(connector = "tcp://localhost:61667", jmx = "false")
 public class EmbeddedJMSIntegrationTest extends AbstractJMSIntegrationTest {
 
@@ -10,6 +12,7 @@ public class EmbeddedJMSIntegrationTest extends AbstractJMSIntegrationTest {
 		testDestinationCreation("TEST.TEST", "tcp://localhost:61667");		
 	}
 }
+
 }}}
 
 = Details =
