@@ -15,7 +15,7 @@ HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resource
 public class SpringMVCIntegrationTest extends AbstractSpringMVCIntegrationTest {
 	
 	
-	public void test() {
+	public void testSpringMVCApplication() {
 		String uri = "http://localhost:9006/test/controller";
 		assertExistBeanInDispatcherServlet("controller");
 		assertExistBeanInApplicationContext("service");
