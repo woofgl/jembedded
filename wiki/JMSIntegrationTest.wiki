@@ -1,11 +1,14 @@
-#summary One-sentence summary of this page.
+#summary JMS Integration Test Unit-
 #labels Featured,Phase-Implementation
 
 = Introduction =
 
+In this case a destination creation is being tested. The name is TEST.TES:
+
 {{{
 
 @JMSIntegrationConfigurationTest(connector = "tcp://localhost:61667", jmx = "false")
+
 public class EmbeddedJMSIntegrationTest extends AbstractJMSIntegrationTest {
 
 	public void testDestinationCreation() {
@@ -16,3 +19,5 @@ public class EmbeddedJMSIntegrationTest extends AbstractJMSIntegrationTest {
 }}}
 
 = Details =
+
+In order to use this Integration Test Unit have a look at the install notes page.
