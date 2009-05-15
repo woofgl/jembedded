@@ -10,15 +10,15 @@
 = Details =
 
 {{{
-@HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/myfaces")
 
+@JettyServiceConfiguration(webApplication="src/main/resources/webapp/myfaces")
+public class IntegrationMyFacesEmbeddedTest extends AbstractMyFacesIntegrationTest {
 
-public class MyFacesTest extends AbstractMyFacesIntegrationTest {
-
-	
-	public void testManagedBean() throws Exception {
-
-	super.assertManagedBeanNotNull("testBean");
+	@Test
+	public void ManagedBeanCreationCheck() throws Exception {
+		assertRuntimeConfigNotNull();
+		assertManagedBeanNotNull("testBean");
 	}
 }
+
 }}}
