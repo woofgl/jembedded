@@ -3,12 +3,62 @@
 
 = Introduction =
 
-Add your content here.
+A Embedded Database Integration Test.
 
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Using Spring (to retrieve a DAO) and a Embedded Derby Database with two SQL scripts (one to create the table another to populate it).
+
+
+{{{
+
+@SpringContext(configurationFile = "classpath:META-INF/derby-application-context.xml")
+@DatabaseServiceConfiguration(database = "test", 
+		databaseCreationScript = "database.sql", 
+		dataCreationScript = "data.sql", 
+		provider="org.jsemantic.services.databaseservice.datasource.derby.DerbyDataSource")
+		
+public class AnnotatedDerbyDatabaseSpringIntegrationTest extends
+		AbstractDatabaseIntegrationTest {
+
+	private TestDAO dao = null;
+
+	@Override
+	protected void init() throws Exception {
+		super.init();
+		dao = (TestDAO) getContainer().getBean("testDAO");
+	}
+	
+	@Test
+	public void testInfrastructure() {
+		assertNotNull(getContainer());
+		assertNotNull(getDatabaseService());
+		assertNotNull(getJdbcService());
+	}
+	
+	@Test
+	public void test() throws Exception {
+		dao.executeUpdate("insert into test values(?,?, ?)", new Object[] { 4,
+				"Test 4", "Test Description Number 4" });
+
+		getJdbcService().executeUpdate(
+				"insert into test values(?,?, ?)",
+				new Object[] { 5, "Test 5", "Test Description Number 5" });
+
+		getJdbcService().executeQueryForList(
+				"select * from test");
+
+		assertResultNotNull("select * from test where id=4");
+	}
+	
+	@Test
+	public void test2() throws Exception {
+		dao.executeUpdate("insert into test values(?,?, ?)", new Object[] { 4,
+				"Test 4", "Test Description Number 4" });
+
+		assertResultNotNull("select * from test where id=4");
+	}
+}
+
+}}}
