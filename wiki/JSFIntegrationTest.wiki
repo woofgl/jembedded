@@ -3,7 +3,7 @@
 
 = Introduction =
 
-- A Integration test unit for JSF (MyFaces implementation). In this case, the creation of a managed bean is tested: ("testBean").
+- A Integration test unit for JSF. In this case, the creation of a managed bean is tested: ("testBean").
 
 
 
