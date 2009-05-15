@@ -5,29 +5,32 @@
 
 To test a web application all is needed is a class that extends from AbstractIntegrationHttpTest and a minimal annotation configuration:
 {{{
-@HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/test")
+
+@JettyServiceConfiguration(webApplication src="src/main/resources/webapp/test")
 
 port: embedded web server listener port.
 
-root: web application root context.
+root: web application root context (/test by default).
 
-src: actual location of the web application.
+webApplication: actual folder location of the web application.
 }}}
 
-Can be executed as a standard JUnit test from Eclipse or from Maven or Ant.
+Can be executed as a standard JUnit4 test from Eclipse or from Maven or Ant.
 
 = Details =
 
 {{{
-@HttpIntegrationConfigurationTest(port=9006, root="/test", src="src/main/resources/webapp/test")
+
+@JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
 public class EmbeddedIntegrationHttpTest extends AbstractIntegrationHttpTest {
 	
+	@Test
 	public void testContextPath() {
-		assertNotNull(super.getWebApplicationContext());
+		assertNotNull(getWebApplicationContext());
 		assertNotNullContextPath();
 		assertEqualsContextPath("/test");
 	}
-
+	@Test
 	public void testRequest() {
 		String uri = "http://localhost:9006/test/index.html";
 		assertResponseStatusOK(uri);
