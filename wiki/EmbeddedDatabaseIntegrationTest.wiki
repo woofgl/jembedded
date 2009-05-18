@@ -28,26 +28,26 @@ The simplest use of this test would be using just the annotation `@DatabaseServi
 
 In order to access the services provided by the annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
 
-- AbstractDatabaseIntegrationTest.getJdbcService() ::JDBCService
+- _AbstractDatabaseIntegrationTest.getJdbcService() ::JDBCService_
 
-- AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService
+- _AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService_
 
 
 Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
 
-- assertResultNotNull(String query, Object... args)
+- _assertResultNotNull(String query, Object... args)_
 
-- assertResultListNull(String query, Object... args)
+- _assertResultListNull(String query, Object... args)_
 
-- assertEqualsUpdateResult(String query, int result, Object... args)
+- _assertEqualsUpdateResult(String query, int result, Object... args)_
 
-- assertFieldEquals(String query, String fieldName, Object expected, Object... args)
+- _assertFieldEquals(String query, String fieldName, Object expected, Object... args)_
 
 - ... 
 
 Of course you don't need to use the former ones, as you can execute your own queries and test the results using the standard methods from JUnit4.
 
-For example:
+=== Example 1: Simple Test ===
 
 {{{
 
@@ -79,7 +79,7 @@ public class AnnotatedSimpleDatabaseIntegrationTest extends AbstractDatabaseInte
 In the example above the table is created using the Jdbc Service provided. This is not need to be always the case as can be seen in the next example.
 
 
-= Details =
+=== Example 3: Spring, Derby and Scripts Test ===
 
 Using Spring (to retrieve a DAO) and a Embedded Derby Database with two SQL scripts (one to create the table another to populate it).
 
