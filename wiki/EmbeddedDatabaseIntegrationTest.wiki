@@ -1,6 +1,4 @@
-#labels Featured,Phase-Implementation,Phase-Deploy
-_Index_
-
+#labels Phase-Implementation,Phase-Deploy
 <wiki:toc max_depth="3" />
 
 = Using the Database Integration Test =
