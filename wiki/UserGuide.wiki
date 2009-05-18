@@ -4,3 +4,4 @@
   * [IntegrationTests]
     * [WebApplicationIntegrationTest]
     * [SpringMVCIntegrationTest]
+    * [EmbeddedDatabaseIntegrationTest]
