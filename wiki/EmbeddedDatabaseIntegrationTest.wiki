@@ -3,11 +3,11 @@
 
 This test allows to test real DAO's, JDBC code etc... using a embedded database. It provides several services to do that: Database Service (produces the embedded databases), a JDBC Service (to execute queries) and a Transactional Service. The generated embedded database could be either HSQLDB (in memory) or Derby (using files).
 
-The simplest usage of this test would be using just the annotation `@DatabaseServiceConfiguration` (with default values) and extending the abstract class `AbstractDatabaseIntegrationTest`. Also the methods of the Integration Unit Test need to be marked with the annotation @Test (from JUnit 4).
+The simplest usage of this test would be using just the annotation `DatabaseServiceConfiguration` (with default values) and extending the abstract class `AbstractDatabaseIntegrationTest`. Also the methods of the Integration Unit Test need to be marked with the annotation @Test (from JUnit 4).
 
 The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus access to the JDBCService.
 
-== @DatabaseServiceConfiguration Annotation usage ==
+== DatabaseServiceConfiguration Annotation usage ==
 
 - _provider:_ embedded database provider. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `org...DerbyDataSource`.
 
