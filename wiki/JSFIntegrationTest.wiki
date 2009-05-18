@@ -1,5 +1,5 @@
 #summary MyFaces Integration Test
-#labels Featured,Phase-Implementation
+#labels Phase-Implementation
 
 = Introduction =
 
