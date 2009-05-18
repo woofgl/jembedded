@@ -1,4 +1,8 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
+_Index_
+
+<wiki:toc max_depth="3" />
+
 = Using the Database Integration Test =
 
 This test allows to test real DAO's, JDBC code etc... using a embedded database. It provides several services to do that: Database Service (produces the embedded databases), a JDBC Service (to execute queries) and a Transactional Service. The generated embedded database could be either HSQLDB (in memory) or Derby (using files).
