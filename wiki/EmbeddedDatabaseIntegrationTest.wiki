@@ -5,9 +5,9 @@ This test provides an Database Service that allows to test real DAO's, JDBC code
 
 The embedded database provided could be either HSQLDB (in memory ) or Derby (using files).
 
-The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` with the default values. It produces a embedded HSQLDB database (_jdbc:hsqldb:mem:test_) and a JDBCService to launch the query's. 
+The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` with the default values. It produces a embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) and a JDBCService to launch the query's. 
 
-@DatabaseServiceConfiguration Annotation usage:
+_@DatabaseServiceConfiguration Annotation usage_
 
 - provider: embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.
  
@@ -25,6 +25,7 @@ The simplest use of this test would be using just the annotation `@DatabaseServi
 
 - createSchema: creates the schema is the scripts are provided by default it's true.
 
+_Services Provided_
 
 In order to access the services provided by annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
 
