@@ -1,7 +1,7 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
 #Embedded Database Integration Test.
 
-= Using the =
+= Using the Database Integration Test=
 
 This test provides an Database Service that allows to test real DAO's, JDBC code etc... using a embedded database. Also it provides a JDBC Service (to execute querys and updates) and a Transactional Service. 
 
@@ -11,15 +11,15 @@ The simplest use of this test would be using just the annotation `@DatabaseServi
 
 @DatabaseServiceConfiguration Annotation usage:
 
-* provider: embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.
+* provider: embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.`*`
  
-* database: database ulr location. By default is `jdbc:hsqldb:mem:test`.
-* user: database connection user. By default is sa.
-* password: database connection password. By default is "".
-* databaseCreationScript: location of a sql script to create the test schema.
-* dataCreationScript: location of a sql script to populate the test schema.
-* doCleanUp: intended for Derby database provider, to clean up the database files. By default it's 
-* createSchema: by default it's 
+* database: database ulr location. By default is `jdbc:hsqldb:mem:test`.`*`
+* user: database connection user. By default is sa.`*`
+* password: database connection password. By default is "".`*`
+* databaseCreationScript: location of a sql script to create the test schema.`*`
+* dataCreationScript: location of a sql script to populate the test schema.`*`
+* doCleanUp: intended for Derby database provider, to clean up the database files. By default it's `*`
+* createSchema: by default it's `*`
 
 
 In order to access the services provided by annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
