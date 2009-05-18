@@ -3,14 +3,15 @@
 
 Using this you can test real DAO's, JDBC code etc... using a embedded database. It provides several services to do that: Database Service (provides the embedded databases), a JDBC Service (to execute querys and updates) and a Transactional Service. The embedded database generated could be either HSQLDB (in memory) or Derby (using files).
 
-The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` (with default values) and extending the abstract class `AbstractDatabaseIntegrationTest`.
-It produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus gives accces to  the JDBCService.
+The simplest usage of this test would be using just the annotation `@DatabaseServiceConfiguration` (with default values) and extending the abstract class `AbstractDatabaseIntegrationTest`. Also the methods of the Integration Unit Test need to be marked with the annotation @Test (from JUnit 4).
+
+The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus access to the JDBCService.
 
 == @DatabaseServiceConfiguration Annotation usage ==
 
-- _provider:_ embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.
- 
-- _database:_ database ulr location. By default is `jdbc:hsqldb:mem:test`.
+- _provider:_ embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `org...DerbyDataSource`.
+
+- _database:_ database url location. By default is `jdbc:hsqldb:mem:test`.
 
 - _user:_ database connection user. By default is sa.
 
@@ -27,11 +28,16 @@ It produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus gives ac
 
 == Services Provided == 
 
-In order to access the services provided by the annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
+The access to the services provided by the annotation the test is made through the extended class `AbstractDatabaseIntegrationTest`:
 
-- _AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService_
+- _JDBCService getJdbcService()_
 
-- _AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService_
+- _DatabaseService getDatabaseService()_
+
+- _Container getContainer()_
+
+- _ApplicationContext getApplicationContext()_
+
 
 
 Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
@@ -44,11 +50,11 @@ Also the abstract test class provides some useful testing methods (apart from th
 
 - _assertFieldEquals(String query, String fieldName, Object expected, Object... args)_
 
-- ... 
+- 
 
 Of course you don't need to use the former methods as you can execute your own queries and test the results against the standard methods from JUnit4.
 
-== Other annotations ==
+== Other Annotations ==
 
 @The 
 
