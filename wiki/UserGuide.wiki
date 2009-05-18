@@ -4,4 +4,4 @@
   * [IntegrationTests]
     * [WebApplicationIntegrationTest]
     * [SpringMVCIntegrationTest]
-    * []
+    * [JSFIntegrationTest]
