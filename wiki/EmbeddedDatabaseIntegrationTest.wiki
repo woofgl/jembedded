@@ -1,9 +1,10 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
 = Using the Database Integration Test =
 
-This test provides a Database Service that allows to test real DAO's, JDBC code etc... using a embedded database. Also it provides a JDBC Service (to execute querys and updates) and a Transactional Service. The embedded database provided could be either HSQLDB (in memory) or Derby (using files).
+Using this you can test real DAO's, JDBC code etc... using a embedded database. It provides several services to do that: Database Service (provides the embedded databases), a JDBC Service (to execute querys and updates) and a Transactional Service. The embedded database generated could be either HSQLDB (in memory) or Derby (using files).
 
-The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` with default values. It produces a embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) pluse a JDBCService to execute the query's. 
+The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` (with default values) and extending the abstract class `AbstractDatabaseIntegrationTest`.
+It produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus gives accces to  the JDBCService.
 
 == @DatabaseServiceConfiguration Annotation usage ==
 
@@ -47,6 +48,9 @@ Also the abstract test class provides some useful testing methods (apart from th
 
 Of course you don't need to use the former methods as you can execute your own queries and test the results against the standard methods from JUnit4.
 
+== Other annotations ==
+
+@The 
 
 === Example 1: Simple Test ===
 
@@ -118,11 +122,11 @@ public class AnnotatedDatabaseIntegrationTest extends
 
 === Example 3: Using a Spring Container and a Derby Embedded Database ===
 
-In order to test DAO'S from a Spring Context the Annotation @SpringContext is used. It needs the location of the Spring Context file. 
+If you need to test DAO'S created by a Spring Context you can use the Annotation @SpringContext providing the location of the context file.
 
-Once the test has started  the Spring Container can be accesed using the method `getContainer()` of the `AbstractDatabaseIntegrationTest` class.
+Once the test has started the Spring Container can be accesed using the method `getContainer()` from the `AbstractDatabaseIntegrationTest` class.
 
-In this example a Embedded Derby database is used. In order to do that the provider parameter must be provided. The usage of the test is just the same af it the database used were HSQLDB.
+In this example a Embedded Derby database is used. In order to do that the provider parameter must be provided. The usage of the test is just the same af if the database used was HSQLDB.
 
 
 {{{
