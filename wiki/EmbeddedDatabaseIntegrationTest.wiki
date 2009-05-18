@@ -30,13 +30,13 @@ The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:me
 
 The access to the Services provided by the Annotations is made through the abstract class `AbstractDatabaseIntegrationTest`:
 
-- _JDBCService getJdbcService()_ // @DatabaseServiceConfiguration
+- _JDBCService getJdbcService()_ // DatabaseServiceConfiguration
 
-- _DatabaseService getDatabaseService()_ // @DatabaseServiceConfiguration
+- _DatabaseService getDatabaseService()_ // DatabaseServiceConfiguration
 
-- _Container getContainer()_ // @SpringContext and @JIContainer
+- _Container getContainer()_ // SpringContext and JIContainer
 
-- _ApplicationContext getApplicationContext():_ // @SpringContext and @JIContainer
+- _ApplicationContext getApplicationContext():_ // SpringContext and JIContainer
 
 
 Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
@@ -54,11 +54,11 @@ Also the abstract test class provides some useful testing methods (apart from th
 
 == Other Annotations ==
 
-@DatabaseServiceConfiguration can be used in combination with other annotations to provide additional services:
+DatabaseServiceConfiguration can be used in combination with other annotations to provide additional services:
 
-@SpringContext 
+SpringContext 
 
-@TransactionalTest
+TransactionalTest
 
 
 === Example 1: Simple Test ===
