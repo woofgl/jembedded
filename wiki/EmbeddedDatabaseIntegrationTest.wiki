@@ -1,15 +1,28 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
 #Embedded Database Integration Test.
 
-= Introduction =
+= Using the =
 
-This test provides a embedded Database Service that allows to test real DAO's, jdbc code etc... using a embedded database. Also it provides a Jdbc Service (to execute querys and updates) and a Transactional Service. 
+This test provides an Database Service that allows to test real DAO's, JDBC code etc... using a embedded database. Also it provides a JDBC Service (to execute querys and updates) and a Transactional Service. 
 
 The embedded database could be either HSQLDB (in memory ) or Derby (using files).
 
 The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` with the default values. It produces a embedded HSQLDB database (_jdbc:hsqldb:mem:test_) and a JDBCService to launch the query's. 
 
-In order to access to those services the test must extends the class `AbstractDatabaseIntegrationTest` :
+@DatabaseServiceConfiguration Annotation usage:
+
+* provider: embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.
+ 
+* database: database ulr location. By default is `jdbc:hsqldb:mem:test`.
+* user: database connection user. By default is sa.
+* password: database connection password. By default is "".
+* databaseCreationScript: location of a sql script to create the test schema.
+* dataCreationScript: location of a sql script to populate the test schema.
+* doCleanUp: intended for Derby database provider, to clean up the database files. By default it's 
+* createSchema: by default it's 
+
+
+In order to access the services provided by annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
 
 * AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService `*`
 * AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService `*`
