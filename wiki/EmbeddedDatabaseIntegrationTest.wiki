@@ -1,7 +1,7 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
 = Using the Database Integration Test =
 
-Using this you can test real DAO's, JDBC code etc... using a embedded database. It provides several services to do that: Database Service (provides the embedded databases), a JDBC Service (to execute querys and updates) and a Transactional Service. The embedded database generated could be either HSQLDB (in memory) or Derby (using files).
+This test allows to test real DAO's, JDBC code etc... using a embedded database. It provides several services to do that: Database Service (produces the embedded databases), a JDBC Service (to execute queries) and a Transactional Service. The generated embedded database could be either HSQLDB (in memory) or Derby (using files).
 
 The simplest usage of this test would be using just the annotation `@DatabaseServiceConfiguration` (with default values) and extending the abstract class `AbstractDatabaseIntegrationTest`. Also the methods of the Integration Unit Test need to be marked with the annotation @Test (from JUnit 4).
 
@@ -50,13 +50,11 @@ Also the abstract test class provides some useful testing methods (apart from th
 
 - _assertFieldEquals(String query, String fieldName, Object expected, Object... args)_
 
-- 
 
-Of course you don't need to use the former methods as you can execute your own queries and test the results against the standard methods from JUnit4.
 
 == Other Annotations ==
 
-@The 
+The 
 
 === Example 1: Simple Test ===
 
