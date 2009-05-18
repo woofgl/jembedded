@@ -28,7 +28,7 @@ The simplest use of this test would be using just the annotation `@DatabaseServi
 
 In order to access the services provided by the annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
 
-- _AbstractDatabaseIntegrationTest.getJdbcService() ::JDBCService_
+- _AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService_
 
 - _AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService_
 
@@ -45,7 +45,8 @@ Also the abstract test class provides some useful testing methods (apart from th
 
 - ... 
 
-Of course you don't need to use the former ones, as you can execute your own queries and test the results using the standard methods from JUnit4.
+Of course you don't need to use the former methods as you can execute your own queries and test the results against the standard methods from JUnit4.
+
 
 === Example 1: Simple Test ===
 
@@ -81,11 +82,13 @@ In the example above the table is created using the Jdbc Service provided. This 
 
 === Example 2: Using scripts to create the embedded database ===
 
-In this examples the database and the data used are created using scripts.
+In this example the database and the data are created using sql scripts.
 
 {{{
 
-@DatabaseServiceConfiguration(database = "jdbc:hsqldb:mem:test", databaseCreationScript = "META-INF/integration-database-test/scripts/database-hsqldb.sql", dataCreationScript = "META-INF/integration-database-test/scripts/data.sql")
+@DatabaseServiceConfiguration(database = "jdbc:hsqldb:mem:test", 
+databaseCreationScript = "META-INF/integration-database-test/scripts/database-hsqldb.sql", 
+dataCreationScript = "META-INF/integration-database-test/scripts/data.sql")
 public class AnnotatedDatabaseIntegrationTest extends
 		AbstractDatabaseIntegrationTest {
 	
@@ -112,9 +115,14 @@ public class AnnotatedDatabaseIntegrationTest extends
 
 }}}
 
-=== Example 3: Using Spring and Derby ===
 
-Using Spring (to retrieve a DAO) and a Embedded Derby Database with two SQL scripts (one to create the table another to populate it).
+=== Example 3: Using a Spring Container and a Derby Embedded Database ===
+
+In order to test DAO'S from a Spring Context the Annotation @SpringContext is used. It needs the location of the Spring Context file. 
+
+Once the test has started  the Spring Container can be accesed using the method `getContainer()` of the `AbstractDatabaseIntegrationTest` class.
+
+In this example a Embedded Derby database is used. In order to do that the provider parameter must be provided. The usage of the test is just the same af it the database used were HSQLDB.
 
 
 {{{
