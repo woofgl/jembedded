@@ -1,39 +1,38 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
-#Embedded Database Integration Test.
 
-= Using the Database Integration Test=
+= Using the Database Integration Test =
 
 This test provides an Database Service that allows to test real DAO's, JDBC code etc... using a embedded database. Also it provides a JDBC Service (to execute querys and updates) and a Transactional Service. 
 
-The embedded database could be either HSQLDB (in memory ) or Derby (using files).
+The embedded database provided could be either HSQLDB (in memory ) or Derby (using files).
 
 The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` with the default values. It produces a embedded HSQLDB database (_jdbc:hsqldb:mem:test_) and a JDBCService to launch the query's. 
 
 @DatabaseServiceConfiguration Annotation usage:
 
-* provider: embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.`*`
+ - provider: embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `DerbyDataSource`.
  
-* database: database ulr location. By default is `jdbc:hsqldb:mem:test`.`*`
-* user: database connection user. By default is sa.`*`
-* password: database connection password. By default is "".`*`
-* databaseCreationScript: location of a sql script to create the test schema.`*`
-* dataCreationScript: location of a sql script to populate the test schema.`*`
-* doCleanUp: intended for Derby database provider, to clean up the database files. By default it's `*`
-* createSchema: by default it's `*`
+- database: database ulr location. By default is `jdbc:hsqldb:mem:test`.
+- user: database connection user. By default is sa.
+- password: database connection password. By default is "".
+- databaseCreationScript: location of a sql script to create the test schema.
+- dataCreationScript: location of a sql script to populate the test schema.
+- doCleanUp: intended for Derby database provider, to clean up the database files. By default it's true.
+- createSchema: creates the schema is the scripts are provided by default it's true.
 
 
 In order to access the services provided by annotation the test must extends the class `AbstractDatabaseIntegrationTest`:
 
-* AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService `*`
-* AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService `*`
+- AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService
+- AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService
 
 Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
 
-* assertResultNotNull(String query, Object... args) `*`
-* assertResultListNull(String query, Object... args) `*`
-* assertEqualsUpdateResult(String query, int result, Object... args) `*`
-* assertFieldEquals(String query, String fieldName, Object expected, Object... args) `*`
-* ... `*`
+- assertResultNotNull(String query, Object... args)
+- assertResultListNull(String query, Object... args)
+- assertEqualsUpdateResult(String query, int result, Object... args)
+- assertFieldEquals(String query, String fieldName, Object expected, Object... args)
+- ... 
 
 Of course you don't need to use the former ones, as you can execute your own queries and test the results using the standard methods from JUnit4.
 
