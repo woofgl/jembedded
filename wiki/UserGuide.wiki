@@ -1,6 +1,7 @@
-* [UserGuide User's Guide]
+* [UserGuide]
   * [InstallNotes]
   * [GettingStarted]
+  * [IntegrationTests]
     * [WebApplicationIntegrationTest]
     * [SpringMVCIntegrationTest]
     * [JSFIntegrationTest]
