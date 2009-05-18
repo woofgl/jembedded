@@ -3,4 +3,5 @@
   * [GettingStarted]
   * [IntegrationTests]
     * [WebApplicationIntegrationTest]
+    * [SpringMVCIntegrationTest]
     * []
