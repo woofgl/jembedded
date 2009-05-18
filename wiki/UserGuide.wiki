@@ -6,4 +6,4 @@
     * [WebApplicationIntegrationTest Web Integration Test]
     * [SpringMVCIntegrationTest Spring MVC Integration Test]
     * [EmbeddedDatabaseIntegrationTest Database Integration Test]
-    * [JSIntegrationTest  MyFaces Integration Test]
+    * [JSFIntegrationTest  MyFaces Integration Test]
