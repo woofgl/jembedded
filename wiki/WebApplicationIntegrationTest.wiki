@@ -1,5 +1,7 @@
+#labels Phase-Implementation
+<wiki:toc max_depth="3" />
+
 #summary Web application Integration Test.
-#labels Featured,Phase-Implementation
 
 = Introduction =
 
