@@ -19,9 +19,9 @@ The simplest use of this test would be using just the annotation `@DatabaseServi
 
 - _dataCreationScript:_ location of a sql script to populate the test schema.
 
-- _doCleanUp:_ intended for Derby database provider, to clean up the database files. By default it's true.
+- _doCleanUp:_ intended for the Derby database provider to clean up the database files. By default it's true.
 
-- _createSchema:_ creates the schema is the scripts are provided by default it's true.
+- _createSchema:_ creates the schema if the scripts are provided. By default it's true.
 
 
 == Services Provided == 
@@ -79,7 +79,40 @@ public class AnnotatedSimpleDatabaseIntegrationTest extends AbstractDatabaseInte
 In the example above the table is created using the Jdbc Service provided. This is not need to be always the case as can be seen in the next example.
 
 
-=== Example 3: Spring, Derby and Scripts Test ===
+=== Example 2: Using scripts to create the embedded database ===
+
+In this examples the database and the data used are created using scripts.
+
+{{{
+
+@DatabaseServiceConfiguration(database = "jdbc:hsqldb:mem:test", databaseCreationScript = "META-INF/integration-database-test/scripts/database-hsqldb.sql", dataCreationScript = "META-INF/integration-database-test/scripts/data.sql")
+public class AnnotatedDatabaseIntegrationTest extends
+		AbstractDatabaseIntegrationTest {
+	
+	@Test
+	public void testInfrastructure() {
+		assertNotNull(getDatabaseService());
+		assertNotNull(getJdbcService());
+	}
+	
+	@Test
+	public void testSelect() throws Exception {
+		assertEqualsUpdateResult(
+		"insert into test values(4, 'test4', 'test description 4')",
+				1);
+		assertResultNotNull("select * from test where id=4");
+	}
+	
+	@Test
+	public void equalsTest() throws Exception {
+		assertFieldEquals("select * from test where id=1", "name", "test1");
+	}
+
+}
+
+}}}
+
+=== Example 3: Using Spring and Derby ===
 
 Using Spring (to retrieve a DAO) and a Embedded Derby Database with two SQL scripts (one to create the table another to populate it).
 
