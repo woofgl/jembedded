@@ -11,16 +11,16 @@ The simplest use of this test would be using just the annotation `@DatabaseServi
 
 In order to access to those services the test must extends the class `AbstractDatabaseIntegrationTest` :
 
-* AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService
-* AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService
+* AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService `*`
+* AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService `*`
 
 Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
 
-* assertResultNotNull(String query, Object... args)
-* assertResultListNull(String query, Object... args)
-* assertEqualsUpdateResult(String query, int result, Object... args)
-* assertFieldEquals(String query, String fieldName, Object expected, Object... args)
-* ... many more.
+* assertResultNotNull(String query, Object... args) `*`
+* assertResultListNull(String query, Object... args) `*`
+* assertEqualsUpdateResult(String query, int result, Object... args) `*`
+* assertFieldEquals(String query, String fieldName, Object expected, Object... args) `*`
+* ... `*`
 
 Of course you don't need to use the former ones, as you can execute your own queries and test the results using the standard methods from JUnit4.
 
