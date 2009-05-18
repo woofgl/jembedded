@@ -3,7 +3,57 @@
 
 = Introduction =
 
-A Embedded Database Integration Test.
+This test provides a embedded Database Service that allows to test real DAO's, jdbc code etc... using a embedded database. Also it provides a Jdbc Service (to execute querys and updates) and a Transactional Service. 
+
+The embedded database could be either HSQLDB (in memory ) or Derby (using files).
+
+The simplest use of this test would be using just the annotation `@DatabaseServiceConfiguration` with the default values. It produces a embedded HSQLDB database (_jdbc:hsqldb:mem:test_) and a JDBCService to launch the query's. 
+
+In order to access to those services the test must extends the class `AbstractDatabaseIntegrationTest` :
+
+* AbstractDatabaseIntegrationTest.getJdbcService() :: JDBCService
+* AbstractDatabaseIntegrationTest.getDatabaseService():: DatabaseService
+
+Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
+
+* assertResultNotNull(String query, Object... args)
+* assertResultListNull(String query, Object... args)
+* assertEqualsUpdateResult(String query, int result, Object... args)
+* assertFieldEquals(String query, String fieldName, Object expected, Object... args)
+* ... many more.
+
+Of course you don't need to use the former ones, as you can execute your own queries and test the results using the standard methods from JUnit4.
+
+For example:
+
+{{{
+
+@DatabaseServiceConfiguration
+public class AnnotatedSimpleDatabaseIntegrationTest extends AbstractDatabaseIntegrationTest {
+	
+	@Test
+	public void testInfrastructure() {
+		assertNotNull(getDatabaseService());
+		assertNotNull(getJdbcService());
+	}
+
+     	@Test
+	public void test() throws Exception {
+		createTable();
+		assertEqualsUpdateResult(
+		"insert into test values(3, 'test3', 'Test3 description')",
+						1);
+		
+		assertResultNotNull("select * from test where id = 3");
+	}
+	
+	private void createTable() {
+		getJdbcService().executeUpdate("CREATE TABLE test" + "(id INTEGER IDENTITY, "+ "	name VARCHAR(25), " + "	description VARCHAR(56))");
+	}
+
+}}}
+
+In the example above the table is created using the Jdbc Service provided. This is not need to be always the case as can be seen in the next example.
 
 
 = Details =
