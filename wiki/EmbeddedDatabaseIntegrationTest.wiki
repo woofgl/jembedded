@@ -9,17 +9,17 @@ The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:me
 
 == @DatabaseServiceConfiguration Annotation usage ==
 
-- _provider:_ embedded database provided. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `org...DerbyDataSource`.
+- _provider:_ embedded database provider. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `org...DerbyDataSource`.
 
 - _database:_ database url location. By default is `jdbc:hsqldb:mem:test`.
 
-- _user:_ database connection user. By default is sa.
+- _user:_ database connection user. By default is `sa`.
 
-- _password:_ database connection password. By default is "".
+- _password:_ database connection password. By default is ``.
 
-- _databaseCreationScript:_ location of a sql script to create the test schema.
+- _databaseCreationScript:_ location of the sql script that creates the test schema.
 
-- _dataCreationScript:_ location of a sql script to populate the test schema.
+- _dataCreationScript:_ location of the sql script that populates the test schema.
 
 - _doCleanUp:_ intended for the Derby database provider to clean up the database files. By default it's true.
 
@@ -28,16 +28,15 @@ The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:me
 
 == Services Provided == 
 
-The access to the services provided by the annotation the test is made through the extended class `AbstractDatabaseIntegrationTest`:
+The access to the Services provided by the Annotations is made through the abstract class `AbstractDatabaseIntegrationTest`:
 
-- _JDBCService getJdbcService()_
+- _JDBCService getJdbcService()_ // @DatabaseServiceConfiguration
 
-- _DatabaseService getDatabaseService()_
+- _DatabaseService getDatabaseService()_ // @DatabaseServiceConfiguration
 
-- _Container getContainer()_
+- _Container getContainer()_ // @SpringContext and @JIContainer
 
-- _ApplicationContext getApplicationContext()_
-
+- _ApplicationContext getApplicationContext():_ // @SpringContext and @JIContainer
 
 
 Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
@@ -50,11 +49,17 @@ Also the abstract test class provides some useful testing methods (apart from th
 
 - _assertFieldEquals(String query, String fieldName, Object expected, Object... args)_
 
+- _...._
 
 
 == Other Annotations ==
 
-The 
+@DatabaseServiceConfiguration can be used in combination with other annotations to provide additional services:
+
+@SpringContext 
+
+@TransactionalTest
+
 
 === Example 1: Simple Test ===
 
