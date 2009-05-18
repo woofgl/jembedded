@@ -4,6 +4,3 @@
   * [IntegrationTests]
     * [WebApplicationIntegrationTest]
     * [SpringMVCIntegrationTest]
-    * [JSFIntegrationTest]
-    * [EmbeddedDatabaseIntegrationTest]
-    * [JMSIntegrationTest]
