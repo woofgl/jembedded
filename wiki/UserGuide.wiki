@@ -1,4 +1,3 @@
-* [UsersGuide User's Guide]
+* [User User's Guide]
   * [GettingStarted Getting Started]
   * [InstallNotes How to Install]
-  * []
