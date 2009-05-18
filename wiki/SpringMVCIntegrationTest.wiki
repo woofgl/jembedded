@@ -1,4 +1,6 @@
-#labels Featured,Phase-Implementation
+#labels Phase-Implementation
+<wiki:toc max_depth="3" />
+
 # Spring MVC Integration Test
 
 = Introduction =
