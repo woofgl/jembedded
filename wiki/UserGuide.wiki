@@ -8,3 +8,4 @@
     * [EmbeddedDatabaseIntegrationTest Database Integration Test]
     * [JSFIntegrationTest MyFaces Integration Test]
     * [JMSIntegrationTest ActiveMQ Integration Test]
+    * [ESBIntegrationTest Mule ESB Integration Test]
