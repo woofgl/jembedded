@@ -1,4 +1,75 @@
-#summary One-sentence summary of this page.
+In this example this MULE Model is being tested:
+
+{{{
+      <jms:activemq-connector name="jmsConnection"
+		brokerURL="tcp://localhost:61616" />
+   
+    	      <model name="JMSModel">
+	         <service name="queue-to-queue">
+			<inbound>
+			   <jms:inbound-endpoint queue="in.queue"/>
+			</inbound>
+                          <echo-component/>
+			<outbound>
+                	   <pass-through-router>
+                    	      <jms:outbound-endpoint queue="out.queue"/>
+               	 	   </pass-through-router>
+           		</outbound>
+		 </service>
+	       </model>
+}}}
+
+A message arrives to the in.queue, pass through the echo-component and arrives to the out.queue.
+
+{{{
+//ActiveMQ Broker configuration. Default Values used
+@ActiveMQServiceConfiguration
+@ConnectionFactoryConfiguration
+//MuleService including the model xml file.
+@MuleServiceConfiguration(configurationFile = "META-INF/integration-mule-test/jms-config.xml")
+public class EmbeddedJMSMuleIntegrationTest extends AbstractMuleIntegrationTest {
+	
+        private JMSClient jmsClient = null;
+	
+	@Test
+	public void checkESBInOutMessage() throws Exception {
+		//Message sent to the ESB Inbound JMS Endpoint
+		assertSendMessage("jms://in.queue", "test");
+		
+		Message message = jmsClient.getJmsTemplate().receive("out.queue");
+		assertNotNull(message);
+
+		//Message retrieved from ESB Outbound JMS EndPoint
+		assertEquals( ((TextMessage)message).getText(), "test");	
+	}
+
+        @Test
+	public void testInfrastructure() {
+		assertMuleServiceNotNull("queue-to-queue");
+		assertMuleServiceInboundRouterNotNull("queue-to-queue");
+		assertMuleServiceOutboundRouterNotNull("queue-to-queue");
+		assertMuleServiceInboundEndPointNotNull("queue-to-queue",
+				"endpoint.jms.in.queue");
+	}
+
+        @Override
+	public void init() throws Exception {
+		super.init();
+		jmsClient = (JMSClient) JMSClientServiceFactory
+		.getInstance(getClass());
+		jmsClient.init();
+	}
+	
+	@Override
+	public void release() throws Exception {
+		super.release();
+		jmsClient.dispose();
+		jmsClient = null;
+	}
+
+}
+
+}}}#summary One-sentence summary of this page.
 
 = Introduction =
 
