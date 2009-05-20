@@ -19,12 +19,14 @@ In this example this MULE Model is being tested:
 	       </model>
 }}}
 
-A message arrives to the in.queue, pass through the echo-component and arrives to the out.queue.
+A message arrives to the `in.queue`, pass through the `echo-component` and arrives to the `out.queue`.
 
 {{{
+
 //ActiveMQ Broker configuration. Default Values used
 @ActiveMQServiceConfiguration
 @ConnectionFactoryConfiguration
+
 //MuleService including the model xml file.
 @MuleServiceConfiguration(configurationFile = "META-INF/integration-mule-test/jms-config.xml")
 public class EmbeddedJMSMuleIntegrationTest extends AbstractMuleIntegrationTest {
