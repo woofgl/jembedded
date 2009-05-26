@@ -22,7 +22,7 @@ Can be executed as a standard JUnit4 test from Eclipse or from Maven or Ant.
 = Details =
 
 {{{
-//Assert Http test module.
+//Assert Http Test Module.
 import static org.jsemantic.jintegration.test.http.Assert.*;
 
 @JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
