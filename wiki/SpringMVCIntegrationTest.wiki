@@ -12,10 +12,15 @@ Several items are checked:  controller existence,  http response etc..
 = Details =
 
 {{{
+//Http Assert Module.
+import static org.jsemantic.jintegration.test.http.Assert.*;
+
+//Spring Assert Module.
+import static org.jsemantic.jintegration.test.spring.Assert.*;
 
 @JettyServiceConfiguration(webApplication = "src/it/resources/webapps/spring")
-public class EmbeddedSpringIntegrationTest extends
-		AbstractIntegrationSpringTest {
+
+public class EmbeddedSpringIntegrationTest extends IntegrationTest {
 	@Test
 	public void testContextPath() {
 		assertNotNull(getWebApplicationContext());
