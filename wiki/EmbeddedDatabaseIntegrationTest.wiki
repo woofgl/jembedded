@@ -30,18 +30,18 @@ The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:me
 
 == Services Provided == 
 
-The access to the Services provided by the Annotations is made through the abstract class `AbstractDatabaseIntegrationTest`:
+The access to the Services provided by the Annotations is made through `IntegrationTest` abstract class:
 
-- _JDBCService getJdbcService()_ // @DatabaseServiceConfiguration
+- _Service getService(Class<?> clazz)_ // `clazz=DatabaseServiceConfiguration`
 
-- _DatabaseService getDatabaseService()_ // @DatabaseServiceConfiguration
+- _Component getClient(Class<?> clazz)_ // @DatabaseServiceConfiguration
 
 - _Container getContainer()_ // @SpringContext and @JIContainer
 
 - _ApplicationContext getApplicationContext():_ // @SpringContext and @JIContainer
 
 
-Also the abstract test class provides some useful testing methods (apart from the standard JUnit4 ones):
+The static Assert Test Module provides some useful testing methods (apart from the standard JUnit4 ones):
 
 - _assertResultNotNull(String query, Object... args)_
 
@@ -67,9 +67,11 @@ The `@DatabaseServiceConfiguration` annotation can be used in combination with o
 === Example 1: Simple Test ===
 
 {{{
+//
+import static org.jsemantic.jintegration.test.database.Assert.*;
 
 @DatabaseServiceConfiguration
-public class AnnotatedSimpleDatabaseIntegrationTest extends AbstractDatabaseIntegrationTest {
+public class AnnotatedSimpleDatabaseIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void testInfrastructure() {
@@ -103,10 +105,12 @@ In this example the database and the data are created using sql scripts.
 {{{
 
 @DatabaseServiceConfiguration(database = "jdbc:hsqldb:mem:test", 
+
 databaseCreationScript = "META-INF/integration-database-test/scripts/database-hsqldb.sql", 
+
 dataCreationScript = "META-INF/integration-database-test/scripts/data.sql")
-public class AnnotatedDatabaseIntegrationTest extends
-		AbstractDatabaseIntegrationTest {
+
+public class AnnotatedDatabaseIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void testInfrastructure() {
