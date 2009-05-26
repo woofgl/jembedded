@@ -11,8 +11,11 @@
 
 {{{
 
+import static org.jsemantic.jintegration.test.myfaces.Assert.*;
+
 @JettyServiceConfiguration(webApplication="src/main/resources/webapp/myfaces")
-public class IntegrationMyFacesEmbeddedTest extends AbstractMyFacesIntegrationTest {
+
+public class IntegrationMyFacesEmbeddedTest extends IntegrationTest {
 
 	@Test
 	public void ManagedBeanCreationCheck() throws Exception {
