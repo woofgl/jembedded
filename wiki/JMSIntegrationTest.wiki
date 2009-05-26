@@ -6,11 +6,17 @@
 Testing JMS Destinations (ActiveMQ Embbeded broker).
 
 {{{
+
+//Assert JMS Test Module.
+import static org.jsemantic.jintegration.test.jms.Assert.*;
+
 @ActiveMQServiceConfiguration
 @ConnectionFactoryConfiguration
+
 @QueueDestinationConfiguration(subject = "TEST.QueueA")
 @TopicDestinationConfiguration(subject = "TEST.TopicA")
-public class EmbeddedJMSIntegrationTest extends AbstractJMSIntegrationTest {
+
+public class EmbeddedJMSIntegrationTest extends IntegrationTest {
 
 	@Test
 	public void testQueueDestinationCreation() {
