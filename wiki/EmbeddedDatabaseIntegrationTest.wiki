@@ -9,6 +9,8 @@ The simplest usage of this test would be using just the annotation `DatabaseServ
 
 The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus access to the JDBCService.
 
+
+
 == DatabaseServiceConfiguration Annotation usage ==
 
 - _provider:_ embedded database provider. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `org...DerbyDataSource`.
@@ -28,17 +30,18 @@ The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:me
 - _createSchema:_ creates the schema if the scripts are provided. By default it's true.
 
 
+
 == Services Provided == 
 
 The access to the Services provided by the Annotations is made through `IntegrationTest` abstract class:
 
 - _Service getService(Class<?> clazz)_ // `clazz=DatabaseServiceConfiguration`
 
-- _Component getClient(Class<?> clazz)_ // @DatabaseServiceConfiguration
+- _Component getClient(Class<?> clazz)_ // `DatabaseServiceConfiguration`
 
-- _Container getContainer()_ // @SpringContext and @JIContainer
+- _Container getContainer()_ // `SpringContext and JIContainer`
 
-- _ApplicationContext getApplicationContext():_ // @SpringContext and @JIContainer
+- _ApplicationContext getApplicationContext():_ // `SpringContext and JIContainer`
 
 
 The static Assert Test Module provides some useful testing methods (apart from the standard JUnit4 ones):
@@ -52,6 +55,7 @@ The static Assert Test Module provides some useful testing methods (apart from t
 - _assertFieldEquals(String query, String fieldName, Object expected, Object... args)_
 
 - _...._
+
 
 
 == Other Annotations ==
@@ -104,6 +108,8 @@ In this example the database and the data are created using sql scripts.
 
 {{{
 
+import static org.jsemantic.jintegration.test.database.Assert.*;
+
 @DatabaseServiceConfiguration(database = "jdbc:hsqldb:mem:test", 
 
 databaseCreationScript = "META-INF/integration-database-test/scripts/database-hsqldb.sql", 
@@ -147,11 +153,14 @@ In this example a Embedded Derby database is used. In order to do that the provi
 
 {{{
 
+import static org.jsemantic.jintegration.test.database.Assert.*;
+
 @SpringContext(configurationFile = "classpath:META-INF/derby-application-context.xml")
+
 @DatabaseServiceConfiguration(database = "test", 
 		databaseCreationScript = "database.sql", 
 		dataCreationScript = "data.sql", 
-		provider="org.jsemantic.services.databaseservice.datasource.derby.DerbyDataSource")
+provider="org.jsemantic.services.databaseservice.datasource.derby.DerbyDataSource")
 		
 public class AnnotatedDerbyDatabaseSpringIntegrationTest extends
 		AbstractDatabaseIntegrationTest {
@@ -204,11 +213,15 @@ The `@TransactionTest` Annotation creates a transparent Transactional Context th
 
 {{{
 
+import static org.jsemantic.jintegration.test.database.Assert.*;
+
 @TransactionalTest
+
 @DatabaseServiceConfiguration(database= "jdbc:hsqldb:mem:test")
+
 @SpringContext(configurationFile = "classpath:META-INF/application-context.xml")
-public class TransactionalAnnotatedDatabaseSpringIntegrationTest extends
-		AbstractDatabaseIntegrationTest {
+
+public class TransactionalAnnotatedDatabaseSpringIntegrationTest extends IntegrationTest {
 
 	private TestDAO dao = null;
 	
