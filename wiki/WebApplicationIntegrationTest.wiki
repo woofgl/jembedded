@@ -5,7 +5,15 @@
 
 = Introduction =
 
-To test a web application all is needed is a class that extends from AbstractIntegrationHttpTest and a minimal annotation configuration:
+To test a web application all is needed is a class that extends from IntegrationTest and a minimal annotation configuration for the http embbeded server. There are two embbeded servers to choose from:
+
+Jetty : @JettyServiceConfiguration(webApplication, port, host)
+
+Tomcat: @TomcatServiceConfiguration(webApplications, port, host).
+
+
+== Using Jetty == 
+
 {{{
 
 @JettyServiceConfiguration(webApplication="src/main/resources/webapp/test")
@@ -15,11 +23,11 @@ port: embedded web server listener port.
 root: web application root context (/test by default).
 
 webApplication: actual folder location of the web application.
+
 }}}
 
 Can be executed as a standard JUnit4 test from Eclipse or from Maven or Ant.
 
-= Details =
 
 {{{
 //Assert Http Test Module.
@@ -34,14 +42,75 @@ public class EmbeddedIntegrationHttpTest extends IntegrationTest {
 		assertNotNull(getWebApplicationContext());
 		assertNotNullContextPath();
 		assertEqualsContextPath("/test");
+		assertNotNull(getHttpClient());
 	}
+
 	@Test
 	public void testRequest() {
 		String uri = "http://localhost:9006/test/index.html";
-		assertResponseStatusOK(uri);
+		
+		assertRequestStatusOK200(uri);
 		assertContentNotEmpty(uri);
+	}
+	
+	@Test
+	public void testPost() {
+		String uri = "http://localhost:9006/test/index.html";
+		assertContentNotEmpty(uri);
+		assertPostStatusOK200(uri);
+	}
+	
+	@Test
+	public void testError() {
+		String uri = "http://localhost:9006/test/noexists.html";
+		assertRequestStatusNotFound404(uri);
 	}
 }
 }}}
 
-That's all is needed to implement and execute the integration test. No need to have installed web server as a embedded one is used.
+
+== Using Tomcat == 
+
+{{{
+
+@TomcatServiceConfiguration(webApplication="src/main/resources/webapp/test")
+
+port: embedded web server listener port.
+
+root: web application root context (/test by default).
+
+webApplications: actual folder location of the web applications.
+
+}}}
+
+{{{
+
+@TomcatServiceConfiguration(webApplications = "src/it/resources/webapps")
+
+public class IntegrationTomcatTest  extends IntegrationTest {
+
+	@Test
+	public void testContextPath() {
+		assertNotNull(getHttpClient());
+	}
+
+	@Test
+	public void testRequest() {
+		String uri = "http://localhost:9006/spring/controller";
+		assertRequestStatusOK200(uri);
+	}
+	@Test
+	public void testPost() {
+		String uri = "http://localhost:9006/spring/controller";
+		assertPostStatusOK200(uri);
+	}
+	
+	@Test
+	public void testError() {
+		String uri = "http://localhost:9006/spring/notexists";
+		assertRequestStatusNotFound404(uri);
+	}
+	
+}
+
+}}}
