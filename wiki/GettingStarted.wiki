@@ -95,7 +95,9 @@ import static org.jsemantic.jintegration.test.database.Assert.*;
 	}
 }
 
-- Run the tests. 
+}}}
+
+- Launch the tests. 
 
 In order to do this you would need the JUnit runner. If you run the test from Eclipse you don't need to do anything special, just launch it like a junit test or make a test suite.
 
