@@ -1,4 +1,5 @@
 #labels Featured,Phase-Requirements,Phase-Deploy
+<wiki:toc max_depth="3" />
 * [UserGuide User's Guide]
   * [InstallNotes How to install the framework]
   * [GettingStarted How to get started]
