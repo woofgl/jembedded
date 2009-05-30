@@ -23,15 +23,24 @@ public class GenericIntegrationTest extends IntegrationTest {
 
 }}}
 
-- Add the annotations you need in order to run the test (class level), for example if you'd need a http test you could add either a @JettyService or a @TomcatService. If you  need a database you can add the @DatabaseService annotation. You can add and mix all the annotations (servers) you need.
+- Add the annotations you need in order to run the test (class level), for example if you'd need to test a web application you could add either a @JettyService or a @TomcatService. If you also need a embedded database you need to add the @DatabaseService annotation. 
 
+You can mix all the annotations (servers) you would need. For example you could make a integration test that uses the ESB, JMS, Database etc ..
+
+All the annotations relies upon defaults, so you can use them right away. Anyway check the parameters that are available for each server (for example, for the http server the default port is 9006, but you can change with the property port. It's useful if the port is already being used or if you launch the tests in a parallel fashion as Hudson does).
 
 {{{
 
+@DatabaseServiceConfiguration
+
 @JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
-
-
 
 public class GenericIntegrationTest extends IntegrationTest {
 
+}}}
+
+- Add the test methods you would need to complete your test. You need to put the @Test annotation in each method you want to be executed:
+
+
+{{{
 }}}
