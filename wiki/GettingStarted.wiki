@@ -12,12 +12,26 @@ Once you have the framework installed (see the install section) and the dependen
 
 The way to use it will be very familiar to you if you have used JUnit before (I'm sure you did ;), specifically JUnit4 that's is annotation based.
 
+
 == Steps to make an integration test unit == 
 
-- Create a POJO class extending the abstract class 'IntegrationTest :
+- Create a POJO class extending the abstract class IntegrationTest:
 
 {{{
 
+public class GenericIntegrationTest extends IntegrationTest {
 
+}}}
+
+- Add the annotations you need in order to run the test (class level), for example if you'd need a http test you could add either a @JettyService or a @TomcatService. If you  need a database you can add the @DatabaseService annotation. You can add and mix all the annotations (servers) you need.
+
+
+{{{
+
+@JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
+
+
+
+public class GenericIntegrationTest extends IntegrationTest {
 
 }}}
