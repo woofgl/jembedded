@@ -2,6 +2,7 @@
 <wiki:toc max_depth="3" />
 * [UserGuide User's Guide]
   * [InstallNotes How to install the framework]
+  * [Motivation Motivation]
   * [GettingStarted How to get started]
   * [IntegrationTests Integration Tests]
     * [WebApplicationIntegrationTest Web Integration Test]
