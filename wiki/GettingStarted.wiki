@@ -1,13 +1,23 @@
+<wiki:toc max_depth="3" />
+
 #summary GettingStarted
 
 = Introduction =
 
-Add your content here.
-
+An explanation about how to use the framework.
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Once you have the framework installed (see the install section) and the dependencies imported in your project you are ready to use the framework.
+
+The way to use it will be very familiar to you if you have used JUnit before (I'm sure you did ;), specifically JUnit4 that's is annotation based.
+
+== Steps to make an integration test unit == 
+
+- Create a POJO class extending the abstract class 'IntegrationTest :
+
+{{{
+
+
+
+}}}
