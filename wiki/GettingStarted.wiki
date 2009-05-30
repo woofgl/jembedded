@@ -85,5 +85,29 @@ import static org.jsemantic.jintegration.test.database.Assert.*;
 		assertContentNotEmpty(uri);
 	}
 
+        @Test
+	public void testSelect() throws Exception {
+                // test some sql operations.
+		assertEqualsUpdateResult(
+		"insert into test values(4, 'test4', 'test description 4')",
+				1);
+		assertResultNotNull("select * from test where id=4");
+	}
+}
+
+- Run the tests. 
+
+In order to do this you would need the JUnit runner. If you run the test from Eclipse you don't need to do anything special, just launch it like a junit test or make a test suite.
+
+If you are planning to launch the test from maven you would need the surefire plugin (have a look at the pom's project).
+
+And that's all :)
+
+
+
+
+
+
+
 
 }}}
