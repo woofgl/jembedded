@@ -59,18 +59,31 @@ public class GenericIntegrationTest extends IntegrationTest {
 }}}
 
 
-- Import the assert test modules you'd need, in this case the http.Assert and the database.Assert. The assert test modules are static classes that contains the methods provided to do the actual tests.
+- Import the assert test modules you'd need, in this case the http.Assert and the database.Assert. 
+
+The assert test modules are static classes that contains the methods provided to do the actual tests. The methods provided depends on the type of module, for instance the http.Assert contains methods to test the status response of a Http request (200, 500, 404 etc...).
+
+As the framework use JUnit4 as a base you can also use the standard assert methods provided with it (assertNull, assertNotNull...).
 
 {{{
 
 //Assert Http Test Module.
 import static org.jsemantic.jintegration.test.http.Assert.*;
 
-
+//Assert Database Test Module.
+import static org.jsemantic.jintegration.test.database.Assert.*;
 
 @JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
-
-
+        
+        @Test
+	public void testRequest() {
+		String uri = "http://localhost:9006/test/index.html";
+		//test a http request, if it does not return a status 200 (OK)
+                //the test will throw an exception.
+		assertRequestStatusOK200(uri);
+                //test that the response returns something.
+		assertContentNotEmpty(uri);
+	}
 
 
 }}}
