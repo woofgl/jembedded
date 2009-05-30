@@ -1,5 +1,7 @@
-#summary JMS Integration Test Unit-
 #labels Phase-Implementation
+<wiki:toc max_depth="3" />
+
+#summary JMS Integration Test Unit-
 
 = Introduction =
 
