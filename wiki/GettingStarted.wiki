@@ -41,6 +41,36 @@ public class GenericIntegrationTest extends IntegrationTest {
 
 - Add the test methods you would need to complete your test. You need to put the @Test annotation in each method you want to be executed:
 
+{{{
+
+public class GenericIntegrationTest extends IntegrationTest {
+	
+	@Test
+	public void testWebApp() {
+
+	}
+
+	@Test
+	public void testRequest() {
+		
+	}
+}
+
+}}}
+
+
+- Import the assert test modules you'd need, in this case the http.Assert and the database.Assert. The assert test modules are static classes that contains the methods provided to do the actual tests.
 
 {{{
+
+//Assert Http Test Module.
+import static org.jsemantic.jintegration.test.http.Assert.*;
+
+
+
+@JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
+
+
+
+
 }}}
