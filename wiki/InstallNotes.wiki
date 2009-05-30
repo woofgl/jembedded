@@ -1,28 +1,40 @@
 #labels Featured,Phase-Implementation,Phase-Support
-= Introduction =
+= How to Install the Framework =
 
-- You will need MAVEN 2.x installed in your system.
+In order to use the framework you will have to get it installed in your maven repository so you will need to have Maven 2.x installed.
 
-- Copy the contains of lib-mvn\repository folder in your own maven repository. It contains the dependencies that you can't download from other sites (jiservice, jicontainer..). It does not contain Spring or other dependencies.
+If you don't use maven you can find the framework distribution jars it the dist directory but you will have to get the dependencies yourself, and than can be a lot of work.
+
+
+== Steps to install the framework == 
+
+- Download the latest snapshot version from the downloads page.
+
+- Unzip the file to the directory of your choice.
+
+- Copy the contains of lib-mvn\repository folder into your own maven repository. It contains the dependencies that you can't download from other sites (jiservice...). It does not contain Spring or other standard dependencies.
 
 - Go to the src directory and type {{{mvn clean install}}}.
 
-- It will download the needed dependencies from various sites.
+- It will download the needed dependencies, compile, build, test, package and install the framework in your maven repository.
 
-- If you want to generate the eclipse projects type: {{{mvn eclipse:eclipse}}}.
 
-- In order to user the framework (core) declare the following dependency in your pom:
+
+= How to use the framework in your projects = 
+
+After having the framework installed you can reference the dependency in your project's pom:
 
 {{{
 		<dependency>
 			<groupId>org.jsemantic.jintegration.test</groupId>
 			<artifactId>jintegration-test-core</artifactId>
-			<version>0.8.5-SNAPSHOT</version>
+			<version>0.9.3-SNAPSHOT</version>
 		</dependency>
 }}}
 
+The core includes all the test modules except the JSF one. In future versions I will split the framework in different modules (and one in all version). In the meantime you can use the mvn exclusions if you don't want to import all the dependencies.
 
-That's all except for the jsf-integration-test module, in order to use it you also have to declare the dependency in your pom:
+The jsf-integration-test module has it own dependency:
 
 {{{
 		<dependency>
@@ -31,3 +43,6 @@ That's all except for the jsf-integration-test module, in order to use it you al
 	                <version>integration-jsf-test-0.2.0-SNAPSHOT</version>
 		</dependency>
 }}}
+
+
+- If you want to generate the eclipse projects just type: {{{mvn eclipse:eclipse}}}.
