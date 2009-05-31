@@ -53,6 +53,12 @@ Can be ran as a standard JUnit4 test from Eclipse, Maven, Hudson etc...
 
 = Spring MVC Assert Module = 
 
+The assert test modules are static classes that contains the methods provided to do the actual tests. The methods provided depends on the type of module, for instance in this case the assert module is spring.Assert. It contains methods to test the spring mvc context and it's components. Also you can use the http.Assert in the same integration test (see example below).
+
+As the framework use JUnit4 as a base you can also use the standard assert methods provided with it (assertNull, assertNotNull...).
+
+== Methods provided == 
+
   * ApplicationContext getSpringApplicationContext()
 
   * assertExistComponent(String id)
