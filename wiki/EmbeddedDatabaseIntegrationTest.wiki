@@ -39,7 +39,6 @@ All the annotations relies on default values, except of course the minimum neede
   * _createSchema:_ creates the schema if the scripts are provided. By default it's true.
 
 
-
 == Other Related Annotations ==
 
 The `@DatabaseServiceConfiguration` annotation can be used in combination with other Annotations to provide additional services:
@@ -75,7 +74,6 @@ As the framework use JUnit4 as a base you can also use the standard assert metho
   * assertResultNull(String query, Object... args) 
 
   * assertResultListNotNull(String query, Object... args) 
-
 
 
 = Examples =
