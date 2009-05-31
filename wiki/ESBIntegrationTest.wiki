@@ -13,7 +13,7 @@ All the annotations relies on default values, except of course the minimum neede
 
 = ESB Annotations = 
 
-`@MuleServiceConfiguration(configurationFile)`
+@MuleServiceConfiguration(configurationFile)
 
   * configurationFile: location of the mule service configuration file.
 
