@@ -9,6 +9,16 @@ The simplest usage of this test would be using just the annotation `DatabaseServ
 
 The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus access to the JDBCService.
 
+To do a database test you can use the general guidelines given in the how to start section:
+
+- Create a POJO class that extends from IntegrationTest.
+
+- Annotate the class with desired annotations (in this case a databaser annotation would be right).
+
+- Create the test methods and annotate them with @Test.
+
+All the annotations relies on default values, except of course the minimum needed parameters.
+
 
 = DatabaseService Annotation =
 
