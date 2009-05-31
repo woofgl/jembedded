@@ -42,7 +42,9 @@ The `@DatabaseServiceConfiguration` annotation can be used in combination with o
 
 = DatabaseService Assert Module = 
 
-The static Assert Test Module provides some useful testing methods (apart from the standard JUnit4 ones):
+The assert test modules are static classes that contains the methods provided to do the actual tests. The methods provided depends on the type of module, for instance in this case the assert module is databaseservice.Assert. 
+
+As the framework use JUnit4 as a base you can also use the standard assert methods provided with it (assertNull, assertNotNull...).
 
   * assertResultNotNull(String query, Object... args)
 
