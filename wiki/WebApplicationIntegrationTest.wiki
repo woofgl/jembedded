@@ -22,18 +22,18 @@ To test a web application you can use the general guidelines given in the how to
 All the annotations relies on default, except of course the minimum needed parameters. In this case would be webApplication(jetty) and webApplications(tomcat).
 
 
-== Using Jetty == 
+== Jetty Annotation == 
 
 
 @JettyServiceConfiguration(webApplication, port, host, root)
 
-port:web server listening port (9006 by default).
+  * _port:_ web server listening port (9006 by default).
 
-root: web application root context (/test by default).
+  * _root:_ web application root context (/test by default).
 
-webApplication: actual folder location of the web application (needed).
+  * _webApplication:_ actual folder location of the web application (needed).
 
-host: application host (by default localhost).
+  * _host:_ application host (by default localhost).
 
 
 Can be ran as a standard JUnit4 test from Eclipse, Maven, Hudson etc...
@@ -80,18 +80,18 @@ public class WebIntegrationTest extends IntegrationTest {
 }}}
 
 
-== Using Tomcat == 
+== Tomcat Annotation == 
 
 
 @TomcatServiceConfiguration(webApplications, port, host, root)
 
-port: embedded web server listener port (9006 by default).
+  * _port:_ embedded web server listener port (9006 by default).
 
-root: web application root context (/test by default).
+  * _root:_ web application root context (/test by default).
 
-webApplications: actual folder location of the web applications (needed).
+  * _webApplications:_ actual folder location of the web applications (needed).
 
-host: application host (by default localhost).
+  * _host:_ application host (by default localhost).
 
 
 {{{
@@ -123,5 +123,7 @@ public class IntegrationTomcatTest  extends IntegrationTest {
 	}
 	
 }
+
+== Web Assert Module == 
 
 }}}
