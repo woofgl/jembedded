@@ -19,9 +19,11 @@ All the annotations relies on default values, except of course the minimum neede
 
   * ConnectionFactory: @ConnectionFactoryConfiguration()
 
+
 == ActiveMQService Annotation == 
 
 == ConnectionFactory Annotation == 
+
 
 == Other related annotations == 
 
