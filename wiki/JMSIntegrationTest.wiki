@@ -15,11 +15,9 @@ All the annotations relies on default values, except of course the minimum neede
 
 = JMS Broker Annotations =
 
-There are two embedded web servers to choose from:
-
   * ActiveMQService : @ActiveMQServiceConfiguration()
 
-  * ConnectionFactory: @ConnectionFactoryConfiguration().
+  * ConnectionFactory: @ConnectionFactoryConfiguration()
 
 == ActiveMQService Annotation == 
 
@@ -27,17 +25,40 @@ There are two embedded web servers to choose from:
 
 == Other related annotations == 
 
-  * QueueDestinationConfiguration
-  * TopicDestinationConfiguration
+  * QueueDestination: @QueueDestinationConfiguration()
+  * TopicDestination: @TopicDestinationConfiguration()
 
 
 = JMS Assert Module = 
 
+The assert test modules are static classes that contains the methods provided to do the actual tests. The methods provided depends on the type of module, for instance in this case the assert module is jms.Assert. 
+
+As the framework use JUnit4 as a base you can also use the standard assert methods provided with it (assertNull, assertNotNull...).
+
+== Provided Methods ==
+
+  * sendMessage(String destination, final String message)
+
+  * assertQueueDestinationCreation(String subject)
+
+  * assertTopicDestinationCreation(String subject)
+
+  * assertTemporaryQueueDestinationCreation()
+
+  * assertTemporaryTopicDestinationCreation()
+ 
+  * assertReceiveMessage(String destination)
+
+  * assertReceiveMessage(String destination, long timeout)
+
+  * assertReceiveMessage(Destination destination)
+ 
+  * assertReceiveMessage(Destination destination, long timeout)
 
 
 = Examples = 
 
-Testing JMS Destinations (ActiveMQ Embbeded broker).
+Testing JMS Destinations (ActiveMQ Embedded broker).
 
 {{{
 
