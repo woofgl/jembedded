@@ -5,7 +5,7 @@
 
 I've used Maven 2.0.x to handle the dependencies and the life cycle of the project so the easiest way to use the framework it's installing it in a maven repository . So I recommend that you'd get Maven 2.0.9 if you don't already have it.
 
-If you don't want to use Maven you can find the framework distribution jars it the dist directory of the distribution zip file, but you will have to get the dependencies yourself and than can be a lot of work.
+If you don't want to use Maven you can find the framework jars it the dist directory of the distribution zip file, but you will have to get the dependencies yourself and than can be a lot of work.
 
 
 == Steps to install the framework == 
