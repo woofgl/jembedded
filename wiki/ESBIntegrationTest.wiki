@@ -4,7 +4,7 @@ To test a ESB based  application you can use the general guidelines given in the
 
 - Create a POJO class that extends from `IntegrationTest`.
 
-- Annotate the class with desired annotations (in this case a JMS broker annotation would be right).
+- Annotate the class with desired annotations (in this case a ESB annotation would be right).
 
 - Create the test methods and annotate them with @Test.
 
