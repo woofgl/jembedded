@@ -13,7 +13,7 @@ To test a web application you can use the general guidelines given in the how to
 
 - Create the test methods and annotate them with @Test.
 
-All the annotations relies on default, except of course the minimum needed parameters. In this case would be webApplication(jetty) and webApplications(tomcat).
+All the annotations relies on default values, except of course the minimum needed parameters. In this case would be webApplication(jetty) and webApplications(tomcat).
 
 = Web Servers Annotations =
 
