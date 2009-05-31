@@ -17,9 +17,22 @@ All the annotations relies on default values, except of course the minimum neede
 
 There are two embedded web servers to choose from:
 
-  * ActiveMQService : @ActiveMQServiceConfiguration(webApplication, port, host, root)
+  * ActiveMQService : @ActiveMQServiceConfiguration()
 
-  * ConnectionFactory: @ConnectionFactoryConfiguration(webApplications, port, host, root).
+  * ConnectionFactory: @ConnectionFactoryConfiguration().
+
+== ActiveMQService Annotation == 
+
+== ConnectionFactory Annotation == 
+
+== Other related annotations == 
+
+  * QueueDestinationConfiguration
+  * TopicDestinationConfiguration
+
+
+= JMS Assert Module = 
+
 
 
 = Examples = 
