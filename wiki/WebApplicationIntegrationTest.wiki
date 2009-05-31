@@ -5,37 +5,50 @@
 
 = Introduction =
 
-To test a web application all is needed is a class that extends from IntegrationTest and a minimal annotation configuration for the http embbeded server. There are two embbeded servers to choose from:
+To test a web application you can use the general guidelines given in the how to start section:
 
-Jetty : @JettyServiceConfiguration(webApplication, port, host)
+- Create a POJO class that extends from IntegrationTest.
 
-Tomcat: @TomcatServiceConfiguration(webApplications, port, host).
+- Annotate the class with the needed annotations. This time you would need to choose between the 2 web servers provided:
+
+
+  * Jetty : @JettyServiceConfiguration(webApplication, port, host, root)
+
+  * Tomcat: @TomcatServiceConfiguration(webApplications, port, host, root).
+
+
+- Create the test methods and annotate them with @Test.
+
+All the annotations relies on default, except of course the minimum needed parameters. In this case would be webApplication(jetty) and webApplications(tomcat).
 
 
 == Using Jetty == 
 
 {{{
 
-@JettyServiceConfiguration(webApplication="src/main/resources/webapp/test")
+@JettyServiceConfiguration(webApplication, port, host, root)
 
-port: embedded web server listener port.
+port:web server listening port (9006 by default).
 
 root: web application root context (/test by default).
 
-webApplication: actual folder location of the web application.
+webApplication: actual folder location of the web application (needed).
+
+host: application host (by default localhost).
 
 }}}
 
-Can be executed as a standard JUnit4 test from Eclipse or from Maven or Ant.
+Can be executed as a standard JUnit4 test from Eclipse, Maven, Hudson etc...
 
 
 {{{
+
 //Assert Http Test Module.
 import static org.jsemantic.jintegration.test.http.Assert.*;
 
 @JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
 
-public class EmbeddedIntegrationHttpTest extends IntegrationTest {
+public class WebIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void testContextPath() {
@@ -73,13 +86,15 @@ public class EmbeddedIntegrationHttpTest extends IntegrationTest {
 
 {{{
 
-@TomcatServiceConfiguration(webApplication="src/main/resources/webapp/test")
+@TomcatServiceConfiguration(webApplications, port, host, root)
 
-port: embedded web server listener port.
+port: embedded web server listener port (9006 by default).
 
 root: web application root context (/test by default).
 
-webApplications: actual folder location of the web applications.
+webApplications: actual folder location of the web applications (needed).
+
+host: application host (by default localhost).
 
 }}}
 
