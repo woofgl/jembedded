@@ -60,6 +60,23 @@ As the framework use JUnit4 as a base you can also use the standard assert metho
 
 == Provided Methods == 
 
+  * assertRuntimeConfigNotNull()
+
+  * assertManagedBeanNotNull(String name)
+
+  * assertNavigationRulesNotNull()
+
+  * assertNavigationRuleNotNull(String fromViewId)
+
+  * assertNavigationCasesNotNull(String fromViewId) 
+
+  * assertNavigationCaseNotNull(String fromViewId, String fromOutcome, String toView)
+
+  * assertResourceBundlesNotNull()
+
+  * assertResourceBundleNotNull(String name)
+
+  * assertPropertyResolverNotNull()
   	
 
 = Examples = 
