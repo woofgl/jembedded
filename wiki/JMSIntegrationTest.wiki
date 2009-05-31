@@ -1,9 +1,20 @@
 #labels Phase-Implementation
 <wiki:toc max_depth="3" />
 
-#summary JMS Integration Test Unit-
-
 = Introduction =
+
+To test a JMS messaging application you can use the general guidelines given in the how to start section:
+
+- Create a POJO class that extends from IntegrationTest.
+
+- Annotate the class with desired annotations (in this case a JMS broker annotation would be right).
+
+- Create the test methods and annotate them with @Test.
+
+All the annotations relies on default values, except of course the minimum needed parameters. 
+
+
+= Examples = 
 
 Testing JMS Destinations (ActiveMQ Embbeded broker).
 
@@ -57,12 +68,3 @@ public class EmbeddedJMSIntegrationTest extends IntegrationTest {
 }
 
 }}}
-
-That's all you need in order to do the integration test. No need to install, configure and run an external ActiveMQ server as an embedded one is included and ready to roll.
-
-
-
-
-= Details =
-
-In order to use this Integration Test Unit have a look at the install notes page.
