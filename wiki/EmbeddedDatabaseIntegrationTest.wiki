@@ -102,7 +102,7 @@ public class AnnotatedSimpleDatabaseIntegrationTest extends IntegrationTest {
 In the example above the table is created using the Jdbc Service provided. This is not need to be always the case as can be seen in the next example.
 
 
-=== Example 2: Using scripts to create the embedded database ===
+== Example 2: Using scripts to create the embedded database ==
 
 In this example the database and the data are created using sql scripts.
 
