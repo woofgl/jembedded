@@ -13,6 +13,14 @@ To test a JMS messaging application you can use the general guidelines given in 
 
 All the annotations relies on default values, except of course the minimum needed parameters. 
 
+= JMS Broker Annotations =
+
+There are two embedded web servers to choose from:
+
+  * ActiveMQService : @ActiveMQServiceConfiguration(webApplication, port, host, root)
+
+  * ConnectionFactory: @ConnectionFactoryConfiguration(webApplications, port, host, root).
+
 
 = Examples = 
 
