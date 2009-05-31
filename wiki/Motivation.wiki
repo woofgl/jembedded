@@ -21,7 +21,7 @@ The other approach and sadly the most common one it's just doing the deployment 
 
 Well it's clear how many time it's wasted following this approach and what is worst, you are never sure that you are not breaking something when you add something new having to do expensive regression tests. It's obvious this approach it's no very easy to automatize.
 
-== Why to use Embedded Servers and jIntegrationTest ==
+= Why to use Embedded Servers and jIntegrationTest =
 
 At this point it's when the idea of using embedded servers (and of course jIntegrationTest) comes handy as you won't have any of the problems of the former approaches:
 
