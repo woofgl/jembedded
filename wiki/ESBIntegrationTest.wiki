@@ -13,7 +13,9 @@ All the annotations relies on default values, except of course the minimum neede
 
 = ESB Annotations = 
 
-@MuleServiceConfiguration(configurationFile = "META-INF/integration-mule-test/jms-config.xml")
+`@MuleServiceConfiguration(configurationFile)`
+
+  * configurationFile: location of the mule service configuration file.
 
 
 = ESB Assert Module =
