@@ -24,7 +24,6 @@ All the annotations relies on default, except of course the minimum needed param
 
 == Using Jetty == 
 
-{{{
 
 @JettyServiceConfiguration(webApplication, port, host, root)
 
@@ -36,9 +35,8 @@ webApplication: actual folder location of the web application (needed).
 
 host: application host (by default localhost).
 
-}}}
 
-Can be executed as a standard JUnit4 test from Eclipse, Maven, Hudson etc...
+Can be ran as a standard JUnit4 test from Eclipse, Maven, Hudson etc...
 
 
 {{{
@@ -84,7 +82,6 @@ public class WebIntegrationTest extends IntegrationTest {
 
 == Using Tomcat == 
 
-{{{
 
 @TomcatServiceConfiguration(webApplications, port, host, root)
 
@@ -96,7 +93,6 @@ webApplications: actual folder location of the web applications (needed).
 
 host: application host (by default localhost).
 
-}}}
 
 {{{
 
