@@ -142,7 +142,7 @@ public class AnnotatedDatabaseIntegrationTest extends IntegrationTest {
 }}}
 
 
-=== Example 3: Using a Spring Container and a Derby Embedded Database ===
+== Example 3: Using a Spring Container and a Derby Embedded Database ==
 
 If you need to test DAO'S created by a Spring Context you can use the Annotation @SpringContext providing the location of the context file.
 
@@ -207,7 +207,7 @@ public class AnnotatedDerbyDatabaseSpringIntegrationTest extends
 }}}
 
 
-=== Example 4: Using a Transactional Context ===
+== Example 4: Using a Transactional Context ==
 
 The `@TransactionTest` Annotation creates a transparent Transactional Context through the methods of the test.
 
