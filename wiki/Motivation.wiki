@@ -13,7 +13,7 @@ One approach is using one of the many *.Mock.* frameworks out there. It's a vali
 
 Mocking as you are developing and designing it's OK, as you don't have the actual code or HTML's or pages (that's the whole point of mocking). But at the end of the day, when you have the real code it feels lacking doing the integration testing through all that mocking infrastructure as you are not getting most of the real errors you would get in the real environment (application, system, configuration, environment, dependencies errors etc...). The good thing about this approach is that fits easily with automatic testing and continuous integration.
 
-== Just Deploy and test Approach ==
+== Deploy and Test Approach ==
 
 The other approach and sadly the most common one it's just doing the deployment and see what happens. OK the deployment fails because the XML descriptors are wrong or a file it's missing or we are getting a null pointer. Fix it, compile, test and deploy again. And so on. At last the deployment works, start testing the application, now one SQL sentence is failing. You do it again.. and again :). Now everything seems to work but now one new component is added and the deployment process fails again :(.
 
