@@ -3,9 +3,9 @@
 
 = How to Install the Framework =
 
-In order to use the framework you will have to get it installed in your maven repository so you will need to have Maven 2.x installed.
+I've used Maven 2.0.x to handle the dependencies and the life cycle of the project so the easiest way to use the framework it's installing it in a maven repository . So I recommend that you'd get Maven 2.0.9 if you don't already have it.
 
-If you don't use maven you can find the framework distribution jars it the dist directory but you will have to get the dependencies yourself, and than can be a lot of work.
+If you don't want to use Maven you can find the framework distribution jars it the dist directory of the distribution zip file, but you will have to get the dependencies yourself and than can be a lot of work.
 
 
 == Steps to install the framework == 
@@ -14,7 +14,7 @@ If you don't use maven you can find the framework distribution jars it the dist 
 
 - Unzip the file to the directory of your choice.
 
-- Copy the contains of lib-mvn\repository folder into your own maven repository. It contains the dependencies that you can't download from other sites (jiservice...). It does not contain Spring or other standard dependencies.
+- Copy the contains of lib-mvn\repository folder into your own maven repository (usually .m2). It contains the dependencies that you can't download from other sites (jiservice, services...). 
 
 - Go to the src directory and type {{{mvn clean install}}}.
 
