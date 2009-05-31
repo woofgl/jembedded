@@ -1,4 +1,4 @@
-#labels Featured,Phase-Implementation,Phase-Support
+#labels Phase-Implementation,Phase-Support
 <wiki:toc max_depth="3" />
 
 = How to Install the Framework =
