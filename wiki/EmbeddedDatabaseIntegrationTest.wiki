@@ -10,7 +10,7 @@ The simplest usage of this test would be using just the annotation `DatabaseServ
 The execution of the test produces an embedded HSQLDB database (`_jdbc:hsqldb:mem:test_`) plus access to the JDBCService.
 
 
-= DatabaseService Annotation  =
+= DatabaseService Annotation =
 
   * _provider:_ embedded database provider. By default is `org.jsemantic.services.databaseservice.datasource.hsqldb.HsqldbDataSource`. The alternative provider is `org...DerbyDataSource`.
 
