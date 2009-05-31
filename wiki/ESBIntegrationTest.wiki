@@ -1,3 +1,41 @@
+= Introduction = 
+
+
+= ESB Annotations = 
+
+@MuleServiceConfiguration(configurationFile = "META-INF/integration-mule-test/jms-config.xml")
+
+= ESB Assert Module =
+
+
+
+== Provided Methods ==
+
+  * assertSendMessage(String uri, String message) 
+
+  * assertReply(String uri, String message)    
+
+  * assertEqualsReplyMessage(String uri, String message)
+
+  * assertMuleServiceNotNull(String serviceId)
+
+  * assertMuleServiceNull(String serviceId)
+
+  * assertMuleServiceInboundRouterNotNull(String serviceId)
+
+  * assertMuleServiceInboundRouterNull(String serviceId)
+
+  * assertMuleServiceOutboundRouterNotNull(String serviceId) 
+
+  * assertMuleServiceOutboundRouterNull(String serviceId)
+
+  * assertMuleServiceInboundEndPointNotNull(String serviceId, String endpointName)
+
+  * assertMuleServiceInboundEndPointNull(String serviceId, String endpointName)
+
+
+= Examples = 
+
 In this example this MULE Model is being tested:
 
 {{{
