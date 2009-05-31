@@ -20,6 +20,9 @@ All the annotations relies on default values, except of course the minimum neede
 
 = ESB Assert Module =
 
+The assert test modules are static classes that contains the methods provided to do the actual tests. The methods provided depends on the type of module, for instance in this case the assert module is esb.Assert. 
+
+As the framework use JUnit4 as a base you can also use the standard assert methods provided with it (assertNull, assertNotNull...).
 
 
 == Provided Methods ==
