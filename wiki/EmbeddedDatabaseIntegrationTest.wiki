@@ -56,6 +56,9 @@ The assert test modules are static classes that contains the methods provided to
 
 As the framework use JUnit4 as a base you can also use the standard assert methods provided with it (assertNull, assertNotNull...).
 
+
+== Provided Methods == 
+
   * assertResultNotNull(String query, Object... args)
 
   * assertResultListNull(String query, Object... args)
