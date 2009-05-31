@@ -1,7 +1,5 @@
 <wiki:toc max_depth="3" />
 
-#summary GettingStarted
-
 = Introduction =
 
 An explanation about how to use the framework.
