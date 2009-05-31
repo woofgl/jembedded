@@ -13,6 +13,56 @@ To test a Spring MVC Web application you can use the general guidelines given in
 
 All the annotations relies on default values, except of course the minimum needed parameters. In this case would be webApplication(jetty) and webApplications(tomcat).
 
+= Web Servers Annotations =
+
+There are two embedded web servers to choose from:
+
+  * Jetty : @JettyServiceConfiguration(webApplication, port, host, root)
+
+  * Tomcat: @TomcatServiceConfiguration(webApplications, port, host, root).
+
+
+== Jetty Web Server Annotation == 
+
+@JettyServiceConfiguration(webApplication, port, host, root)
+
+  * _port:_ web server listening port (9006 by default).
+
+  * _root:_ web application root context (/test by default).
+
+  * _webApplication:_ actual folder location of the web application (needed).
+
+  * _host:_ application host (by default localhost).
+
+
+Can be ran as a standard JUnit4 test from Eclipse, Maven, Hudson etc...
+
+
+== Tomcat Web Server Annotation == 
+
+@TomcatServiceConfiguration(webApplications, port, host, root)
+
+  * _port:_ embedded web server listener port (9006 by default).
+
+  * _root:_ web application root context (/test by default).
+
+  * _webApplications:_ actual folder location of the web applications (needed).
+
+  * _host:_ application host (by default localhost).
+
+
+= Spring MVC Assert Module = 
+
+  * ApplicationContext getSpringApplicationContext()
+
+  * assertExistComponent(String id)
+
+  * assertExistService(String id)
+
+  * assertExistBean(String id)
+
+  * assertExistController(String id) 
+
 
 = Examples = 
 
