@@ -13,11 +13,14 @@ The way to use it will be very familiar to you if you have used JUnit before (I'
 
 == Steps to make an integration test unit == 
 
-- Create a POJO class extending the abstract class IntegrationTest:
+- Create a POJO class and annotate the class with the IntegrationTest Runner:
+
 
 {{{
 
-public class GenericIntegrationTest extends IntegrationTest {
+@RunWith(IntegrationTestClassRunner.class)
+
+public class GenericIntegrationTest {
 
 }}}
 
@@ -29,11 +32,13 @@ All the annotations relies upon defaults, so you can use them right away. Anyway
 
 {{{
 
+@RunWith(IntegrationTestClassRunner.class)
+
 @DatabaseServiceConfiguration
 
 @JettyServiceConfiguration(webApplication="src/it/resources/webapps/test")
 
-public class GenericIntegrationTest extends IntegrationTest {
+public class GenericIntegrationTest {
 
 }}}
 
@@ -41,7 +46,7 @@ public class GenericIntegrationTest extends IntegrationTest {
 
 {{{
 
-public class GenericIntegrationTest extends IntegrationTest {
+public class GenericIntegrationTest {
 	
 	@Test
 	public void testWebApp() {
@@ -97,7 +102,7 @@ import static org.jsemantic.jintegration.test.database.Assert.*;
 
 - Launch the tests. 
 
-In order to do this you would need the JUnit runner. If you run the test from Eclipse you don't need to do anything special, just launch it like a junit test or make a test suite.
+In order to do this you would need the JUnit4 runner. If you run the test from Eclipse you don't need to do anything special, just launch it like a junit test or make a test suite.
 
 If you are planning to launch the test from maven you would need the surefire plugin (have a look at the pom's project).
 
