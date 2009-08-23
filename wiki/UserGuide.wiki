@@ -4,7 +4,7 @@
   * [Motivation Motivation]
   * [InstallNotes How to install the framework]
   * [GettingStarted How to get started]
-  * [IntegrationTests Integration Tests]
+  * [Embedded Services]
     * [WebApplicationIntegrationTest Web Integration Test]
     * [SpringMVCIntegrationTest Spring / Spring MVC Integration Test]
     * [EmbeddedDatabaseIntegrationTest Database Integration Test]
