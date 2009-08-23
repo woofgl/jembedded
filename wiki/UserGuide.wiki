@@ -1,4 +1,4 @@
-#labels Featured,Phase-Requirements,Phase-Deploy
+#labels Phase-Requirements,Phase-Deploy
 <wiki:toc max_depth="3" />
 * [UserGuide User's Guide]
   * [Motivation Motivation]
