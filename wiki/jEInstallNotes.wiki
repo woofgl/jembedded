@@ -1,0 +1,20 @@
+= Introduction =
+
+- You will need MAVEN 2.x installed in your system.
+
+- Go to the directory where you have installed jembedded and type “mvn clean install.”
+
+- It will download the needed dependencies from various sites and generate and install  all the projects.
+
+- If you want to generate the eclipse projects type: mvn eclipse:eclipse.
+
+- In order to user the framework (core) you should declare the following dependency in your pom:
+
+		
+		<dependency>
+			<groupId>org.jsemantic.jembedded</groupId>
+			<artifactId>jembedded-core</artifactId>
+			<version>0.1</version>
+		</dependency>
+
+    
