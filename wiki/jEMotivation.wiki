@@ -1,5 +1,3 @@
-#jEmbedded Motivation
-
 = Introduction =
 
 jEmbedded was bornt out of the necessity to use an IoC container on the go, lighter, faster and easier. Spring is great, but it takes some time to setup all the beans, xml-schemas (also you can use annotations, but still). For my purposes, using embedded services or just a few services it was a bit too much. I just wanted to provide some annotations, some configuration data and get it running.
@@ -33,7 +31,8 @@ private TestBean testBean = null;
 
 public void test() {  
 testBean.printMsg();  
-} 
+}
+ 
 }
 
 }}}
