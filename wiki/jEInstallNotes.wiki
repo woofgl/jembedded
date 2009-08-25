@@ -8,7 +8,7 @@
 
 - If you want to generate the eclipse projects type: mvn eclipse:eclipse.
 
-- In order to user the framework (core) you should declare the following dependency in your pom:
+- In order to user the core framework you will need to  declare the following dependency in your pom:
 
 		{{{
 		<dependency>
