@@ -5,7 +5,7 @@
 * [jEmbeddedUserGuide User's Guide]
   * [jEMotivation Motivation]
   * [jEInstallNotes How to install jEmbedded]
-
+  * [jEGettingStarted How to get started in 5 (more or less)]
 
 ==jIntegrationTest==
 * [UserGuide User's Guide]
