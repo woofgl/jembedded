@@ -1,11 +1,7 @@
-= Introduction =
-
 Once you have installed the framework, you’d need to declare the dependencies in your pom. 
-
 * The core dependency (jembedded-core).
 
 * Any service dependency you are planning to use. For instance, if you want to use the jetty-service you need to include:
-
 
 {{{
                  <dependency>
