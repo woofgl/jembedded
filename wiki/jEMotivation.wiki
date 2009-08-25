@@ -24,6 +24,7 @@ What is more, I was looking for something more specific and Spring or Guice are 
 
 For example, A CMT Service. This service will be started and stopped by the container. Also initialized and disposed.
 
+{{{
 @AnnotatedService(id="testService", resources=TestBean.class) 
 public class TestService extends AbstractCMTService {  
 
@@ -35,11 +36,16 @@ testBean.printMsg();
 } 
 }
 
+}}}
+
+
 In order to have access to the service and get the container started:
 
+{{{
 EmbeddedHandler handler= EmbeddedHandlerFactory.getInstance(TestService.class); handler.start(); 
 TestService testService = (TestService) handler.getService("testService")
 testService.test(); 
 handler.stop();
+}}}
 
 As you can see, my main concern has been keeping it easy and fast to use as it should be with embedded services.
