@@ -6,6 +6,7 @@
   * [jEMotivation Motivation]
   * [jEInstallNotes How to install jEmbedded]
   * [jEGettingStarted How to get started in 5 (more or less)]
+  * [jExamples Embedded Database(Derby/HSQLDB)]
 
 ==jIntegrationTest==
 * [UserGuide User's Guide]
