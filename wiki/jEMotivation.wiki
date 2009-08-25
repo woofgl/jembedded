@@ -1,0 +1,45 @@
+#jEmbedded Motivation
+
+= Introduction =
+
+jEmbedded was bornt out of the necessity to use an IoC container on the go, lighter, faster and easier. Spring is great, but it takes some time to setup all the beans, xml-schemas (also you can use annotations, but still). For my purposes, using embedded services or just a few services it was a bit too much. I just wanted to provide some annotations, some configuration data and get it running.
+
+In fact Spring was the core of the first version of my testing framework (jIntegration-Test), but I found myself writing a lot of xml schemas for each service or association classes,  something I wanted to avoid for the sake of simplicity.
+
+What is more, I was looking for something more specific and Spring or Guice are very generic, for instance everything is a POJO for then. I wanted to have more control of my services and have different kind of POJOS:
+
+* Services (CMT / Unmanaged)
+
+- Lifecycle is managed by the container or not.
+- Can be started / stopped. Initialized / disposed.
+- The context is injected by the container and gives access to the running enviroment. 
+- A service could contain and manage services, components, beans and entities.
+
+* Components (CMT/ Unmannaged)
+
+- Lifecycle is managed by the container or not.
+- Can be initialized / disposed.
+- The context is injected by the container and gives access to the running enviroment. 
+- A component could contain and manage components, beans and entities.
+
+For example, A CMT Service. This service will be started and stopped by the container. Also initialized and disposed.
+
+@AnnotatedService(id="testService", resources=TestBean.class) 
+public class TestService extends AbstractCMTService {  
+
+@Inject  
+private TestBean testBean = null;  
+
+public void test() {  
+testBean.printMsg();  
+} 
+}
+
+In order to have access to the service and get the container started:
+
+EmbeddedHandler handler= EmbeddedHandlerFactory.getInstance(TestService.class); handler.start(); 
+TestService testService = (TestService) handler.getService("testService")
+testService.test(); 
+handler.stop();
+
+As you can see, my main concern has been keeping it easy and fast to use as it should be with embedded services.
