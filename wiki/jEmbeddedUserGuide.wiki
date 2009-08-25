@@ -8,9 +8,9 @@ _Lightweight IoC container focused on 'elements' with specific semantics: servic
 An embedded service it's a standalone service that can be invoked from within an application.
 
 
-_IoC Semantics_
+== IoC Semantics ==
 
-* Services
+=== Services ===
 
 Usually offers functionality to any potential clients (for instance, an application or other service), implementing an interface that provides the contract for the client.
 
@@ -29,19 +29,19 @@ public class JettyServiceImpl extends AbstractCMTService implements JettyService
 
 The container injects a Context to the service (and the components as well), that provides access to the executing enviroment.
 
-_Types of Services_
+==== Types of Services ====
 
 CMT Services(managed by the container) and un-managed services (Service). A service can be started/stopped,  initialized/disposed. If the service is CMT the former operations only can be invoked by the container. 
 
 A service can manage: services, components, beans  and entities.
 
 
-* Components
+=== Components ===
 
 Usually provides support functionality to services or other components,  but usually it's not invoked directly by any client.
 
 
-_Types of Components_
+==== Types of Components ====
 
 CMT Component (managed by the container) and un-managed component. A component can be initialized/disposed. If the component is of CMT type, the former operations only can be invoked by the container (an exception will be throw otherwise).
 
@@ -69,7 +69,7 @@ public class SupportComponent extends AbstractComponent {
 }}}
 
 
-* Entities
+=== Entities ===
 
 Just a pojo, but does not follow the get/set bean standard. Usually are DOM classes, utility classes, etc...
 
@@ -88,7 +88,7 @@ An entity can manage entities or beans.
 
 Note: in the next version (0.1.1) the annotation for entities will be different: ´@AnnotatedEntity()´
 
-* Beans
+=== Beans ===
 
 Just a pojo that follows the getter/setter standard.
 
