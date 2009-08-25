@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
 #labels Featured
-
 = Introduction =
 
 _Lightweight IoC container focused on 'elements' with specific semantics: services (specially embedded ones), components, entities and beans (well this one has the regular semantics, you know the gettter/settter ones).
