@@ -1,0 +1,79 @@
+= Introduction =
+
+A good example of what you can achieve with jEmbedded and service composition is an Embedded database that you can access locally from your application, just to test it or to help in development. 
+
+You have the option to store the data in memory or in files (HSQLDB/DERBY).
+
+The interface of the service is:
+
+{{{
+@AnnotatedInterface(resources={JdbcServiceImpl.class})
+public interface EmbeddedDatabase extends Service {
+
+	GenericEmbeddedDataSource getDatasource();
+	
+	public Map<String, Object> executeQuery(String query, Object... args);
+
+}
+}}}
+
+Note the annotation adds some new semantics to the interface: any service that implements the interface should have the jdbc-service as an association in order to comply with the contract.
+
+The implementation of the service is:
+
+{{{
+@AnnotatedService(id="databaseService")
+@Include (resources=DerbyDataSource.class)
+public class DerbyEmbeddedDatabaseImpl extends AbstractCMTService implements EmbeddedDatabase {
+	
+	@Inject
+	private JdbcService jdbcService = null;
+		
+	public Map<String, Object> executeQuery(String query, Object... args) {
+		return jdbcService.executeQuery(query, args);
+	}
+	...more methods
+
+		
+
+	@Override
+	protected void release() {
+		jdbcService.stop();
+	}
+}
+}}}
+
+The configuration is passed on the standard repository.properties file:(provided by the PropertiesService)
+
+{{{
+#jdbcService.dataSource
+dataSource.uri=test
+dataSource.user=sa
+dataSource.password=
+dataSource.createSchemaScript=META-INF/database-service/scripts/schema.sql
+dataSource.populateSchemaScript=META-INF/database-service/scripts/populate-schema.sql
+}}}
+
+To get the service started and execute a query:
+
+{{{
+EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(DerbyEmbeddedDatabaseImpl.class);
+handler.start();
+
+EmbeddedDatabase database = (EmbeddedDatabase)handler.getService("databaseService");
+
+database.executeQueryForList("select * from test").size() == 3);
+handler.stop();
+}}}
+
+If you want to declare it in a Spring context:
+{{{
+<bean id="embeddedContainerRunner" class="org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner" >
+		<property name="annotatedClasses">
+			<list>
+		         <value>
+                       org.jsemantic.jembedded.database.EmbeddedDatabaseImpl</value>
+			</list>
+		</property>
+</bean>
+}}}
