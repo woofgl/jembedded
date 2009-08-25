@@ -1,0 +1,104 @@
+= Introduction =
+
+Once you have installed the framework, you’d need to declare the dependencies in your pom. 
+
+* The core dependency (jembedded-core).
+
+* Any service dependency you are planning to use. For instance, if you want to use the jetty-service you need to include:
+
+
+{{{
+                 <dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>jetty-service</artifactId>
+                        <version>0.4.0-SNAPSHOT</version>
+		</dependency>
+}}}
+
+Now that you have the framework classes available to your project, you can start using it right away.
+
+=== Steps ===
+
+1 – Create the elements you would need for your application. Consider if you can create any of them using composition.
+
+2 - Annotate the services, components etc you have created, reused or composed.
+
+For instance, let’s say you need to create your own customized Web Server. You could do this using the included jetty or tomcat services and composition:
+
+{{{
+@AnnotatedInterface(resources=JettyServiceImpl.class)
+public interface WebServer extends Service {
+	/**
+	 * 
+	 * @return
+	 */
+	public ServletContext getServletContext();
+}
+}}}
+
+And the implementation:
+
+{{{
+@AnnotatedService(id="webServer")
+public class WebServerImpl extends AbstractCMTService implements WebServer {
+	
+	@Inject(ref="httpService")
+	private JettyService httpService = null;
+	
+
+	@Override
+	protected void startService() throws ServiceException {
+		httpService.start();
+	}
+
+	@Override
+	protected void stopService() throws ServiceException {
+		httpService.stop();
+	}
+	
+	public ServletContext getServletContext() {
+		return httpService.getServerContext();
+	}
+}
+
+}}}
+Obviously you can add more functionality :)
+
+
+3 – If the number of elements is very high, you could consider using one or more repositories:
+
+{{{
+@Repository(id=”complexServicesLayer”, resources={WebServerImpl.class, JMServer.class…….}
+}}}
+
+
+4 – Once the services (and its associated components and beans) are created and annotated you’ll need to create an instance of the jEmbedded container (or more than one, you are not restricted to one).
+
+In order to do that you can use the EmbeddedHandlerFactory:
+
+{{{
+EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(Class<?>…classes);
+}}}
+
+The factory accepts an array of classes. You should include here the entry point to your services, for example: WebServerImp.class or if you running it from a test unit:
+
+{{{
+@WebClient
+@Include(resources={WebServerImpl.class})
+public class IntegrationWebServerTest {
+
+……
+EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(IntegrationWebServerTest.class);
+}}}
+
+The factory returns a handler to the created container that allows manipulating it:
+
+{{{
+handler.start(); // start the container.
+
+WebServer server = (WebServer)handler.getService(“webServer”); // retrieves a service
+
+ServletContext  servletContext = server.getServletContext()
+
+handler.stop(); // stop and dispose the container.
+}}}
