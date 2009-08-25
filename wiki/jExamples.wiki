@@ -4,6 +4,17 @@ A good example of what you can achieve with jEmbedded and service composition is
 
 You have the option to store the data in memory or in files (HSQLDB/DERBY).
 
+To build this service we'll use the jdbc-service included in the distribution:
+
+{{{
+
+
+}}}
+
+The complete example it's in the examples directory.
+
+=== Implementation of the embedded database === 
+
 The interface of the service is:
 
 {{{
