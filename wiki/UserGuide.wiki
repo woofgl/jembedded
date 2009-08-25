@@ -1,5 +1,12 @@
 #labels Phase-Requirements,Phase-Deploy,Featured
 <wiki:toc max_depth="3" />
+
+==jEmbedded==
+* [jEmbeddedUserGuide User's Guide]
+
+*[jEmbeddedMotivation Motivation]
+
+==jIntegrationTest==
 * [UserGuide User's Guide]
   * [Motivation Motivation]
   * [InstallNotes How to install the framework]
