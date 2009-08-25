@@ -8,7 +8,11 @@ To build this service we'll use the jdbc-service included in the distribution:
 
 {{{
 
-
+                <dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>jdbc-service</artifactId>
+			<version>0.4.5-SNAPSHOT</version>
+		</dependency>
 }}}
 
 The complete example it's in the examples directory.
