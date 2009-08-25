@@ -3,8 +3,9 @@
 
 ==jEmbedded==
 * [jEmbeddedUserGuide User's Guide]
+  * [jEMotivation Motivation]
+  * [jEInstallNotes How to install jEmbedded]
 
-*[jEmbeddedMotivation Motivation]
 
 ==jIntegrationTest==
 * [UserGuide User's Guide]
