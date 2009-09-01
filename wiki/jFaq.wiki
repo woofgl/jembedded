@@ -1,0 +1,114 @@
+= Introduction =
+
+As the documentation is not complete by now I've added a small FAQ with the questions I've being asked.
+
+= F.A.Q =
+
+== What is this framework good for? ==
+
+Well first of all it's just an _IoC_ container with all that implies, but more importantly it allows you to manage your application elements (definition, creation, composing, starting, stopping, releasing) in a easy and fast way (using annotations, no need of XML or other additional configuration).
+
+It provides the semantics or annotations needed to promote a bean or a POJO to a service, to a component, or to a entity managing their life cycle (if you choose that). For example, the container will start and stop the services for you.
+
+These additional semantics provide not only a life cycle to the POJOS, or a contract but also additional features as accessing to the executing environment and a chance to be externally managed (through JMX, I'm already working on a console).
+
+I would say that the provided embedded services and the feature of easy composition (creating a new service using other services) it's quite useful. In fact, it's how this framework was born.
+For example, you can get the jetty-service and create and web server of your own using just composition. Or a rules-server for your application using the rules-service provided, executing a set of business rules for the rest of the services.
+
+Finally, _jEmbedded_ is an implementation of another framework of mine, _jRepository_ that allows you to create your own IoC customized container (included in the distribution).
+
+
+== Can jEmbedded be used in a web application? == 
+
+Of course you can, in the same way you would use it in a standalone application. (I designed it with the 2 environments in mind). You have to be careful though, in the way that the container are created or disposed. This is managed by the annotation :
+
+{{{
+@Container(ContainerInstanceType instanceType)
+
+public enum ContainerInstanceType {
+SINGLETON_VM, PROTOTYPE_VM, PROTOTYPE_BY_THREAD;
+}
+}}}
+
+If you don't provide this annotation by default the way of creating instances it's PROTOTYPE_BY_THREAD (a new instance per thread) so if you are creating an instance of jEmbedded inside a MVC Controller, there is a good chance that you are creating a new container with each request. In this case use the SINGLETON_VM property to have one container per VM.
+
+Another way of getting the handler to the container is using the following static method:
+{{{
+EmbededHandler handler = ContainerHolder.getCurrentThreadContainer();
+}}}
+
+== What's the best way to use jEmbedded in a web environment? ==
+
+Depends how are you planning to use it, there are many ways you just can do it.
+
+*Singleton*
+
+If you are planning to use it as a one single container to serve the whole web app you can create and dispose the instance in a ServletContext listener:
+{{{
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.*;
+
+@Container(instanceType=SINGLETON_VM)
+public class EmbeddedContainerListener implements ServletContextListener {
+{
+private ServletContext context = null;
+
+private EmbeddedHandler handler = null;
+
+public void contextDestroyed(ServletContextEvent event)
+{
+this.context = null;
+handler.stop();
+}
+
+public void contextInitialized(ServletContextEvent event)
+{
+this.context = event.getServletContext();
+
+handler = EmbeddedHandlerFactory.getInstance(EmbeddedContainerListener.class, *.class);
+handler.start();
+}
+}
+}}}
+
+In order to access the container from any part of the web app:
+{{{
+EmbededHandler handler = ContainerHolder.getCurrentThreadContainer();
+}}}
+
+If you are using Spring, you can use an implementation of the ContainerListener to create the container.
+
+*As an instance per thread.*
+
+Let's say that you need a fresh container per request, in a MCV controller for instance. In order to do that just create and dispose the instance there.
+
+*Prototype instances.*
+
+You can create and dispose these instances anywhere but remember to dispose them!
+
+
+== What are the differences between @Container and @Repository annotations. ==
+
+@Container is just an annotation to control how the instances are being created when `EmbeddedHandlerFactory.getInstance()` is invoked.
+
+@Repository is a way to create logical collections of services, components etc, for example different layers of services or components (as you can create them as a hierarchy).
+
+This is useful even when you don't want to create complex collections (as a tree of services) just as an entry point for the container:
+
+{{{
+@Repository (id="baseServicesRepo", resources={*.class})
+public class RepoEntryPoint {
+
+handler = EmbeddedHandlerFactory.getInstance(RepoEntryPoint.class);
+...
+}
+}}}
+
+Now for instance lets say you need to create a different group of services that need to reference the former repository for composition:
+
+{{{
+@Repository (id="extendedServices", resources={*.class}, parent="myRepo")
+}}}
+
+Now the new container would have access to the to the parent repository as well.
