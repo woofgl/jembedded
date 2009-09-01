@@ -30,7 +30,7 @@ SINGLETON_VM, PROTOTYPE_VM, PROTOTYPE_BY_THREAD;
 }
 }}}
 
-If you don't provide this annotation by default the way of creating instances it's PROTOTYPE_BY_THREAD (a new instance per thread) so if you are creating an instance of jEmbedded inside a MVC Controller, there is a good chance that you are creating a new container with each request. In this case use the SINGLETON_VM property to have one container per VM.
+If you don't provide this annotation by default the way of creating instances it's PROTOTYPE_BY_THREAD (a new instance per thread) so if you are creating an instance of _jEmbedded_ inside a MVC Controller, there is a good chance that you are creating a new container with each request. In this case use the SINGLETON_VM property to have one container per VM.
 
 Another way of getting the handler to the container is using the following static method:
 {{{
@@ -43,7 +43,7 @@ Depends how are you planning to use it, there are many ways you just can do it.
 
 *Singleton*
 
-If you are planning to use it as a one single container to serve the whole web app you can create and dispose the instance in a ServletContext listener:
+If you are planning to use it as a one single container to serve the whole web app you can create and dispose the instance in a `ServletContext` listener:
 {{{
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletContextEvent;
@@ -77,7 +77,7 @@ In order to access the container from any part of the web app:
 EmbededHandler handler = ContainerHolder.getCurrentThreadContainer();
 }}}
 
-If you are using Spring, you can use an implementation of the ContainerListener to create the container.
+If you are using Spring, you can use an implementation of the `ContainerListener` to create the container.
 
 *As an instance per thread.*
 
