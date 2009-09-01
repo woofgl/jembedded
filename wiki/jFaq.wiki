@@ -1,4 +1,3 @@
-#labels Featured
 = Introduction =
 
 As the documentation is not complete by now I've added a small FAQ with the questions I've being asked.
