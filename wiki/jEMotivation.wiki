@@ -1,6 +1,6 @@
 = Introduction =
 
-jEmbedded was bornt out of the necessity to use an IoC container on the go, lighter, faster and easier. Spring is great, but it takes some time to setup all the beans, xml-schemas (also you can use annotations, but still). For my purposes, using embedded services or just a few services it was a bit too much. I just wanted to provide some annotations, some configuration data and get it running.
+jEmbedded was born out of the necessity to use an IoC container on the go, lighter, faster and easier. Spring is great, but it takes some time to setup all the beans, xml-schemas (also you can use annotations, but still). For my purposes, using embedded services or just a few services it was a bit too much. I just wanted to provide some annotations, some configuration data and get it running.
 
 In fact Spring was the core of the first version of my testing framework (jIntegration-Test), but I found myself writing a lot of xml schemas for each service or association classes,  something I wanted to avoid for the sake of simplicity.
 
