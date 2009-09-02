@@ -116,7 +116,7 @@ Now the new container would have access to the to the parent repository as well.
 
 == What's the difference between the @Include and @Repository annotations? ==
 
-With these two annotations resources can be added to the container but in a different manner as @Repository will create a new container for the resources and @Include will just add them to the current container (default container in case you haven't provided the @Repository ann).
+With these two annotations resources can be added to the container but in a different manner as @Repository will create a new container for the resources and @Include will just add them to the current container (default container in case you haven't provided the @Repository annotation).
 
 Use @Include if you only want to add some extra resources to the container and not to create a new one.
 
@@ -124,10 +124,11 @@ Use @Include if you only want to add some extra resources to the container and n
 
 There are many different ways to do this. I've provided a spring-support-module that will help you, but in this stage it's not very comprehensive as I've focused to provide a stand alone IoC container.
 
-In this module a _FactoryBean_ class is provided so an instance of the embedded container can be stored into the spring-context. Then you can inject the container in any bean you want, get the container from Spring or just use `ContainerHolder.getCurrentThreadContainer()`.
+In this module a `FactoryBean` class is provided so an instance of the embedded container can be stored into the spring-context. Then you can inject the container in any bean you want, get the container from Spring or just use `ContainerHolder.getCurrentThreadContainer()`.
+
 Please have a look at the spring-integration-module and the embedded-database example for more information.
 
-You may ignore the integration module and write your own FactoryBean:
+You may ignore the integration module and write your own `FactoryBean`:
 {{{
 @Container(instanceType=ContainerInstanceType.xxxx)
 @Repository(id="database-service-layer", resources={EmbeddedDatabaseImpl.class})
@@ -157,4 +158,4 @@ Finally, you can create the container in any spring bean you'd like. Of course w
 
 == Can the annotation @Inject be used to reference a Spring bean? ==
 
-No at this moment, but you can inject the container to any spring bean or just accessing the container with _ContainerHolder_. I will add this feature in the near future.
+No at this moment, but you can inject the container to any spring bean or just accessing the container with `ContainerHolder`. I will add this feature in the near future.
