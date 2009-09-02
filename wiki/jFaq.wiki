@@ -148,11 +148,11 @@ return false;
 }}}
 
 Then you can retrieve the container like this:
-
+{{{
 ApplicationContex appContex; //SpringContext
 
 EmbeddedHandler handler = (EmbeddedHandler)appContext.getBean("factory-bean-id");
-
+}}}
 Finally, you can create the container in any spring bean you'd like. Of course watch out what kind of bean it is (singleton, prototype etc...)
 
 == Can the annotation @Inject be used to reference a Spring bean? ==
