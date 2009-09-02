@@ -112,3 +112,10 @@ Now for instance lets say you need to create a different group of services that 
 }}}
 
 Now the new container would have access to the to the parent repository as well.
+
+
+== What's the difference between the @Include and @Repository annotations? ==
+
+With these two annotations resources can be added to the container but in a different manner as @Repository will create a new container for the resources and @Include will just add them to the current container (default container in case you haven't provided the @Repository ann).
+
+Use @Include if you only want to add some extra resources to the container and not to create a new one.
