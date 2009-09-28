@@ -2,58 +2,49 @@
 
 = Introduction =
 
-A service layer needs to be implemented that would act as a facade for a Spring MVC Controller. 
+//In construction. all the sources and the resources will be available in the next release of jEmbedded (0.1.2)
 
-This layer should has access to a Business Layer (to access a database) and an Integration Layer (to access a JMS Broker).
+An integration service layer needs to be implemented that will act as a facade for a Spring MVC Controller. 
+
+This layer represents the entry to point to an invoicing-server, that calculates the invoices for a number of customers. The invoicing server will be represented by an integration-layer. 
+
+This service layer will be composed as a hierarchy of layers having as a parent a Persistence Layer and an Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the persince layer.
+
+== Application Flow. ==
+
+The controller will receive http request with 2 parameters (needed to calculate the invoice) and it will retrieve and invoke the invoicing-service (in the services-layer). 
+
+This service will get the details of the customer (in the persistence layer) and will  send a message to the invoicing-server with the data (in the integration-layer).
+
+The invoicing-server is composed of a mule-service, an jms broker, a rules-service and the actual invoicing-service (that calculates and creates the invoice).
+
 
 === Services Layer ===
 {{{
 
-@Repository(id = "serviceLayer", resources = { CMTServiceImpl.class}, parent="businessLayer")
+@Container(instanceType = ContainerInstanceType.PROTOTYPE_VM)
+
+@Repository(id = "serviceLayer", parent="persistenceLayer")
 public class ServicesLayer extends AbstractServiceLayer {
-	
-	public CMTService getCMTService() {
-		return (CMTService)this.getService("cmtService");
-	}
-	
-	public JdbcService getJdbcService() {
-		return (JdbcService)this.getService("jdbcService");
-	}
 
-        public ActiveMQService getBrokerService() {
-		return  (ActiveMQService)getService("brokerService");
+	/**
+	 * 
+	 * @return
+	 */
+	public InvoicingService getInvoicingService() {
+		return (InvoicingService)this.getService("invoicingService");
 	}
 }
+
 }}}
 
-=== Business Layer ===
-
-{{{
-
-@Repository(id="businessLayer", resources={EmbeddedDatabaseImpl.class}, parent="integrationLayer")
-
-public class BusinessLayer  extends AbstractLayer {
-	
-}
-}}}
-
-=== Integration Layer ===
-
-{{{
-@JmsBroker(connector="tcp://localhost:61617")
-@Repository(id = "integrationLayer")
-
-public class IntegrationLayer extends AbstractLayer {
-}
-}}}
-
-=== Spring MVC Controller ===
+The controller looks like this:
 
 {{{
 public class Controller extends AbstractController {
 	
 	private ServicesLayer serviceLayer = null;
-
+	
 	public void setServiceLayer(ServicesLayer serviceLayer) {
 		this.serviceLayer = serviceLayer;
 	}
@@ -63,46 +54,193 @@ public class Controller extends AbstractController {
         throws Exception
     {
         Map<String, Object> model = new WeakHashMap<String, Object>();
-       
-        CMTService cmtService = serviceLayer.getCMTService();
-        model.put("result", cmtService.service());
-         
-        JdbcService jdbcService = serviceLayer.getJdbcService();
-        List<?> list =  jdbcService.executeQueryForList("select * from test");
-        model.put("list", list);
         
-        ActiveMQService mqService = (ActiveMQService)serviceLayer.getService("jmsBrokerService");
-        mqService.getBrokerService();
+        String id = (String)request.getParameter("id");
+        String kwh = (String)request.getParameter("kwh");
         
-        ModelAndView mv = new ModelAndView("index");
-        mv.addAllObjects(model);
+        InvoicingService invoiceService = (InvoicingService)serviceLayer.getInvoicingService();
+        invoiceService.generateInvoice(id, kwh);
+     
         return null;
     }
 }
 
 }}}
 
-As all the services are provided by the container out of the box you can compose an create the layers pretty fast (at least for a prototype).
-
-Finally the spring application-context.xml file (you would configure spring as usual)
+The controller retrieves and invoke the invoicingService with the http params:
 
 {{{
-<!-- Service Layer in jEmbedded -->
+@MuleClient
+@AnnotatedService(id = "invoicingService")
+public class InvoicingServiceImpl extends AbstractCMTService implements
+		InvoicingService {
 	
-<bean id="handler" class="org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner">
-<property name="annotatedClasses">
-<list>				
-<value>org.jsemantic.jembedded.examples.webapp.layers.ServicesLayer</value>
+	@Inject
+	private JdbcService jdbcService = null;
 
-<value>org.jsemantic.jembedded.examples.webapp.layers.BusinessLayer</value>
+	@Inject
+	private MuleClientWrapper muleClient = null;
+
+	public void generateInvoice(String customerId, String kwh) {
+
+		Customer customer = null;
 		
-<value>org.jsemantic.jembedded.examples.webapp.layers.IntegrationLayer</value>
-</list>
-</property>
-</bean>
-	
-	
-<bean id="serviceLayer" class="org.jsemantic.jembedded.examples.webapp.layers.ServicesLayer" 
+                //the customer is retrieved using the jdbcService
 
-autowire="autodetect" lazy-init="true"  depends-on="handler"/>	
+		if (customerResult != null) {
+			MuleMessage message = new DefaultMuleMessage(customer);
+			muleClient.sendMessage("jms://in.queue", message);
+
+			logger.debug(">>>>>>>>>>>>Sent message: " + message
+					+ ">>>>>>>>>>>>>>>>>>");
+		} else {
+			logger.debug(">>>>>>>>>>>>No message sent");
+		}
+	}
+
+}
+}}}
+
+
+=== Persistence Layer ===
+
+The persistence layer is integrated with a spring-container that provides the datasource, daos etc...
+
+{{{
+
+@SpringRepository(configurationFile="META-INF/invoices-app/layers/persistence-layer.xml")
+		
+@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
+
+@Repository(id="persistenceLayer", resources={EmbeddedDatabaseImpl.class, InvoicingServiceImpl.class}, 
+		iocProviders="springProvider", parent="integrationLayer")
+		
+interface PersistenceLayer{
+
+}
+}}}
+
+#summary Integration/ESB case study using jEmbedded.
+
+= Introduction =
+
+//In construction 
+
+An integration service layer needs to be implemented that will act as a facade for a Spring MVC Controller. 
+
+This layer represents the entry to point to an invoicing-server, that calculates the invoices for a number of customers. The invoicing server will be represented by an integration-layer. 
+
+This service layer will be composed as a hierarchy of layers having as a parent a Persistence Layer and an Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the persince layer.
+
+== Application Flow. ==
+
+The controller will receive http request with 2 parameters (needed to calculate the invoice) and it will retrieve and invoke the invoicing-service (in the services-layer). 
+
+This service will get the details of the customer (in the persistence layer) and will  send a message to the invoicing-server with the data (in the integration-layer).
+
+The invoicing-server is composed of a mule-service, an jms broker, a rules-service and the actual invoicing-service (that calculates and creates the invoice).
+
+
+=== Services Layer ===
+{{{
+
+@Container(instanceType = ContainerInstanceType.PROTOTYPE_VM)
+
+@Repository(id = "serviceLayer", parent="persistenceLayer")
+public class ServicesLayer extends AbstractServiceLayer {
+
+	/**
+	 * 
+	 * @return
+	 */
+	public InvoicingService getInvoicingService() {
+		return (InvoicingService)this.getService("invoicingService");
+	}
+}
+
+}}}
+
+The controller looks like this:
+
+{{{
+public class Controller extends AbstractController {
+	
+	private ServicesLayer serviceLayer = null;
+	
+	public void setServiceLayer(ServicesLayer serviceLayer) {
+		this.serviceLayer = serviceLayer;
+	}
+
+	@Override
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+        throws Exception
+    {
+        Map<String, Object> model = new WeakHashMap<String, Object>();
+        
+        String id = (String)request.getParameter("id");
+        String kwh = (String)request.getParameter("kwh");
+        
+        InvoicingService invoiceService = (InvoicingService)serviceLayer.getInvoicingService();
+        invoiceService.generateInvoice(id, kwh);
+     
+        return null;
+    }
+}
+
+}}}
+
+The controller retrieves and invoke the invoicingService with the http params:
+
+{{{
+@MuleClient
+@AnnotatedService(id = "invoicingService")
+public class InvoicingServiceImpl extends AbstractCMTService implements
+		InvoicingService {
+	
+	@Inject
+	private JdbcService jdbcService = null;
+
+	@Inject
+	private MuleClientWrapper muleClient = null;
+
+	public void generateInvoice(String customerId, String kwh) {
+
+		Customer customer = null;
+		
+                //the customer is retrieved using the jdbcService
+
+		if (customerResult != null) {
+			MuleMessage message = new DefaultMuleMessage(customer);
+			muleClient.sendMessage("jms://in.queue", message);
+
+			logger.debug(">>>>>>>>>>>>Sent message: " + message
+					+ ">>>>>>>>>>>>>>>>>>");
+		} else {
+			logger.debug(">>>>>>>>>>>>No message sent");
+		}
+	}
+
+}
+}}}
+
+
+=== Integration Layer ===
+
+{{{
+@Repository(id = "integrationLayer")
+
+@JmsBroker(connector="tcp://localhost:61618")
+@MuleService(configurationFile="META-INF/invoices-app/services/mule-service/invoicing-system-config.xml")
+public interface IntegrationLayer  {
+
+}
+}}}
+
+
+As all the services are provided by the container out of the box you can compose an create the layers pretty fast (at least for a prototype).
+
+=== The invoicing-sever ===
+
+// TO DO
+
 }}}
