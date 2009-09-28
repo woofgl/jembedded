@@ -6,6 +6,7 @@
   * [jEMotivation Motivation]
   * [jEInstallNotes How to install jEmbedded]
   * [jEGettingStarted How to get started in 5 mins(more or less)]
+  * [jECaseStudy Integration/ESB case study]
   * [jExamples Embedded Database(Derby/HSQLDB)]
   * [jFaq jEmbedded FAQ)]
 
