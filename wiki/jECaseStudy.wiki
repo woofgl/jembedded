@@ -2,12 +2,107 @@
 
 = Introduction =
 
-Add your content here.
+A service layer needs to be implemented that would act as a facade for a Spring MVC Controller. 
 
+This layer should has access to a Business Layer (to access a database) and an Integration Layer (to access a JMS Broker).
 
-= Details =
+=== Services Layer ===
+{{{
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+@Repository(id = "serviceLayer", resources = { CMTServiceImpl.class}, parent="businessLayer")
+public class ServicesLayer extends AbstractServiceLayer {
+	
+	public CMTService getCMTService() {
+		return (CMTService)this.getService("cmtService");
+	}
+	
+	public JdbcService getJdbcService() {
+		return (JdbcService)this.getService("jdbcService");
+	}
+
+        public ActiveMQService getBrokerService() {
+		return  (ActiveMQService)getService("brokerService");
+	}
+}
+}}}
+
+=== Business Layer ===
+
+{{{
+
+@Repository(id="businessLayer", resources={EmbeddedDatabaseImpl.class}, parent="integrationLayer")
+
+public class BusinessLayer  extends AbstractLayer {
+	
+}
+}}}
+
+=== Integration Layer ===
+
+{{{
+@JmsBroker(connector="tcp://localhost:61617")
+@Repository(id = "integrationLayer")
+
+public class IntegrationLayer extends AbstractLayer {
+}
+}}}
+
+=== Spring MVC Controller ===
+
+{{{
+public class Controller extends AbstractController {
+	
+	private ServicesLayer serviceLayer = null;
+
+	public void setServiceLayer(ServicesLayer serviceLayer) {
+		this.serviceLayer = serviceLayer;
+	}
+
+	@Override
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+        throws Exception
+    {
+        Map<String, Object> model = new WeakHashMap<String, Object>();
+       
+        CMTService cmtService = serviceLayer.getCMTService();
+        model.put("result", cmtService.service());
+         
+        JdbcService jdbcService = serviceLayer.getJdbcService();
+        List<?> list =  jdbcService.executeQueryForList("select * from test");
+        model.put("list", list);
+        
+        ActiveMQService mqService = (ActiveMQService)serviceLayer.getService("jmsBrokerService");
+        mqService.getBrokerService();
+        
+        ModelAndView mv = new ModelAndView("index");
+        mv.addAllObjects(model);
+        return null;
+    }
+}
+
+}}}
+
+As all the services are provided by the container out of the box you can compose an create the layers pretty fast (at least for a prototype).
+
+Finally the spring application-context.xml file (you would configure spring as usual)
+
+{{{
+<!-- Service Layer in jEmbedded -->
+	
+<bean id="handler" class="org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner">
+<property name="annotatedClasses">
+<list>				
+<value>org.jsemantic.jembedded.examples.webapp.layers.ServicesLayer</value>
+
+<value>org.jsemantic.jembedded.examples.webapp.layers.BusinessLayer</value>
+		
+<value>org.jsemantic.jembedded.examples.webapp.layers.IntegrationLayer</value>
+</list>
+</property>
+</bean>
+	
+	
+<bean id="serviceLayer" class="org.jsemantic.jembedded.examples.webapp.layers.ServicesLayer" 
+
+autowire="autodetect" lazy-init="true"  depends-on="handler"/>	
+}}}
