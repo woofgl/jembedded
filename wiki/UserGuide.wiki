@@ -10,6 +10,7 @@
   * [jExamples Embedded Database(Derby/HSQLDB)]
   * [jFaq jEmbedded FAQ)]
 
+Note: deprecated until next version 1.0
 ==jIntegrationTest==
 * [UserGuide User's Guide]
   * [Motivation Motivation]
