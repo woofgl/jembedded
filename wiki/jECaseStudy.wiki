@@ -39,10 +39,10 @@ The invoicing-server is composed of a mule-service, an jms broker, a rules-servi
 === Services Layer ===
 {{{
 
-@Container(instanceType = ContainerInstanceType.PROTOTYPE_VM)
+
 @Repository(id = "serviceLayer",  iocProviders = { "springRepository" }, parent = "persistenceLayer")
 
-@AnnotatedService(id = "serviceLayer", resources={InvoicingServiceImpl.class, DynamicService.class})
+@AnnotatedService(id = "serviceLayer", resources={InvoicingServiceImpl.class})
 public interface ServicesLayer extends Service {
 
 	@Inject(ref="invoicingService")
@@ -50,12 +50,6 @@ public interface ServicesLayer extends Service {
 
 	@SpringRepository(configurationFile = "META-INF/invoices-app/layers/persistence-layer.xml")
 	public Service getSpringRepository();
-	
-	@Inject(ref="persistenceLayer")
-	public PersistenceLayer getPersistenceLayer();
-	
-	@Inject(ref="integrationLayer")
-	public IntegrationLayer getIntegrationLayer();
 }
 
 }}}
