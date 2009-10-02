@@ -1,8 +1,25 @@
 #summary Integration/ESB case study using jEmbedded.
 
-= Introduction =
+= Case study: Electrical measures & invoicing =
+Note:
 
-//In construction. all the sources and the resources will be available in the next release of jEmbedded (0.1.2)
+´In construction. all the sources and the resources will be available in the next release of jEmbedded (0.1.3rc)´
+
+
+So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every home and then send it to a central system that will calculate and print the invoices.
+
+In order to connect to the central system, we need a device in every building that gets the readings and send them. 
+We can think about that device as an embedded pc system with an ip that will connect to the internet and send the data to the central system through a few protocols. 
+
+We'll use the  http protocol, so web services come to mind. Also we'll use spring/mvc integration so we can send the data through a controller if the web service is not available, or just to build a web portal over the central system.
+
+It seems that we got a pretty clear case of system integrations, so using a ESB is in place. Also JMS to store the incoming messages.
+
+So how do we build the proyotype? We can just get the esb and a bunch of frameworks and start integratiog then, etc... but that takes time and certainly don't promote reuse (it's a prototype but still), so why don't use a ready framework for that, that implemens service composition, that has ready to go services, promotes reuse and eases all the integration pain? :)
+
+For instance, if you need to deploy a service or just a class in Mule, after you have created you still have to put the jar in the mule/lib folder, start it ect ect.. you don't need to do this using the framework.
+
+== Prototype ==
 
 An integration service layer needs to be implemented that will act as a facade for a Spring MVC Controller. 
 
@@ -12,7 +29,7 @@ This service layer will be composed as a hierarchy of layers having as a parent 
 
 == Application Flow. ==
 
-The controller will receive http request with 2 parameters (needed to calculate the invoice) and it will retrieve and invoke the invoicing-service (in the services-layer). 
+The controller will receive http request with 2 parameters (needed to calculate the invoice) and it will invoke the invoicing-service (in the services-layer). 
 
 This service will get the details of the customer (in the persistence layer) and will  send a message to the invoicing-server with the data (in the integration-layer).
 
@@ -23,17 +40,22 @@ The invoicing-server is composed of a mule-service, an jms broker, a rules-servi
 {{{
 
 @Container(instanceType = ContainerInstanceType.PROTOTYPE_VM)
+@Repository(id = "serviceLayer",  iocProviders = { "springRepository" }, parent = "persistenceLayer")
 
-@Repository(id = "serviceLayer", parent="persistenceLayer")
-public class ServicesLayer extends AbstractServiceLayer {
+@AnnotatedService(id = "serviceLayer", resources={InvoicingServiceImpl.class, DynamicService.class})
+public interface ServicesLayer extends Service {
 
-	/**
-	 * 
-	 * @return
-	 */
-	public InvoicingService getInvoicingService() {
-		return (InvoicingService)this.getService("invoicingService");
-	}
+	@Inject(ref="invoicingService")
+	public InvoicingService getInvoicingService();
+
+	@SpringRepository(configurationFile = "META-INF/invoices-app/layers/persistence-layer.xml")
+	public Service getSpringRepository();
+	
+	@Inject(ref="persistenceLayer")
+	public PersistenceLayer getPersistenceLayer();
+	
+	@Inject(ref="integrationLayer")
+	public IntegrationLayer getIntegrationLayer();
 }
 
 }}}
@@ -42,29 +64,30 @@ The controller looks like this:
 
 {{{
 public class Controller extends AbstractController {
-	
-	private ServicesLayer serviceLayer = null;
-	
-	public void setServiceLayer(ServicesLayer serviceLayer) {
-		this.serviceLayer = serviceLayer;
+
+	private ServicesLayer servicesLayer = null;
+
+	public void setServicesLayer(ServicesLayer servicesLayer) {
+		this.servicesLayer = servicesLayer;
 	}
 
 	@Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-        throws Exception
-    {
-        Map<String, Object> model = new WeakHashMap<String, Object>();
-        
-        String id = (String)request.getParameter("id");
-        String kwh = (String)request.getParameter("kwh");
-        
-        InvoicingService invoiceService = (InvoicingService)serviceLayer.getInvoicingService();
-        invoiceService.generateInvoice(id, kwh);
-     
-        return null;
-    }
-}
+	protected ModelAndView handleRequestInternal(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		Map<String, Object> model = new WeakHashMap<String, Object>();
 
+		String id = (String) request.getParameter("id");
+		String kwh = (String) request.getParameter("kwh");
+
+		InvoicingService invoiceService = (InvoicingService) servicesLayer
+				.getInvoicingService();
+		invoiceService.generateInvoice(id, kwh);
+
+		ModelAndView mv = new ModelAndView("index");
+		mv.addAllObjects(model);
+		return null;
+	}
+}
 }}}
 
 The controller retrieves and invoke the invoicingService with the http params:
@@ -104,21 +127,36 @@ public class InvoicingServiceImpl extends AbstractCMTService implements
 
 === Persistence Layer ===
 
-The persistence layer is integrated with a spring-container that provides the datasource, daos etc...
+The persistence layer contains the embedded databse and the jdbcService. The 
 
 {{{
+@Repository(id="persistenceLayer", parent="integrationLayer")
 
-@SpringRepository(configurationFile="META-INF/invoices-app/layers/persistence-layer.xml")
-		
-@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
+@AnnotatedService(id="persistenceLayer", resources={EmbeddedDatabaseImpl.class})
+public interface PersistenceLayer extends Service {
 
-@Repository(id="persistenceLayer", resources={EmbeddedDatabaseImpl.class, InvoicingServiceImpl.class}, 
-		iocProviders="springProvider", parent="integrationLayer")
-		
-interface PersistenceLayer{
-
+	@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
+	public Service getPropertiesService();
+	
 }
 }}}
+
+=== Integration Layer == 
+
+{{{
+@Repository(id = "integrationLayer")
+@AnnotatedService(id="integrationLayer", resources={InvoicingServer.class})
+public interface IntegrationLayer  extends Service {
+	
+	@JmsBroker(connector="tcp://localhost:61618")
+	public Service getJmsBroker();
+	
+	@Inject(ref="invoicingServer")
+	public InvoicingServer getInvoicingServer();
+}
+
+}}}
+
 
 #summary Integration/ESB case study using jEmbedded.
 
