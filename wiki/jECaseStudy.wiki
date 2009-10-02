@@ -277,7 +277,7 @@ public interface IntegrationLayer  {
 
 As all the services are provided by the container out of the box you can compose an create the layers pretty fast (at least for a prototype).
 
-=== The invoicing-sever ===
+=== The invoicing-server ===
 
 // TO DO
 
