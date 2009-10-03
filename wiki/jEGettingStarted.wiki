@@ -1,5 +1,13 @@
+== Project Setup ==
+
 Once you have installed the framework, you’d need to declare the dependencies in your pom. 
 * The core dependency (jembedded-core).
+
+                 <dependency>
+			<groupId>org.jsemantic</groupId>
+			<artifactId>jembedded-core</artifactId>
+                        <version>0.1.x</version>
+		</dependency>
 
 * Any service dependency you are planning to use. For instance, if you want to use the jetty-service you need to include:
 
@@ -13,52 +21,106 @@ Once you have installed the framework, you’d need to declare the dependencies 
 
 Now that you have the framework classes available to your project, you can start using it right away.
 
-=== Steps ===
+== How to use jEmbedded ==
 
-1 – Create the elements you would need for your application. Consider if you can create any of them using composition.
+There are many ways you could use jEmbedded:
 
-2 - Annotate the services, components etc you have created, reused or composed.
+* Standalone framework: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
 
-For instance, let’s say you need to create your own customized Web Server. You could do this using the included jetty or tomcat services and composition:
+* Integrated with Spring: you can access spring beans from jEmbedded or just create an ApplicationContext (as another service of the container) and access those beans.
+
+* Web enviroment: can be used in any web enviroment, have a look at the invoicing-server example. It shows the provided integration with SpringMVC.
+
+* Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For example it's fast to test your integration/soa designs this way. Have a look at the invoicing-server example for an example of this (even though it's a bit complex for the sake of showing more jEmbedded features).
+
+
+=== Services Examples & How to create them ===
+
+The core of any application logic must be a handful of services that handle it. You can create them fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just and interface+annotations. This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services.
+
+=== Steps ==
+
+1 – Create an interface with the methods you would need.
+
+2 - Annotate the service, class level with the @AnnotatedService annotation:
+
+@AnnotatedService:
+
+- id: service id in the container.
+
+- resources: elements the service will use for composition, these elements will be handled by the container container.
+
+- managedElements: services managed by the present service, this means that the service will handle their lifecycle (start&stop them), not the container.
+
+
+For example let's say you want invoke a mule model from your application, for instance the echo example that cames with the distribution just for testing or to learn mule.
+
+Obviouly you can do this from the mule directory etc.. but that's not fun and you don't have access 
+
+For this matter you can just declare the mule service and client services dependencies in your pom:
+
+
+
 
 {{{
-@AnnotatedInterface(resources=JettyServiceImpl.class)
-public interface WebServer extends Service {
-	/**
-	 * 
-	 * @return
-	 */
-	public ServletContext getServletContext();
-}
+@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
 }}}
+
+public interface EchoMuleService extends Service {
+
+}
+
+
+
+
+For instance, let’s say you need to create your own customized Web Server. You could do this using the included jetty or tomcat services:
+
+
+//Service composition, the web server is created from 2 services: JettyService and
+// a PropertiesService (for external configuration).
+//As an alternative you could use the @JettyService annotation.
+@AnnotatedService(id="webServer", resources=JettyServiceImpl.class, 
+		managedElements={"httpService"})
+public interface WebServer extends Service {
+	
+	//This service one is managed by the WebServer, started and stopped by it.
+	@Inject(ref="httpService")
+	public void getHttpService(JettyService httpService);
+	
+	//This service is just for composition, but its lifecycle is managed by the container, not the WebServer
+	@PropertiesService(propertiesFile="META-INF/web-server/web-server.properties")
+	public void getPropertiesService();
+	// end of service composition
+	
+	//Added functionality, you can create dynamic invoking methods from any service
+	//that you may have in the container
+	
+	@ImplementedBy(ref="httpService", refMethodName="getServerContext")
+	public ServletContext getServletContext();
+	
+	@ImplementedBy(ref="httpService")
+	public void setPort(String port);
+	//end of added functionality
+}
+
+
+
 
 And the implementation:
 
 {{{
-@AnnotatedService(id="webServer")
-public class WebServerImpl extends AbstractCMTService implements WebServer {
+@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
+public interface EchoMuleService extends Service {
 	
-	@Inject(ref="httpService")
-	private JettyService httpService = null;
+	@Inject(ref="muleService")
+	public MuleService getMuleService();
 	
-
-	@Override
-	protected void startService() throws ServiceException {
-		httpService.start();
-	}
-
-	@Override
-	protected void stopService() throws ServiceException {
-		httpService.stop();
-	}
-	
-	public ServletContext getServletContext() {
-		return httpService.getServerContext();
-	}
+	//This service is just for composition, but its lifecycle is managed by the                    container, not the WebServer
+	@PropertiesService(propertiesFile=
+             "META-INF/web-server/mule-echo-service.properties")
+	public void getPropertiesService();
 }
-
 }}}
-Obviously you can add more functionality :)
 
 
 3 – If the number of elements is very high, you could consider using one or more repositories:
