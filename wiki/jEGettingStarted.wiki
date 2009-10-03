@@ -40,9 +40,18 @@ The core of any application logic must be a handful of services that handle it. 
 
 === Steps ==
 
-1 – Create an interface with the methods you would need.
+1 – Create an interface with the methods you would need and extends the Service interface.
 
-2 - Annotate the service, class level with @AnnotatedService.
+public interface EchoMuleService extends Service {
+   public Service getMuleService();
+}
+
+
+2 - Annotate the service at a class level with the @AnnotatedService annotation.
+
+{{{
+@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
+}}}
 
 @AnnotatedService:
 
@@ -73,11 +82,12 @@ For this matter you can just declare the mule service and client services depend
 
 All the services provided with jEmbedded follows the same packaging pattern,  they provide you with an interface, an implementation , some customs annotations and  a META-INF/xxx-service directory with the needed resources, usually a xxx-service.xml file(to use it from Spring or any other framework that uses its ApplicationContext), some properties files, some other configuration stuff etc... In fact this is the way you should package your services for distribution:
 
+{{{
 resources/
          META-INF/
                  xxx-service
                  /....config files
-
+}}}
 
 So basically to use a service you can:
 
@@ -85,53 +95,22 @@ So basically to use a service you can:
 
 *  Using its custom annotation:
 
-
-
 {{{
-@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
+@MuleService(configurationFile="echo-config.xml")
+public Service getMuleService();
 }}}
 
-public interface EchoMuleService extends Service {
+The annotation can be declared at class level or method level. If you want to have access to it, the best way it's to declare method that will be dynamicly implemented  by the service.
 
-}
+{{{
+MuleService muleService = echoService.geMuleService();
+}}}
 
-
-
-
-For instance, let’s say you need to create your own customized Web Server. You could do this using the included jetty or tomcat services:
-
-
-//Service composition, the web server is created from 2 services: JettyService and
-// a PropertiesService (for external configuration).
-//As an alternative you could use the @JettyService annotation.
-@AnnotatedService(id="webServer", resources=JettyServiceImpl.class, 
-		managedElements={"httpService"})
-public interface WebServer extends Service {
-	
-	//This service one is managed by the WebServer, started and stopped by it.
-	@Inject(ref="httpService")
-	public void getHttpService(JettyService httpService);
-	
-	//This service is just for composition, but its lifecycle is managed by the container, not the WebServer
-	@PropertiesService(propertiesFile="META-INF/web-server/web-server.properties")
-	public void getPropertiesService();
-	// end of service composition
-	
-	//Added functionality, you can create dynamic invoking methods from any service
-	//that you may have in the container
-	
-	@ImplementedBy(ref="httpService", refMethodName="getServerContext")
-	public ServletContext getServletContext();
-	
-	@ImplementedBy(ref="httpService")
-	public void setPort(String port);
-	//end of added functionality
-}
+Importing the service this way has the restriction that the configuration it's fixed on the annotation. This is not an issue when you want to develop and distribute a service like this one, that is not likely to change.
 
 
+3 - Annotate the methods and add the additional services you may need.
 
-
-And the implementation:
 
 {{{
 @AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
@@ -147,12 +126,7 @@ public interface EchoMuleService extends Service {
 }
 }}}
 
-
-3 – If the number of elements is very high, you could consider using one or more repositories:
-
-{{{
-@Repository(id=”complexServicesLayer”, resources={WebServerImpl.class, JMServer.class…….}
-}}}
+Note the I added the PropertiesService as it's needed to parse the properties file configuration (you can avoid this 
 
 
 4 – Once the services (and its associated components and beans) are created and annotated you’ll need to create an instance of the jEmbedded container (or more than one, you are not restricted to one).
@@ -185,3 +159,5 @@ ServletContext  servletContext = server.getServletContext()
 
 handler.stop(); // stop and dispose the container.
 }}}
+
+5 - You may handle the service with a Repository as well.
