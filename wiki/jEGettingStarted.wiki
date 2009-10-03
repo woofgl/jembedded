@@ -100,7 +100,7 @@ So basically to use a service you can:
 public Service getMuleService();
 }}}
 
-The annotation can be declared at class level or method level. If you want to have access to it, the best way it's to declare method that will be dynamicly implemented  by the service.
+The annotation can be declared at class or method level. If you want to have access to it, the best way it's to declare method that will be dynamicly implemented  by the service.
 
 {{{
 MuleService muleService = echoService.geMuleService();
@@ -147,11 +147,62 @@ public interface EchoMuleService extends Service {
 public Object sendEchoMessage(String echoEndPoint, String message);
 }}}
 
-Now you may think that you have to write have an implementation class.. no you are wrong :), you can implement this functionality just using composition:
+Now you may think that you have to write have an implementation class.. but no you are wrong :), you can implement this functionality just using composition:
 
+{{{
+@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
+public Object sendEchoMessage(String echoEndPoint, String message);
+}}}
 
+@ImplementedBy annotation:
 
+- ref: service or element that can implements this functionality (required).
 
+- refMethodName: method of the ref element that needs to be invoked (optional). If it's not provided the declared method name will be used.
+
+In this case we use the @MuleClient service to implement this method (with the paramas endpoint and message).
+
+{{{
+echoMuleService.sendEchoMessage("vm://echo", "hello dude!");
+}}}
+
+Finally the service looks like this:
+
+{{{
+@MuleClient
+@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, 
+		managedElements="muleService")
+public interface EchoMuleService extends Service {
+	
+	@Inject(ref="muleService")
+	public MuleService getMuleService();
+	
+	@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
+	public void getPropertiesService();
+	
+	//We add custom functionality, using composition of elements
+	@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
+	public Object sendEchoMessage(String echoEndPoint, String message);
+}
+}}}
+
+And a stripped version:
+
+{{{
+@AnnotatedService(id="echoMuleService", 
+resources=MuleServiceImpl.class, MuleClientWrapperImpl.class,
+PropertiesService.class, 
+managedElements="muleService")
+public interface EchoMuleService extends Service {
+		
+	@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
+	public Object sendEchoMessage(String echoEndPoint, String message);
+}
+}}}
+
+If you use this version you also would need to the configuration in a properties file in META-INF/repository.properties.
+
+As you can see jEmbedded gives a lot of flexibility in order to configure and compose the elements.
 
 
 4 – Once the services (and its associated components and beans) are created and annotated you’ll need to create an instance of the jEmbedded container (or more than one, you are not restricted to one).
