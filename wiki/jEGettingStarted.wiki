@@ -25,13 +25,13 @@ Now that you have the framework classes available to your project, you can start
 
 There are many ways you could use jEmbedded:
 
-* Standalone framework: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
+  * Standalone framework: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
 
-* Integrated with Spring: you can access spring beans from jEmbedded or just create an ApplicationContext (as another service of the container) and access those beans.
+  * Integrated with Spring: you can access spring beans from jEmbedded or just create an ApplicationContext (as another service of the container) and access those beans.
 
-* Web enviroment: can be used in any web enviroment, have a look at the invoicing-server example. It shows the provided integration with SpringMVC.
+  * Web enviroment: can be used in any web enviroment, have a look at the invoicing-server example. It shows the provided integration with SpringMVC.
 
-* Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For example it's fast to test your integration/soa designs this way. Have a look at the invoicing-server example for an example of this (even though it's a bit complex for the sake of showing more jEmbedded features).
+  * Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For example it's fast to test your integration/soa designs this way. Have a look at the invoicing-server example for an example of this (even though it's a bit complex for the sake of showing more jEmbedded features).
 
 
 === Services Examples & How to create them ===
@@ -111,22 +111,35 @@ Importing the service this way has the restriction that the configuration it's f
 
 3 - Annotate the methods and add the additional services you may need.
 
-
 {{{
-@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
+@AnnotatedService(id="echoMuleService", 
+resources=MuleServiceImpl.class, managedElements="muleService")
 public interface EchoMuleService extends Service {
 	
 	@Inject(ref="muleService")
 	public MuleService getMuleService();
 	
-	//This service is just for composition, but its lifecycle is managed by the                    container, not the WebServer
 	@PropertiesService(propertiesFile=
              "META-INF/web-server/mule-echo-service.properties")
 	public void getPropertiesService();
 }
 }}}
 
-Note the I added the PropertiesService as it's needed to parse the properties file configuration (you can avoid this 
+Note the I added the PropertiesService as it's needed to parse the properties file configuration (you can avoid this using the custom annotation), this service is used to compose the service, but it's not managed by the service. Also you don't need it to declare it as method (I did it for the sake of the example):
+
+{{{
+
+@PropertiesService(propertiesFile=
+             "META-INF/web-server/mule-echo-service.properties")
+
+@AnnotatedService(id="echoMuleService", 
+resources=MuleServiceImpl.class, managedElements="muleService")
+public interface EchoMuleService extends Service {
+	
+	@Inject(ref="muleService")
+	public MuleService getMuleService();
+}
+}}}
 
 
 4 – Once the services (and its associated components and beans) are created and annotated you’ll need to create an instance of the jEmbedded container (or more than one, you are not restricted to one).
