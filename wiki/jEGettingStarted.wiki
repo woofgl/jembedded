@@ -1,17 +1,17 @@
 == Project Setup ==
 
 Once you have installed the framework, you’d need to declare the dependencies in your pom. 
-* The core dependency (jembedded-core).
-
+*  The core dependency (jembedded-core).
+{{{
                  <dependency>
 			<groupId>org.jsemantic</groupId>
 			<artifactId>jembedded-core</artifactId>
                         <version>0.1.x</version>
 		</dependency>
-
-* Any service dependency you are planning to use. For instance, if you want to use the jetty-service you need to include:
-
+}}}
+*  Any service dependency you are planning to use. For instance, if you want to use the jetty-service you need to include:
 {{{
+
                  <dependency>
 			<groupId>org.jsemantic.services</groupId>
 			<artifactId>jetty-service</artifactId>
@@ -36,29 +36,54 @@ There are many ways you could use jEmbedded:
 
 === Services Examples & How to create them ===
 
-The core of any application logic must be a handful of services that handle it. You can create them fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just and interface+annotations. This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services.
+The core of any application logic must be a handful of services that handle it. The services can be created fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just and interface+annotations. This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services.
 
 === Steps ==
 
 1 – Create an interface with the methods you would need.
 
-2 - Annotate the service, class level with the @AnnotatedService annotation:
+2 - Annotate the service, class level with @AnnotatedService.
 
 @AnnotatedService:
 
 - id: service id in the container.
 
-- resources: elements the service will use for composition, these elements will be handled by the container container.
+- resources: elements the service will use for composition, that will be handled by the container.
 
-- managedElements: services managed by the present service, this means that the service will handle their lifecycle (start&stop them), not the container.
+- managedElements: services managed by this service, that means that the service will handle their lifecycle (start&stop them), not the container.
 
 
-For example let's say you want invoke a mule model from your application, for instance the echo example that cames with the distribution just for testing or to learn mule.
+For example let's say you want invoke a mule based service from your application, for instance the echo example that cames with the distribution just for testing.
 
-Obviouly you can do this from the mule directory etc.. but that's not fun and you don't have access 
+Obviously you can do this from the mule directory etc.. but that's not fun and you can't import the example into your echo-application :)
 
 For this matter you can just declare the mule service and client services dependencies in your pom:
+{{{
+                <dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>mule-service</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>mule-client-service</artifactId>
+			<version>0.2.0-SNAPSHOT</version>
+		</dependency>
+}}}
 
+All the services provided with jEmbedded follows the same packaging pattern,  they provide you with an interface, an implementation , some customs annotations and  a META-INF/xxx-service directory with the needed resources, usually a xxx-service.xml file(to use it from Spring or any other framework that uses its ApplicationContext), some properties files, some other configuration stuff etc... In fact this is the way you should package your services for distribution:
+
+resources/
+         META-INF/
+                 xxx-service
+                 /....config files
+
+
+So basically to use a service you can:
+
+*  Import it using the attribute resources with a class/interface depending how it was designed. This way you can externalize the configuration of your service using the @PropertiesService: `resources=MuleServiceImpl.class`
+
+*  Using its custom annotation:
 
 
 
