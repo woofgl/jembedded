@@ -141,6 +141,18 @@ public interface EchoMuleService extends Service {
 }
 }}}
 
+4- At this point we could think that would be nice to add a method that actually invokes the model that mule service exposes. This model just echo whatever string you sent it so we add the following method:
+
+{{{
+public Object sendEchoMessage(String echoEndPoint, String message);
+}}}
+
+Now you may think that you have to write have an implementation class.. no you are wrong :), you can implement this functionality just using composition:
+
+
+
+
+
 
 4 – Once the services (and its associated components and beans) are created and annotated you’ll need to create an instance of the jEmbedded container (or more than one, you are not restricted to one).
 
