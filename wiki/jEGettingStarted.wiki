@@ -216,10 +216,11 @@ EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(Class<?>...…class
 
 The factory accepts an array of classes. You should add here the services or elements you want to add to the container (most likely the entry point).
 
-For example: EchoMuleService.class or if you running it from a test unit:
+For example: `EchoMuleService.class` or if you running it from a test unit:
 
 {{{
-//note 
+//note if you not declare the @Respository annotation here, a default repository will
+//be created
 @Include(resources={EchoMuleService.class}) // include the service into the container
 public class TestEchoMuleService {
 	
@@ -246,4 +247,40 @@ public class TestEchoMuleService {
 }
 }}}
 
-5 - You can use the service with a RepositoryHandler as well.
+5 - Now you can run the service for real using with the jEmbedded plugin.
+
+This plugin is for maven so you need to declare it in your pom:
+
+{{{
+	<plugins>
+		<plugin>
+		<groupId>org.jsemantic.jembedded</groupId>
+		<artifactId>jembedded-plugin</artifactId>
+		<version>0.2-SNAPSHOT</version>
+		<configuration>
+			<argLine>-Xms256m -Xmx512m</argLine>
+
+				<additionalClasspathElements>
+					<additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
+				</additionalClasspathElements>	
+				<useSystemClassLoader>true</useSystemClassLoader>
+					<container>
+						<id>test</id>
+						<classes>
+							<class>org.jsemantic.jembedded.examples.services.mule.EchoMuleService</class>
+							
+						</classes>
+					</container>
+				</configuration>
+		</plugin>
+	</plugins>
+}}}
+
+To start the container: `mvn -o jembedded:start`
+
+Once the container it's started, you will prompted to enter something, do it and you will have your echo, cool huh? ;)
+
+
+
+
+
