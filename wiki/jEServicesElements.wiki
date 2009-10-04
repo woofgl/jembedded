@@ -1,13 +1,102 @@
-#summary One-sentence summary of this page.
+==jEmbedded elements==
 
-= Introduction =
+An embedded service it's a standalone service that can be invoked from within an application.
 
-Add your content here.
+=== Services ===
+
+Usually offers functionality to any potential clients (for instance, an application or other service), implementing an interface that provides the contract for the client.
+
+jEmbedded can produce definitions, make instances, hold and manage the lifecycle of any number or services that are annotated with a minimal configuration:
+
+{{{
+
+@AnnotatedService(id = "httpService")
+public class JettyServiceImpl extends AbstractCMTService implements JettyService {
+	
+	@Inject(value="${jettyService.port}")
+	private String port = "9005";
+}
+
+}}}
+
+The container injects a Context to the service (and the components as well), that provides access to the executing enviroment.
+
+==== Types of Services ====
+
+CMT Services(managed by the container) and un-managed services (Service). A service can be started/stopped,  initialized/disposed. If the service is CMT the former operations only can be invoked by the container. 
+
+A service can manage: services, components, beans  and entities.
 
 
-= Details =
+=== Components ===
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Usually provides support functionality to services or other components,  but usually it's not invoked directly by any client.
+
+
+==== Types of Components ====
+
+CMT Component (managed by the container) and un-managed component. A component can be initialized/disposed. If the component is of CMT type, the former operations only can be invoked by the container (an exception will be throw otherwise).
+
+A component can manage: component, beans and entities.
+
+jEmbedded can produce definitions, make instances, hold and manage the lifecycle of any number or  components that are annotated with a minimal configuration:
+
+{{{
+@AnnotatedComponent(id="supportComponent")
+public class SupportComponent extends AbstractComponent {
+	
+	@Override
+	protected void postConstruct() {
+		System.out.println("PostConstruct");
+	}
+	
+	@Override
+	protected void release() {
+		System.out.println("Release");
+	}
+	
+	public String support() {
+		return msg;
+	}
+}}}
+
+
+=== Entities ===
+
+Just a pojo, but does not follow the get/set bean standard. Usually are DOM classes, utility classes, etc...
+
+jEmbedded can produce definition, make instances and hold any number of entities that are annotated with a minimal configuration. In this case the lifecycle of the entity is managed by the application nor the container (for example, could be diposed by a parent componen).
+
+{{{
+@AnnotatedBean(id="dependency")
+public class TestDependency {
+	
+	@Inject(value="hi")
+	private String msg = null;
+}
+}}}
+
+An entity can manage entities or beans.
+
+Note: in the next version (0.1.1) the annotation for entities will be different: ´@AnnotatedEntity()´
+
+=== Beans ===
+
+Just a pojo that follows the getter/setter standard.
+
+jEmbedded can produce definitions, make instances and hold any number of beans  that are annotated with a minimal configuration. In this case the lifecycle of the bean is managed by the application nor the container (for example, could be diposed by a parent component).
+
+{{{
+@AnnotatedBean(id="dependency")
+public class TestDependency {
+	
+	@Inject(value="hi")
+	private String msg = null;
+
+	public String getMsg() {
+		return msg;
+	}
+}
+}}}
+
+An bean can manage entities or beans.
