@@ -8,6 +8,17 @@ Many times this is not possible, because you have to install servers, frameworks
 
 First I designed jIntegration-Test, a integration testing framework to test the prototypes faster. That was good, I saved sometime but still I missed the possibility to compose this prototypes in a fast and reusable way, so I didn't have to start from scratch every time and in some way avoiding to install all that additional servers.
 
-So that was how I designed jEmbedded, as a container for services (embedded or not) or other elements, that promotes re usability and composition and easy configuration. I started to code a few embedded services (services that run in the same VM) as a Web Server, a Embedded Database, a Mule Service etc.. so I didn't need to install them in my environment.
+So that was how I designed jEmbedded, as a container for services (embedded or not) or other elements, that promotes re usability and composition and easy configuration. I started to code a few embedded services (services that run in the same VM) as a Web Server, a Embedded Database, a Mule Service etc.. so I didn't need to install them in my environment. And jEmbeded was born.
 
-The first version I developed, used Spring as an IoC container and don't get me wrong Spring is great but it takes some time to setup all the beans, xml-schemas (also you can use annotations, but still) and could take a bit to start. Also it's a bit generic, everything it's a POJO. I found myself adapting a lot of the spring code to handle my services so at the end I decided to write a little IoC container that could provided everything I need
+
+So what you can do with jEmbedded:
+
+- Easy prototyping and testing of Integration/SOA or standalone/web applications (not only prototypes of course, can be used in final apps), using the provided services. Have a look at the ESB case study.
+
+- Create services, package and distribute them. Then you can reuse them easily using service composition.
+
+- As a container for the embedded services provided (jetty, tomcat, activemq, mule etc..)
+
+- As a another IoC Container.
+
+- As a helper container for Spring providing services or a facade layer of services. Have a look at the ESB case study and the spring-integration module.
