@@ -32,12 +32,12 @@ There are many ways you could use jEmbedded:
 
   * Web enviroment: can be used in any web enviroment, have a look at the invoicing-server example. It shows the provided integration with SpringMVC.
 
-  * Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For example it's fast to test your integration/soa designs this way. Have a look at the invoicing-server example for an example of this (even though it's a bit complex for the sake of showing more jEmbedded features).
+  * Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For example, it's faster to test your integration/soa designs this way. Have a look at the invoicing-server example for an example of this (even though it's a bit complex for the sake of showing more jEmbedded features).
 
 
 === Services Examples & How to create them ===
 
-The core of any application logic must be a handful of services that handle it. The services can be created fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just and interface+annotations. This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services.
+The core of any application logic must be a handful of services that handle it. The services can be created fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just a interface+annotations. This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services.
 
 === Steps ==
 
@@ -54,7 +54,7 @@ public interface EchoMuleService extends Service {
 @AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
 }}}
 
-@AnnotatedService:
+`@AnnotatedService`:
 
 - id: service id in the container.
 
@@ -81,7 +81,7 @@ For this matter you can just declare the mule service and client services depend
 		</dependency>
 }}}
 
-All the services provided with jEmbedded follows the same packaging pattern,  they provide you with an interface, an implementation , some customs annotations and  a META-INF/xxx-service directory with the needed resources, usually a xxx-service.xml file(to use it from Spring or any other framework that uses its ApplicationContext), some properties files, some other configuration stuff etc... In fact this is the way you should package your services for distribution:
+All the services provided with jEmbedded follows the same packaging pattern,  they provide you with an interface, an implementation, some customs annotations and  a META-INF/xxx-service directory with the needed resources, usually a xxx-service.xml file(to use it from Spring or any other framework that uses its ApplicationContext), some properties files, some other configuration stuff etc... In fact this is the way you should package your services for distribution:
 
 {{{
 resources/
@@ -92,7 +92,7 @@ resources/
 
 So basically to use a service you can:
 
-*  Import it using the attribute resources with a class/interface depending how it was designed. This way you can externalize the configuration of your service using the @PropertiesService: `resources=MuleServiceImpl.class`
+*  Import it using the attribute "resources" with a class/interface depending how it was designed. This way you can externalize the configuration of your service using the @PropertiesService: `resources=MuleServiceImpl.class`
 
 *  Using its custom annotation:
 
@@ -101,13 +101,13 @@ So basically to use a service you can:
 public Service getMuleService();
 }}}
 
-The annotation can be declared at class or method level. If you want to have access to it, the best way it's to declare method that will be dynamicly implemented  by the service.
+The annotation can be declared at class or method level. If you want to have access to it, the best way it's to declare method that will implemented  by the service at runtime.
 
 {{{
 MuleService muleService = echoService.geMuleService();
 }}}
 
-Importing the service this way has the restriction that the configuration it's fixed on the annotation. This is not an issue when you want to develop and distribute a service like this one, that is not likely to change.
+Importing the service this way has the restriction that the configuration it's fixed on the annotation. This is not an issue when you want to develop and distribute a service like this one that is not likely to change.
 
 
 3 - Annotate the methods and add the additional services you may need.
@@ -126,7 +126,7 @@ public interface EchoMuleService extends Service {
 }
 }}}
 
-Note the I added the PropertiesService as it's needed to parse the properties file configuration (you can avoid this using the custom annotation), this service is used to compose the service, but it's not managed by the service. Also you don't need it to declare it as method (I did it for the sake of the example):
+Note the I added the `PropertiesService` as it's needed to parse the properties file configuration (you can avoid this using the custom annotation). This service is used to add functionality to the service but it's not managed by it. Also you don't need it to declare it as method (I did it for the sake of the example):
 
 {{{
 
@@ -142,7 +142,7 @@ public interface EchoMuleService extends Service {
 }
 }}}
 
-4- At this point we could think that would be nice to add a method that actually invokes the model that mule service exposes. This model just echo whatever string you sent it so we add the following method:
+4- At this point we could think that would be nice to add a method that actually invokes the model that mule service exposes. This model just echo whatever string you sent to it so we'll add the following method:
 
 {{{
 public Object sendEchoMessage(String echoEndPoint, String message);
@@ -155,9 +155,9 @@ Now you may think that you have to write have an implementation class.. but no y
 public Object sendEchoMessage(String echoEndPoint, String message);
 }}}
 
-@ImplementedBy annotation:
+`@ImplementedBy annotation:`
 
-- ref: service or element that can implements this functionality (required).
+- ref: service or element that could implement this functionality (required).
 
 - refMethodName: method of the ref element that needs to be invoked (optional). If it's not provided the declared method name will be used.
 
@@ -201,7 +201,7 @@ public interface EchoMuleService extends Service {
 }
 }}}
 
-If you use this version you also would need to the configuration in a properties file in META-INF/repository.properties.
+If you use this version you also will need add the configuration in a properties file in META-INF/repository.properties.
 
 As you can see jEmbedded gives a lot of flexibility in order to configure and compose the services or other elements as components or beans.
 
@@ -280,6 +280,39 @@ To start the container: `mvn -o jembedded:start`
 
 Once the container it's started, you will prompted to enter something, do it and you will have your echo, cool huh? ;)
 
+6 - Packaging and distribution.
+
+Now that you have a complete service you may think that you could distribute it or reuse it using composition.
+
+For this you could do:
+
+- Create a pom (have a look at any pom provided with the jembedded-services) that will package the classes and resources in a jar.
+
+- Create a custom annotation if you think that could be useful for the users of the service:
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD})
+public @interface EchoMuleService {
+	/**
+	 * 
+	 * @return
+	 */
+	AnnotatedService service() default @AnnotatedService(id="echoMuleService", clazz="org.jsemantic.jembedded.examples.services.mule.EchoMuleService");
+	
+        //you could declare more properties if needed
+}
+
+This way anyone that wants to use the service only would have to declare the annotation (that it's using jEmbedded that is):
+
+{{{
+@EchoMuleService // include the service into the container
+public class TestEchoMuleService {
+	
+	private EmbeddedHandler handler = null;
+	
+..
+}
+}}}
 
 
 
