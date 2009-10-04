@@ -4,88 +4,12 @@ As the documentation is not complete by now I've added a small FAQ with the ques
 
 = F.A.Q =
 
-== What is this framework good for? ==
-
-Well first of all it's just an _IoC_ container with all that implies, but more importantly it allows you to manage your application elements (definition, creation, composing, starting, stopping, releasing) in a easy and fast way (using annotations, no need of XML or other additional configuration).
-
-It provides the semantics or annotations needed to promote a bean or a POJO to a service, to a component, or to a entity managing their life cycle (if you choose that). For example, the container will start and stop the services for you.
-
-These additional semantics provide not only a life cycle to the POJOS, or a contract but also additional features as accessing to the executing environment and a chance to be externally managed (through JMX, I'm already working on a console).
-
-I would say that the provided embedded services and the feature of easy composition (creating a new service using other services) it's quite useful. In fact, it's how this framework was born.
-For example, you can get the jetty-service and create and web server of your own using just composition. Or a rules-server for your application using the rules-service provided, executing a set of business rules for the rest of the services.
-
-Finally, _jEmbedded_ is an implementation of another framework of mine, _jRepository_ that allows you to create your own IoC customized container (included in the distribution).
-
 
 == Can jEmbedded be used in a web application? == 
 
-Of course you can, in the same way you would use it in a standalone application. (I designed it with the 2 environments in mind). You have to be careful though, in the way that the container are created or disposed. This is managed by the annotation :
+Yes, for example integrated with SpringMVC. A ContainerListener is provided in the jembedded-spring-module for this matter. If you don't use Spring you can use a standard web listener.
 
-{{{
-@Container(ContainerInstanceType instanceType)
-
-public enum ContainerInstanceType {
-SINGLETON_VM, PROTOTYPE_VM, PROTOTYPE_BY_THREAD;
-}
-}}}
-
-If you don't provide this annotation by default the way of creating instances it's PROTOTYPE_BY_THREAD (a new instance per thread) so if you are creating an instance of _jEmbedded_ inside a MVC Controller, there is a good chance that you are creating a new container with each request. In this case use the SINGLETON_VM property to have one container per VM.
-
-Another way of getting the handler to the container is using the following static method:
-{{{
-EmbededHandler handler = ContainerHolder.getCurrentThreadContainer();
-}}}
-
-== What's the best way to use jEmbedded in a web environment? ==
-
-Depends how are you planning to use it, there are many ways you just can do it.
-
-*Singleton*
-
-If you are planning to use it as a one single container to serve the whole web app you can create and dispose the instance in a `ServletContext` listener:
-{{{
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.*;
-
-@Container(instanceType=SINGLETON_VM)
-public class EmbeddedContainerListener implements ServletContextListener {
-{
-private ServletContext context = null;
-
-private EmbeddedHandler handler = null;
-
-public void contextDestroyed(ServletContextEvent event)
-{
-this.context = null;
-handler.stop();
-}
-
-public void contextInitialized(ServletContextEvent event)
-{
-this.context = event.getServletContext();
-
-handler = EmbeddedHandlerFactory.getInstance(EmbeddedContainerListener.class, *.class);
-handler.start();
-}
-}
-}}}
-
-In order to access the container from any part of the web app:
-{{{
-EmbededHandler handler = ContainerHolder.getCurrentThreadContainer();
-}}}
-
-If you are using Spring, you can use an implementation of the `ContainerListener` to create the container.
-
-*As an instance per thread.*
-
-Let's say that you need a fresh container per request, in a MCV controller for instance. In order to do that just create and dispose the instance there.
-
-*Prototype instances.*
-
-You can create and dispose these instances anywhere but remember to dispose them!
+Have a look a the invoicing-server for a complete example of this.
 
 
 == What are the differences between @Container and @Repository annotations. ==
@@ -119,43 +43,3 @@ Now the new container would have access to the to the parent repository as well.
 With these two annotations resources can be added to the container but in a different manner as @Repository will create a new container for the resources and @Include will just add them to the current container (default container in case you haven't provided the @Repository annotation).
 
 Use @Include if you only want to add some extra resources to the container and not to create a new one.
-
-* Spring Integration, how to do it?
-
-There are many different ways to do this. I've provided a spring-support-module that will help you, but in this stage it's not very comprehensive as I've focused to provide a stand alone IoC container.
-
-In this module a `FactoryBean` class is provided so an instance of the embedded container can be stored into the spring-context. Then you can inject the container in any bean you want, get the container from Spring or just use `ContainerHolder.getCurrentThreadContainer()`.
-
-Please have a look at the spring-integration-module and the embedded-database example for more information.
-
-You may ignore the integration module and write your own `FactoryBean`:
-{{{
-@Container(instanceType=ContainerInstanceType.xxxx)
-@Repository(id="database-service-layer", resources={EmbeddedDatabaseImpl.class})
-public class EmbeddedDatabaseFactory implements FactoryBean {
-
-public Object getObject() throws Exception {
-return EmbeddedHandlerFactory.getInstance(getClass());
-}
-
-public Class getObjectType() {
-return EmbeddedHandler.class;
-}
-
-public boolean isSingleton() {
-return false;
-}
-}
-}}}
-
-Then you can retrieve the container like this:
-{{{
-ApplicationContex appContex; //SpringContext
-
-EmbeddedHandler handler = (EmbeddedHandler)appContext.getBean("factory-bean-id");
-}}}
-Finally, you can create the container in any spring bean you'd like. Of course watch out what kind of bean it is (singleton, prototype etc...)
-
-== Can the annotation @Inject be used to reference a Spring bean? ==
-
-No at this moment, but you can inject the container to any spring bean or just accessing the container with `ContainerHolder`. I will add this feature in the near future.
