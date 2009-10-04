@@ -278,13 +278,13 @@ This plugin is for maven so you need to declare it in your pom:
 
 To start the container: `mvn -o jembedded:start`
 
-Once the container it's started, you will prompted to enter something, do it and you will have your echo, cool huh? ;)
+Once the container it's started, you will prompted to enter something, just do it and you will have your echo, cool huh? ;)
 
 6 - Packaging and distribution.
 
-Now that you have a complete service you may think that you could distribute it or reuse it using composition.
+Now that you have a complete service you may think that you could distribute or reuse it using composition.
 
-For this you could do:
+In order to this you need to do:
 
 - Create a pom (have a look at any pom provided with the jembedded-services) that will package the classes and resources in a jar.
 
@@ -331,4 +331,3 @@ public class TestEchoMuleService {
 To use from Spring just use the import tag:
 
 `<import resource="classpath:META-INF/echo-mule-service/echo-mule-service.xml"/>`
-
