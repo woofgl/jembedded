@@ -218,6 +218,7 @@ The factory accepts an array of classes. You should add here the services or ele
 
 For example: EchoMuleService.class or if you running it from a test unit:
 
+{{{
 //note 
 @Include(resources={EchoMuleService.class}) // include the service into the container
 public class TestEchoMuleService {
@@ -243,6 +244,6 @@ public class TestEchoMuleService {
 		assertEquals("hello dude!", result);
 	}
 }
-
+}}}
 
 5 - You can use the service with a RepositoryHandler as well.
