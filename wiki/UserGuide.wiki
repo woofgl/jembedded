@@ -13,7 +13,7 @@
     * [jEmbeddedSpringExporter jEmbedded Spring Service Exporter]
     * [jEmbeddedSpringAnnotation jEmbedded Spring Container Annotation]
   * [jEmbeddedPlugin jEmbedded Maven Plugin]
-  * [jECaseStudy Integration/ESB case study
+  * [jECaseStudy Integration/ESB case study]
   * [jExamples jEmbedded Examples]
     * [jECaseStudy Integration/ESB case study]
   * [jFaq jEmbedded FAQ]
