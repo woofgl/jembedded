@@ -7,7 +7,7 @@ As the documentation is not complete by now I've added a small FAQ with the ques
 
 == Can jEmbedded be used in a web application? == 
 
-Yes, for example integrated with SpringMVC. A ContainerListener is provided in the jembedded-spring-module for this matter. If you don't use Spring you can use a standard web listener.
+Yes, for example integrated with SpringMVC. A `ContainerListener` is provided in the jembedded-spring-module for this matter. If you don't use Spring you can use a standard web listener.
 
 Have a look a the invoicing-server for a complete example of this.
 
