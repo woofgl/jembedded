@@ -289,7 +289,7 @@ For this you could do:
 - Create a pom (have a look at any pom provided with the jembedded-services) that will package the classes and resources in a jar.
 
 - Create a custom annotation if you think that could be useful for the users of the service:
-
+{{{
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.TYPE, ElementType.METHOD})
 public @interface EchoMuleService {
@@ -301,8 +301,9 @@ public @interface EchoMuleService {
 	
         //you could declare more properties if needed
 }
+}}}
 
-This way anyone that wants to use the service only would have to declare the annotation (that it's using jEmbedded that is):
+This way anyone that wants to use the service only will need to declare the annotation (that it's using jEmbedded that is):
 
 {{{
 @EchoMuleService // include the service into the container
@@ -314,6 +315,20 @@ public class TestEchoMuleService {
 }
 }}}
 
+- Create a META-INF/echo-mule-service directory and include a properties file for configuration (if needed) and a xml beans file if you are planning to use this service from Spring or any framework that uses Spring's ApplicationContext (as such as Mule):
+{{{
+<bean id="echoMuleService" class="org.jsemantic.jembedded.support.spring.exporter.ServiceExporter">
+		<property name="id" value="echoMuleService"/>
+		
+		<property name="annotatedClasses">
+			<list>
+	<value>org.jsemantic.jembedded.examples.services.mule.EchoMuleService</value>
+			</list>
+		</property>
+	</bean>
+}}}
 
+To use from Spring just use the import tag:
 
+`<import resource="classpath:META-INF/echo-mule-service/echo-mule-service.xml"/>`
 
