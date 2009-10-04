@@ -3,11 +3,14 @@
 
 ==jEmbedded==
 * [jEmbeddedUserGuide User's Guide]
-  * [jEMotivation Motivation]
   * [jEInstallNotes How to install jEmbedded]
-  * [jEGettingStarted How to get started in 5 mins(more or less)]
+  * [jEGettingStarted How to get started in 5 minutes (more or less)]
+  * [jEmbeddedCore jEmbedded Core Container]
+  * [jEmbeddedServices jEmbedded Services]
+  * [jEmbeddedSpring jEmbedded Spring Integration]
+  * [jEmbeddedPlugin jEmbedded Maven Plugin]
   * [jECaseStudy Integration/ESB case study]
-  * [jExamples Embedded Database(Derby/HSQLDB)]
+  * [jExamples jEmbedded Examples]
   * [jFaq jEmbedded FAQ)]
 
 Note: deprecated until next version 1.0
