@@ -203,38 +203,46 @@ public interface EchoMuleService extends Service {
 
 If you use this version you also would need to the configuration in a properties file in META-INF/repository.properties.
 
-As you can see jEmbedded gives a lot of flexibility in order to configure and compose the elements.
+As you can see jEmbedded gives a lot of flexibility in order to configure and compose the services or other elements as components or beans.
 
 
-4 – Once the services (and its associated components and beans) are created and annotated you’ll need to create an instance of the jEmbedded container (or more than one, you are not restricted to one).
+4 – Now you have the service to ready to go, but how still you need and environment to run it.
 
 In order to do that you can use the EmbeddedHandlerFactory:
 
 {{{
-EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(Class<?>…classes);
+EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(Class<?>...…classes);
 }}}
 
-The factory accepts an array of classes. You should include here the entry point to your services, for example: WebServerImp.class or if you running it from a test unit:
+The factory accepts an array of classes. You should add here the services or elements you want to add to the container (most likely the entry point).
 
-{{{
-@WebClient
-@Include(resources={WebServerImpl.class})
-public class IntegrationWebServerTest {
+For example: EchoMuleService.class or if you running it from a test unit:
 
-……
-EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(IntegrationWebServerTest.class);
-}}}
+//note 
+@Include(resources={EchoMuleService.class}) // include the service into the container
+public class TestEchoMuleService {
+	
+	private EmbeddedHandler handler = null;
+	
+	@Before
+	public void setUp() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();//start the container
+	}
+	
+	@After
+	public void dispose() {
+		handler.stop(); //stop and dispose the container
+	}
+	@Test
+	public void test() {
+		
+		EchoMuleService echoMuleService = (EchoMuleService)handler.getService("echoMuleService");
+		
+		String result = (String)echoMuleService.sendEchoMessage("vm://echo", "hello dude!");
+		assertEquals("hello dude!", result);
+	}
+}
 
-The factory returns a handler to the created container that allows manipulating it:
 
-{{{
-handler.start(); // start the container.
-
-WebServer server = (WebServer)handler.getService(“webServer”); // retrieves a service
-
-ServletContext  servletContext = server.getServletContext()
-
-handler.stop(); // stop and dispose the container.
-}}}
-
-5 - You may handle the service with a Repository as well.
+5 - You can use the service with a RepositoryHandler as well.
