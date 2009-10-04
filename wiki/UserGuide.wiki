@@ -7,11 +7,15 @@
   * [jEGettingStarted How to get started in 5 minutes (more or less)]
   * [jEmbeddedCore jEmbedded Core Container]
   * [jEmbeddedServices jEmbedded Services]
+    * [jEmbeddedJettyService jEmbedded Jetty Service]
   * [jEmbeddedSpring jEmbedded Spring Integration]
+    * [jEmbeddedSpringMVC jEmbedded Spring MVC Integration]
+    * [jEmbeddedSpringExporter jEmbedded Spring Service Exporter]
+    * [jEmbeddedSpringAnnotation jEmbedded Spring Container Annotation]
   * [jEmbeddedPlugin jEmbedded Maven Plugin]
-  * [jECaseStudy Integration/ESB case study]
   * [jExamples jEmbedded Examples]
-  * [jFaq jEmbedded FAQ)]
+    * [jECaseStudy Integration/ESB case study]
+  * [jFaq jEmbedded FAQ]
 
 Note: deprecated until next version 1.0
 ==jIntegrationTest==
