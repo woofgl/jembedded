@@ -3,8 +3,7 @@
 = Case study: Electrical measures & invoicing =
 Note:
 
-´In construction. all the sources and the resources will be available in the next release of jEmbedded (0.1.3rc)´
-
+´In construction'
 
 So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every home and then send it to a central system that will calculate and print the invoices.
 
@@ -118,10 +117,11 @@ public class InvoicingServiceImpl extends AbstractCMTService implements
 }
 }}}
 
+The invoicing service "lives" in the service layer, acting as a mediator to the rest of the services, accessing the persistence layer (to retrieve the customer) and the integration layer to call the invoicing server.
 
 === Persistence Layer ===
 
-The persistence layer contains the embedded databse and the jdbcService. The 
+The persistence layer contains the embedded database and the jdbcService
 
 {{{
 @Repository(id="persistenceLayer", parent="integrationLayer")
@@ -137,6 +137,10 @@ public interface PersistenceLayer extends Service {
 
 === Integration Layer == 
 
+The integration layer it's the interface to the external systems, in this case it's the invoicing-server that's is handled by a MULE ESB.
+
+The invoicing-server doesn't get all the requests upfront, there is queue that gets all the petitions, a validation-service that validates the msg and then if it's correct it's passed to the invoces-service (if not it's redirected to and error queue).
+
 {{{
 @Repository(id = "integrationLayer")
 @AnnotatedService(id="integrationLayer", resources={InvoicingServer.class})
@@ -151,9 +155,43 @@ public interface IntegrationLayer  extends Service {
 
 }}}
 
-
 === The invoicing-server ===
 
-// TO DO
-
+{{{
+@AnnotatedService(id="invoicingServer")
+public interface InvoicingServer extends Service {
+	
+	@MuleService(
+			configurationFile="META-INF/invoices-app/services/mule-service/invoicing-system-config.xml")
+	public Service getMuleService();
+	
+}
 }}}
+
+So the invoicing server can be created with composition: a mule service, a validation-service and a invoices-service (the one that actually creates the invoices). In the layer it's only declared the mule-service as the rest of services are handled by mule (but both services are created by jEmbedded and imported by mule):
+
+{{{
+spring:beans>
+   <spring:import resource="classpath:META-INF/invoices-service/invoices-service.xml"/>
+   <spring:import resource="classpath:META-INF/validation-service/validation-service.xml"/>
+}}}
+
+The validation needs to be referenced by a custom-inbound router:
+{{{
+<custom-inbound-router 						class="org.jsemantic.jembedded.examples.invoicing.mule.MuleValidationService">
+    <spring:property name="validationService" ref="validationService"/>
+</custom-inbound-router>
+}}}
+
+and the invoices-service will be the core component of the mule model service:
+
+{{{
+<service name="invoicingService">
+	<inbound>
+	   <jms:inbound-endpoint queue="temp.queue"/>
+	</inbound>
+	<component>
+	   <spring-object bean="invoicesService"/>
+	</component>
+}}}
+
