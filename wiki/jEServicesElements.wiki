@@ -6,7 +6,7 @@ Can be deduced from the name of the framework that there is one kind of "special
 
 *An embedded service it's a standalone one that can be invoked from within the same VM*
 
-Many of the 
+Many of the provided services within the container are embedded ones: JMS-Broker, Mule-Service, CFXServer-Service etc... most of that services can be used as no embedded as well, but I have prepared then (in some cases they already had an embedded implementation) and packaged them to be embedded so it can be used directly from the container, saving you the pain to install them, configuring them (well some little config it's needed, just the basic one from the annotations) etc... For example, you don't need to put jar's or classes in the classpath in order to the server to load them, or deploy a war etc etc..
 
 === Services ===
 
@@ -14,22 +14,40 @@ Usually offers functionality to any potential clients (for instance, an applicat
 
 jEmbedded can produce definitions, make instances, hold and manage the lifecycle of any number or services that are annotated with a minimal configuration:
 
+== Standard Container Managed implemented Service ==
+
+This is the standard service, implementing an interface and extending an abstract class to  get its functionality(this is changing and in the next version of `jService` there won't be any need of abstract classes, won't be deprecated though).
+
 {{{
+@AnnotatedService(id="jdbcService", resources=DataSource.class,
+managedElements="jdbcTemplate")
+public class JdbcServiceImpl extends AbstractCMTService implements
+		JdbcService {
 
-@AnnotatedService(id = "httpService")
-public class JettyServiceImpl extends AbstractCMTService implements JettyService {
+	private JdbcTemplate jdbcTemplate;
 	
-	@Inject(value="${jettyService.port}")
-	private String port = "9005";
-}
-
+	@Inject(ref="dataSource")
+	private DataSource dataSource = null;
 }}}
 
-The container injects a Context to the service (and the components as well), that provides access to the executing enviroment.
+This is a Container Managed Service, it means that the container will managed it's lifecyle (init, start, stop, dispose).
 
-==== Types of Services ====
+The service can have some resources associated to it and injected but still are managed by the container (`DataSource.class`). Still the service can managed other services with the attribute `managedElements" handling its life cycle himself.
 
-CMT Services(managed by the container) and un-managed services (Service). A service can be started/stopped,  initialized/disposed. If the service is CMT the former operations only can be invoked by the container. 
+One of the benefits of the managed elements it's that as they don't live alone they have access to their environment and maybe to other's. The container injects a Context to the service (and the components as well), that provides access to the executing enviroment and the container itself. It means you can have access to other services or elements within the service:
+
+{{{
+JdbcService jdbcService = handler.getService("jdbcService");
+jdbcService.getContext().getInstance("id");
+}}}
+
+or if you are executing the the container in other container environment as such as Spring 
+you can have access to it:
+
+{{{
+JdbcService jdbcService = handler.getService("jdbcService");
+ApplicationContext ctx = (ApplicationContext)jdbcService.getContext().getExternal();
+}}}
 
 A service can manage: services, components, beans  and entities.
 
