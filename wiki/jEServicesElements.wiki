@@ -1,6 +1,12 @@
-==jEmbedded elements==
+==jEmbedded Services and Other Elements==
 
-An embedded service it's a standalone service that can be invoked from within an application.
+The jEmbedded container can handle many different elements as Services, Dynamic Services, Components, Beans and AbstractBeans. All of them can be created and managed through annotations.
+
+Can be deduced from the name of the framework that there is one kind of "special element" and that it's the embedded service:
+
+*An embedded service it's a standalone one that can be invoked from within the same VM*
+
+Many of the 
 
 === Services ===
 
