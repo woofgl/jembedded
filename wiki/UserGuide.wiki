@@ -6,7 +6,7 @@
   * [jEInstallNotes How to install jEmbedded]
   * [jEGettingStarted How to get started in 5 minutes (more or less)]
   * [jEmbeddedCore jEmbedded Core Container]
-  * [jEmbeddedServices jEmbedded Services]
+  * [jEServicesElements  jEmbedded Services]
      * [jEmbeddedJettyService jEmbedded Jetty Service]
   * [jEmbeddedSpring jEmbedded Spring Integration]
     * [jEmbeddedSpringMVC jEmbedded Spring MVC Integration]
@@ -18,7 +18,7 @@
     * [jECaseStudy Integration/ESB case study]
   * [jFaq jEmbedded FAQ]
 
-Note: deprecated until next version 1.0
+Note: The documentation of jIntegrationTest is deprecated until next version 1.0
 ==jIntegrationTest==
 * [UserGuide User's Guide]
   * [Motivation Motivation]
