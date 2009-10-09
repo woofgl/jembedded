@@ -4,7 +4,7 @@ The jEmbedded container can handle many different elements as Services, Dynamic 
 
 Can be deduced from the name of the framework that there is one kind of "special element" and that it's the embedded service:
 
-*An embedded service it's a standalone one that can be invoked from within the same VM*
+*Standalone service that can be invoked from within the same VM*
 
 Many of the provided services within the container are embedded ones: JMS-Broker, Mule-Service, CFXServer-Service etc... most of that services can be used as no embedded as well, but I have prepared then (in some cases they already had an embedded implementation) and packaged them to be embedded so it can be used directly from the container, saving you the pain to install them, configuring them (well some little config it's needed, just the basic one from the annotations) etc... For example, you don't need to put jar's or classes in the classpath in order to the server to load them, or deploy a war etc etc..
 
