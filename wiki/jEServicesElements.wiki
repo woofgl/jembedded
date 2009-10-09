@@ -14,7 +14,7 @@ Usually offers functionality to any potential clients (for instance, an applicat
 
 jEmbedded can produce definitions, make instances, hold and manage the lifecycle of any number or services that are annotated with a minimal configuration:
 
-== Standard Container Managed implemented Service ==
+== Container Managed implemented Service ==
 
 This is the standard service, implementing an interface and extending an abstract class to  get its functionality(this is changing and in the next version of `jService` there won't be any need of abstract classes, won't be deprecated though).
 
@@ -51,15 +51,46 @@ ApplicationContext ctx = (ApplicationContext)jdbcService.getContext().getExterna
 
 A service can manage: services, components, beans  and entities.
 
+== Container Managed Abstract Service ==
+
+This service would the same as the former if it wasn't because you don't need to supply an implementation for it, just and interface + some annotations. That's the reason why it's an `AbstractService`:
+
+@AnnotatedService(id="webServer", resources=JettyServiceImpl.class, 
+		managedElements={"httpService"})
+public interface WebServer extends Service {
+	
+	//This service one is managed by the WebServer, started and stopped by it.
+	@Inject(ref="httpService")
+	public void getHttpService(JettyService httpService);
+	
+	//This service is just for composition, but its lifecycle is managed by the container, not the WebServer
+	@PropertiesService(propertiesFile="META-INF/web-server/web-server.properties")
+	public void getPropertiesService();
+	// end of service composition
+	
+	//Added functionality, you can create dynamic invoking methods from any service
+	//that you may have in the container
+	
+	@ImplementedBy(ref="httpService", refMethodName="getServerContext")
+	public ServletContext getServletContext();
+	
+	@ImplementedBy(ref="httpService")
+	public void setPort(String port);
+	//end of added functionality
+}
+
+The annotation is likely to change in the next release to `@AbstractService`. Have a look at the "5 minutes guide for a good example of an `AbstractService`.
 
 === Components ===
 
-Usually provides support functionality to services or other components,  but usually it's not invoked directly by any client.
+Provides support functionality to services or other components but usually it's not invoked directly by any client but for other services or components.
 
 
-==== Types of Components ====
+==== CMT Component ====
 
-CMT Component (managed by the container) and un-managed component. A component can be initialized/disposed. If the component is of CMT type, the former operations only can be invoked by the container (an exception will be throw otherwise).
+CMT Component (managed by the container).
+
+ A component can be initialized/disposed. If the component is of CMT type, the former operations only can be invoked by the container (an exception will be throw otherwise).
 
 A component can manage: component, beans and entities.
 
@@ -67,7 +98,7 @@ jEmbedded can produce definitions, make instances, hold and manage the lifecycle
 
 {{{
 @AnnotatedComponent(id="supportComponent")
-public class SupportComponent extends AbstractComponent {
+public class SupportComponent extends AbstractCMTComponent {
 	
 	@Override
 	protected void postConstruct() {
