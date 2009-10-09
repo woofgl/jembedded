@@ -1,6 +1,6 @@
 ==jEmbedded Services and Other Elements==
 
-The jEmbedded container can handle many different elements as Services, Dynamic Services, Components, Beans and AbstractBeans. All of them can be created and managed through annotations.
+The jEmbedded container can handle many different elements as Services, Dynamic Services, Components, Beans and Abstract Beans. All of them can be created and managed through annotations.
 
 Can be deduced from the name of the framework that there is one kind of "special element" and that it's the embedded service:
 
@@ -54,7 +54,7 @@ A service can manage: services, components, beans  and entities.
 == Container Managed Abstract Service ==
 
 This service would the same as the former if it wasn't because you don't need to supply an implementation for it, just and interface + some annotations. That's the reason why it's an `AbstractService`:
-
+{{{
 @AnnotatedService(id="webServer", resources=JettyServiceImpl.class, 
 		managedElements={"httpService"})
 public interface WebServer extends Service {
@@ -78,8 +78,9 @@ public interface WebServer extends Service {
 	public void setPort(String port);
 	//end of added functionality
 }
+}}}
 
-The annotation is likely to change in the next release to `@AbstractService`. Have a look at the "5 minutes guide for a good example of an `AbstractService`.
+The annotation is likely to change in the next release to `@AbstractService`. Have a look at the "5 minutes guide" for a good example of an `AbstractService`.
 
 === Components ===
 
