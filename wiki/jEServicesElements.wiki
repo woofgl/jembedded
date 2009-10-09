@@ -87,7 +87,7 @@ The annotation is likely to change in the next release to `@AbstractService`. Ha
 Provides support functionality to services or other components but usually it's not invoked directly by any client but for other services or components.
 
 
-==== CMT Component ====
+== CMT Component ==
 
 CMT Component (managed by the container).
 
