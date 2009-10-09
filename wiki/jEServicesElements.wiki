@@ -12,7 +12,7 @@ Many of the provided services within the container are embedded ones: JMS-Broker
 
 Usually offers functionality to any potential clients (for instance, an application or other service), implementing an interface that provides the contract for the client.
 
-jEmbedded can produce definitions, make instances, hold and manage the lifecycle of any number or services that are annotated with a minimal configuration:
+All the services should implement the interface `Service`.
 
 == Container Managed implemented Service ==
 
@@ -82,20 +82,28 @@ public interface WebServer extends Service {
 
 The annotation is likely to change in the next release to `@AbstractService`. Have a look at the "5 minutes guide" for a good example of an `AbstractService`.
 
+
 === Components ===
 
 Provides support functionality to services or other components but usually it's not invoked directly by any client but for other services or components.
 
+- All the components should implement the interface `Component`.
 
-== CMT Component ==
+- A component can manage: component, beans and entities.
 
-CMT Component (managed by the container).
+== Container Managed Component ==
 
- A component can be initialized/disposed. If the component is of CMT type, the former operations only can be invoked by the container (an exception will be throw otherwise).
+This element's life cycle is managed by the container, which is different from service's one:
 
-A component can manage: component, beans and entities.
+- init (the component it's initialized, the method `postConstruct` can be overrided)
 
-jEmbedded can produce definitions, make instances, hold and manage the lifecycle of any number or  components that are annotated with a minimal configuration:
+- dispose (the component is discarded, the method release can be overrided).
+
+A component therefore can't be started/stopped. As this is a CMT component the former methods can only be invoked by the container.
+
+In order to implement a CMT Component the `AbstractCMTComponent` must be extended, this will change in the next version of `jService` (no abstract classes needed at all). 
+
+For example:
 
 {{{
 @AnnotatedComponent(id="supportComponent")
@@ -117,6 +125,13 @@ public class SupportComponent extends AbstractCMTComponent {
 }}}
 
 
+== Simple Component (non managed) ==
+
+The principal difference with the former is that the life cycle of the component must be handled by any other service or component, invoking it's methods directly. The container only will instantiated it.
+
+In order to implement a Simple Component the `AbstractComponent` class must be extended, this will change in the next version of `jService` (no abstract classes needed at all).
+
+
 === Entities ===
 
 Just a pojo, but does not follow the get/set bean standard. Usually are DOM classes, utility classes, etc...
@@ -134,13 +149,15 @@ public class TestDependency {
 
 An entity can manage entities or beans.
 
-Note: in the next version (0.1.1) the annotation for entities will be different: ´@AnnotatedEntity()´
-
 === Beans ===
 
-Just a pojo that follows the getter/setter standard.
+Just a pojo that follows the getter/setter standard but that it's created and stored by the container.
 
-jEmbedded can produce definitions, make instances and hold any number of beans  that are annotated with a minimal configuration. In this case the lifecycle of the bean is managed by the application nor the container (for example, could be diposed by a parent component).
+It doesn't have an special life cycle beyond the creation and garbage collected.
+
+== Annotated Bean == 
+
+It' enough in order to create a bean to annotated and inject some values or dependencies.
 
 {{{
 @AnnotatedBean(id="dependency")
@@ -155,4 +172,6 @@ public class TestDependency {
 }
 }}}
 
-An bean can manage entities or beans.
+== Abstract Bean == 
+
+// TO DO
