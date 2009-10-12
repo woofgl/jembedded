@@ -25,22 +25,47 @@ First we can define the protocols we'll use to connect to the central system. We
 
 Now with the description of the system at hand we can came up with the services, components etc... that we'd need, trying to use as much service composition as possible:
 
- - Electrical measures devices: they will take the measure and send it to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
+  * Electrical measures devices: they will take the measures and send them to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
 
- - The agent will connect via HTTP, we'll use the HTTP-Client component for that.
+The agent will connect via HTTP, we'll use the HTTP-Client component for that.
+
+  * Central system: it will be created as a composition of several services and entry points.
+
+=== Entry Points ===
+
+There will be 2 entry points to the application: A WS-Enpoint and a HTTP-Entry point. The second one will be represented by a MVC controller (it's url, in fact) and the other as WS-Entry point exposed by the ESB.
+
+In order to model these entry points we'll need a web-server that we can implement using a jetty-service and a ESB than we can implement with the mule-service. Also to implement the entry point controller we'll use SpringMVC that it's supported by jEmbedded natively.
 
 
-- Central system:
+|| *Entry Point* || *Model* || *Implementation* ||
+|| WS-Endpoint || ESB || Mule-Service ||
+|| HTTP-Endpoint  || Web/Controller || Jetty-Service/Spring MVC ||
 
-The central system will be created as a composition of several services. As it's possible 
+
+=== Services ===
+
+Apart from the services needed to implement the entry point we'll need some business services and other components to implement the application work flow.
+
+It's a good idea to group the application services in a logical fashion, in other words in layers:
+
+
+- A Service Layer that will work as a facade for the entry points. It's a good idea that the external clients (whatever they might be) access just a facade that shields it from changes and don't expose more than the necessary interface.
+
+The Service Layer will be composed as a hierarchy having as a parent a Persistence Layer and an Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the persistence layer.
+
+|| *Service* || *Layer* || *Implementation* ||
+|| Invoicing Facade || ServicesLayer || AbstractService ||
+|| Invoicing Service || ServicesLayer || AbstractService ||
+|| Customer Database || PersistenceLayer || Embedded-Database(Derby) ||
+|| ESB || IntegrationLayer || Mule-Service ||
+|| Messaging Facility  || IntegrationLayer || JMS-Broker-Service ||
 
 
 
-An integration service layer needs to be implemented that will act as a facade for a Spring MVC Controller. 
-
-This layer represents the entry to point to an invoicing-server, that calculates the invoices for a number of customers. The invoicing server will be represented by an integration-layer. 
-
-This service layer will be composed as a hierarchy of layers having as a parent a Persistence Layer and an Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the persince layer.
+|| *Service* || *Model* || *Implementation* ||
+|| Invoicing Server || ServicesLayer || Mule-Service ||
+|| Customer Database  || Web/Controller || Jetty-Service/Spring MVC ||
 
 == Application Flow. ==
 
@@ -97,7 +122,7 @@ public class Controller extends AbstractController {
 }
 }}}
 
-The controller retrieves and invoke the `InvoicingService` with the http params
+The controller retrieves and invoke the `InvoicingService` with the http params through messaging:
 
 {{{
 @MuleClient
