@@ -42,39 +42,44 @@ In order to model these entry points we'll need a web-server that we can impleme
 || WS-Endpoint || ESB || Mule-Service ||
 || HTTP-Endpoint  || Web/Controller || Jetty-Service/Spring MVC ||
 
-
 === Services ===
 
-Apart from the services needed to implement the entry point we'll need some business services and other components to implement the application work flow.
+Apart from the services needed to implement the entry points we'll need some business services and other components to implement the application work flow.
 
 It's a good idea to group the application services in a logical fashion, in other words in layers:
-
 
 - A Service Layer that will work as a facade for the entry points. It's a good idea that the external clients (whatever they might be) access just a facade that shields it from changes and don't expose more than the necessary interface.
 
 The Service Layer will be composed as a hierarchy having as a parent a Persistence Layer and an Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the persistence layer.
 
+- A Persistence Layer that will hold the customer database (a derby embedded database) and the necessary DAO's to retrieve the data. We'll implement this layer using Spring to take advantage of it's transactional services and to show the jEmbedded integration
+
+- A Integration Layer that's the interface to the external systems, in this case it's the Invoicing-Server that's is modelled by composition of a few services.
+
 || *Service* || *Layer* || *Implementation* ||
 || Invoicing Facade || ServicesLayer || AbstractService ||
 || Invoicing Service || ServicesLayer || AbstractService ||
 || Customer Database || PersistenceLayer || Embedded-Database(Derby) ||
+|| Customer DAO || PersistenceLayer || SpringJDBC ||
 || ESB || IntegrationLayer || Mule-Service ||
 || Messaging Facility  || IntegrationLayer || JMS-Broker-Service ||
 
 
+- Invoicing server
 
 || *Service* || *Model* || *Implementation* ||
-|| Invoicing Server || ServicesLayer || Mule-Service ||
-|| Customer Database  || Web/Controller || Jetty-Service/Spring MVC ||
+|| Invoicing Server || Mule-Model || Abstract Service ||
+|| Customer validator  || Mule-Model || Mule-Validation-Service ||
+|| Invoices Service  || Mule-Model || Invoices Service (provided) ||
+
 
 == Application Flow. ==
 
-The controller will receive http request with 2 parameters (needed to calculate the invoice) and it will invoke the invoicing-service (in the services-layer). 
+The requests sent by the measure agents will be received from any of the 2 entry points. If the http entry point received a request, a controller will be invoked with the two parameters needed to calculate the invoice. The controller has access to the Service Layer and its facade invoking the Invoicing Service facade.
 
-This service will get the details of the customer (in the persistence layer) and will  send a message to the invoicing-server with the data (in the integration-layer).
+This service is implemented using a jBPM process, that basically 
 
-The invoicing-server is composed of a mule-service, an jms broker, a rules-service and the actual invoicing-service (that calculates and creates the invoice).
-
+== Implementation == 
 
 === Services Layer ===
 {{{
@@ -89,7 +94,6 @@ public interface ServicesLayer extends Service {
 	public InvoicingService getInvoicingService();
 }
 }}}
-
 
 
 The controller looks like this:
@@ -122,45 +126,19 @@ public class Controller extends AbstractController {
 }
 }}}
 
-The controller retrieves and invoke the `InvoicingService` with the http params through messaging:
+The controller retrieves and invoke the `InvoicingService` with the http params:
 
 {{{
-@MuleClient
-@AnnotatedService(id = "invoicingService")
-public class InvoicingServiceImpl extends AbstractCMTService implements
-		InvoicingService {
-	
-	@Inject
-	private JdbcService jdbcService = null;
 
-	@Inject
-	private MuleClientWrapper muleClient = null;
-
-	public void generateInvoice(String customerId, String kwh) {
-
-		Customer customer = null;
-		
-                //the customer is retrieved using the jdbcService
-
-		if (customerResult != null) {
-			MuleMessage message = new DefaultMuleMessage(customer);
-			muleClient.sendMessage("jms://in.queue", message);
-
-			logger.debug(">>>>>>>>>>>>Sent message: " + message
-					+ ">>>>>>>>>>>>>>>>>>");
-		} else {
-			logger.debug(">>>>>>>>>>>>No message sent");
-		}
-	}
-
-}
 }}}
+
+
 
 The invoicing service "lives" in the service layer, acting as a mediator to the rest of the services, accessing the persistence layer (to retrieve the customer) and the integration layer to call the invoicing server.
 
 === Persistence Layer ===
 
-The persistence layer contains the embedded database and the jdbcService
+The persistence layer contains the embedded database and the DAO's.
 
 {{{
 @Repository(id="persistenceLayer", parent="integrationLayer")
