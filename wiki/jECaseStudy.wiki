@@ -2,9 +2,6 @@
 
 = Case study: Electrical Measures & Invoicing =
 
-Note:
-´In construction'
-
 So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every building and then send it to a central system that will calculate and print the invoices. 
 
 In order to connect to the central system, we'd need a device in every building that gets the readings and send them through the internet.
@@ -30,7 +27,8 @@ Now with the description of the system at hand we can came up with the services,
 The agent will connect via HTTP, we'll use the HTTP-Client component for that.
 
   * Central system: it will be created as a composition of several services and entry points.
-
+  * Invoicing system: a composition of services + the provided invoices-service.
+ 
 === Entry Points ===
 
 There will be 2 entry points to the application: A WS-Enpoint and a HTTP-Entry point. The second one will be represented by a MVC controller (it's url, in fact) and the other as WS-Entry point exposed by the ESB.
@@ -64,6 +62,7 @@ The Service Layer will be composed as a hierarchy having as a parent a Persisten
 || ESB || IntegrationLayer || Mule-Service ||
 || Messaging Facility  || IntegrationLayer || JMS-Broker-Service ||
 
+All the layers are implemented using AbstractServices and composition so there is no need of any implementation (just the interface).
 
 - Invoicing server
 
@@ -77,7 +76,9 @@ The Service Layer will be composed as a hierarchy having as a parent a Persisten
 
 The requests sent by the measure agents will be received from any of the 2 entry points. If the http entry point received a request, a controller will be invoked with the two parameters needed to calculate the invoice. The controller has access to the Service Layer and its facade invoking the Invoicing Service facade.
 
-This service is implemented using a jBPM process, that basically 
+This service is implemented using an AbstractService and jBPM process, that basically retrieves the customer data and sends it to the invoicing-server using the messaging-service. The only implementation needed here it's the DAO and that also could be generated for the most part.
+
+Once the Invoicing-Server receives the customer data in it's inbound queue, this Customer Data is validated buy the Mule-Validation-Service. If the data it's wrong, it will dispatched to a error queue. If it's correct it will be dispatched to the invoices-service, that will generate the invoice and then send it to the outbound queue and store the invoice in a xml format in a directory.
 
 == Implementation == 
 
@@ -129,26 +130,72 @@ public class Controller extends AbstractController {
 The controller retrieves and invoke the `InvoicingService` with the http params:
 
 {{{
-
+@MuleClient
+@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
+@AbstractService (id="invoicingService", resources={JBPMServiceImpl.class}, 
+		managedElements={"jbpmService"})
+public interface InvoicingService extends Service {
+	
+	
+	@ImplementedByBPM(bpmServiceRef="jbpmService", processKey="invoicing")
+	public void generateInvoice(String customerId, String kwh);
+	
+}
 }}}
 
 
 
-The invoicing service "lives" in the service layer, acting as a mediator to the rest of the services, accessing the persistence layer (to retrieve the customer) and the integration layer to call the invoicing server.
+The invoicing service "lives" in the service layer, acting as a mediator to the rest of the services, accessing the persistence layer (to retrieve the customer) and the integration layer to call the invoicing server. This is done by a jBPM process:
+
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="invoicing" xmlns="http://jbpm.org/4.0/jpdl">
+
+  <start g="147,55,48,48">
+    <transition to="invoke"/>
+  </start>
+   
+  <java expr="#{customerDao}" method="getInvoiceCustomerData" name="invoke" var="result_service_1" g="129,139,80,40">
+   		<arg><object expr="#{service_param_0}"/></arg>
+   		<arg><object expr="#{service_param_1}"/></arg>
+   		<transition name="to_invoke" to="invoke2" g="-52,-18"/>
+  </java>
+   
+  <java expr="#{muleClient}" g="120,226,99,52" method="sendObjectMessage" name="invoke2" var="result_service_end">
+    
+    <arg><object expr="jms://in.queue"/></arg>
+    <arg><object expr="#{result_service_1}"/></arg>
+    <transition to="wait"/>
+  </java>
+  
+  <state g="125,321,88,52" name="wait">
+   <transition to="end"/>
+  </state>
+  
+  <end g="148,415,48,48" name="end"/>
+
+</process>
+}}}
+
 
 === Persistence Layer ===
 
 The persistence layer contains the embedded database and the DAO's.
 
 {{{
-@Repository(id="persistenceLayer", parent="integrationLayer")
+@Repository(id="persistenceLayer",  iocProviders = { "springRepository" },
+		parent="integrationLayer")
 
-@AnnotatedService(id="persistenceLayer", resources={EmbeddedDatabaseImpl.class})
+@AbstractService(id="persistenceLayer", resources={EmbeddedDatabase.class}, 
+		managedElements="embeddedDatabase")
 public interface PersistenceLayer extends Service {
 
 	@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
 	public Service getPropertiesService();
 	
+	@SpringRepository(configurationFile = "META-INF/invoices-app/layers/persistence-layer.xml")
+	public Service getSpringRepository();
 }
 }}}
 
@@ -160,7 +207,8 @@ The invoicing-server doesn't get all the requests upfront, there is queue that g
 
 {{{
 @Repository(id = "integrationLayer")
-@AnnotatedService(id="integrationLayer", resources={InvoicingServer.class})
+@AbstractService(id="integrationLayer", resources={InvoicingServer.class}, 
+		managedElements={"invoicingServer", "jmsBrokerService"})
 public interface IntegrationLayer  extends Service {
 	
 	@JmsBroker(connector="tcp://localhost:61618")
@@ -169,13 +217,12 @@ public interface IntegrationLayer  extends Service {
 	@Inject(ref="invoicingServer")
 	public InvoicingServer getInvoicingServer();
 }
-
 }}}
 
 === The invoicing-server ===
 
 {{{
-@AnnotatedService(id="invoicingServer")
+@AbstractService(id="invoicingServer", managedElements="muleService")
 public interface InvoicingServer extends Service {
 	
 	@MuleService(
