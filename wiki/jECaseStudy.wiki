@@ -1,24 +1,40 @@
 #summary Integration/ESB case study using jEmbedded.
 
-= Case study: Electrical measures & invoicing =
-Note:
+= Case study: Electrical Measures & Invoicing =
 
+Note:
 ´In construction'
 
-So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every home and then send it to a central system that will calculate and print the invoices.
+So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every building and then send it to a central system that will calculate and print the invoices. 
 
-In order to connect to the central system, we need a device in every building that gets the readings and send them. 
-We can think about that device as an embedded pc system with an ip that will connect to the internet and send the data to the central system through a few protocols. 
+In order to connect to the central system, we'd need a device in every building that gets the readings and send them through the internet.
 
-We'll use the  http protocol, so web services come to mind. Also we'll use spring/mvc integration so we can send the data through a controller if the web service is not available, or just to build a web portal over the central system.
+We can think about that device as an embedded pc system with an IP and an id that will connect to the internet and send the data to the central system through a few protocols. This device will have to get the measures from every home, so we'd still new some electrical meters in place and connect them to the embedded device.
 
-It seems that we got a pretty clear case of system integrations, so using a ESB is in place. Also JMS to store the incoming messages.
+As the "Electrical Co" already has a Invoicing System and doesn't want to replace it, we'll have to use and connect it to the new system. It has a java api to invoke, but no WS api or JMS ect.... therefore we'll have to come up with something that allows to connect to the invoicing system but at the same time that give us flexibility and don't tie the new system to it.
 
-So how do we build the proyotype? We can just get the esb and a bunch of frameworks and start integratiog then, etc... but that takes time and certainly don't promote reuse (it's a prototype but still), so why don't use a ready framework for that, that implemens service composition, that has ready to go services, promotes reuse and eases all the integration pain? :)
+It seems that we got a pretty clear case of System's Integration so using an SOA/Integration architecture is in place. This is not only using an ESB but implementing all the functionality in services using composition when possible.
+
+So how do we build the proyotype? We can just get the ESB and a bunch of frameworks and start integratiog then, etc... but that takes time and certainly don't promote reuse (it's a prototype but still), so why don't use a ready framework for that, that implemens service composition, that has ready to go services, promotes reuse and eases all the integration pain? :)
 
 For instance, if you need to deploy a service or just a class in Mule, after you have created you still have to put the jar in the mule/lib folder, start it ect ect.. you don't need to do this using the framework.
 
 == Prototype ==
+
+First we can define the protocols we'll use to connect to the central system. We could think that JMS over HTTP will be the safest one to use, but for the purposes of the prototype we'll use the  SOAP/HTTP protocol through we services. Also we'll use plain HTTP protocol so we can have another entry point if the web service is not available or just to invoke the invoices system on line through a web application (to correct or create manually an invoice).
+
+Now with the description of the system at hand we can came up with the services, components etc... that we'd need, trying to use as much service composition as possible:
+
+ - Electrical measures devices: they will take the measure and send it to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
+
+ - The agent will connect via HTTP, we'll use the HTTP-Client component for that.
+
+
+- Central system:
+
+The central system will be created as a composition of several services. As it's possible 
+
+
 
 An integration service layer needs to be implemented that will act as a facade for a Spring MVC Controller. 
 
@@ -38,20 +54,18 @@ The invoicing-server is composed of a mule-service, an jms broker, a rules-servi
 === Services Layer ===
 {{{
 
+@Repository(id = "serviceLayer", parent = "persistenceLayer")
 
-@Repository(id = "serviceLayer",  iocProviders = { "springRepository" }, parent = "persistenceLayer")
-
-@AnnotatedService(id = "serviceLayer", resources={InvoicingServiceImpl.class})
+@AbstractService(id = "serviceLayer", resources={InvoicingService.class},
+managedElements="invoicingService")
 public interface ServicesLayer extends Service {
 
 	@Inject(ref="invoicingService")
 	public InvoicingService getInvoicingService();
-
-	@SpringRepository(configurationFile = "META-INF/invoices-app/layers/persistence-layer.xml")
-	public Service getSpringRepository();
 }
-
 }}}
+
+
 
 The controller looks like this:
 
@@ -83,7 +97,7 @@ public class Controller extends AbstractController {
 }
 }}}
 
-The controller retrieves and invoke the invoicingService with the http params:
+The controller retrieves and invoke the `InvoicingService` with the http params
 
 {{{
 @MuleClient
@@ -194,4 +208,3 @@ and the invoices-service will be the core component of the mule model service:
 	   <spring-object bean="invoicesService"/>
 	</component>
 }}}
-
