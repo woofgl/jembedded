@@ -1,8 +1,3 @@
-  *  [jEServicesElements  jEmbedded Services]
-    *  [jEmbeddedJettyService jEmbedded Jetty Service]
-    *  [jEmbeddedTomcatService  jEmbedded Tomcat Service]
-    *  [jEmbeddedJettyService jEmbedded Mule Service]
-
 ==jEmbedded Services and Other Elements==
 
 The jEmbedded container can handle many different elements as Services, Dynamic Services, Components, Beans and Abstract Beans. All of them can be created and managed through annotations.
