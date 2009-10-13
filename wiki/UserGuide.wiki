@@ -12,7 +12,7 @@
     *  [jEmbeddedSpringMVC jEmbedded Spring MVC Integration]
     *  [jEmbeddedSpringExporter jEmbedded Spring Service Exporter]
     *  [jEmbeddedSpringAnnotation jEmbedded Spring Container Annotation]
-  *  [JEmbeddedBPM jEmbedded jBPM native support]
+  *  [jBPMSupport jEmbedded jBPM native support]
   *  [jEmbeddedPlugin jEmbedded Maven Plugin]
   *  [jECaseStudy Integration/ESB case study]
   *  [jExamples jEmbedded Examples]
