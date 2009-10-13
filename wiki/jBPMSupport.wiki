@@ -8,6 +8,7 @@ jBPM it's a Open Source BPM that I've been using for years, 5 years I think so I
 
 The BPM gives you the flexibility of composing services in a graphical way (using a Eclipse plugin, GPDL) that generates a readable xml. This way you can create/change without having to glue the services together and without having to code (well not that much :))
 
+In order to use it you will need some basic knowledge of how jBPM works, so I recommend you the official tutorial for that. You don't need to know all the gory details but at least how to compose a jPDL diagram as most of the technical details are wrapped up by the service.
 
 == jEmbedded jBPM Support ==
 
@@ -26,7 +27,7 @@ The support is provided by a new service: jbpm-service.
 
 The service can be used as any other service of the framework or using the new core annotation: `@ImplementedByBPM`. Using this annotation you can provide the implementation of one method with a BPM process:
 
-`@ImplementedByBPM`
+@ImplementedByBPM
 || Attribute || Description ||
 || bpmServiceRef || Service name of the bpm service, by default "jbpmService" ||
 || processKey || The key name of the process ||
@@ -95,12 +96,12 @@ And the template could be something like this:
    	<transition to="invoke_service_2 />
   </java>
   
-  <java name="invoke" expr="#{service_2}" method="service_2_method" var="result_service_2">
+  <java name="invoke_service_2" expr="#{service_2}" method="service_2_method" var="result_service_2">
                 <arg><object expr="#{result_service_1}"/></arg>
    		<transition to="invoke_service_n />
   </java>
   
-   <java name="invoke" expr="#{service_n}" method="service_n_method" var="result_service_end">
+   <java name="invoke_service_n" expr="#{service_n}" method="service_n_method" var="result_service_end">
                 <arg><object expr="#{result_service_n-1}"/></arg>
    		<transition to="wait />
   </java>
