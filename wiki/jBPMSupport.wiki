@@ -1,5 +1,3 @@
-#summary One-sentence summary of this page.
-
 = Introduction =
 
 Note: The jBPM support will be available in the next RC version.
