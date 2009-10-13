@@ -6,7 +6,7 @@ Note: The jBPM support will be available in the next RC version.
 
 jBPM it's a Open Source BPM that I've been using for years, 5 years I think so I can recommend it, even though it had some performance problems in the past now it's excellent. I took some heat to use it years ago mainly because people didn't understand what a BPM is. You can't use for everything (as you have to pay the price of resources) but when you got a clear case of business work flow that it's likely to change or if you need to create new functionality invoking different systems, resources, services etc.. in other words composition of services. 
 
-The BPM gives you the flexibility of composing the services in a graphical way (using a Eclipse plugin, GPDL) that generates a readable xml. This way you can create/change without having to glue the services together and without having to code (well not that much :))
+The BPM gives you the flexibility of composing services in a graphical way (using a Eclipse plugin, GPDL) that generates a readable xml. This way you can create/change without having to glue the services together and without having to code (well not that much :))
 
 
 == jEmbedded jBPM Support ==
@@ -24,8 +24,109 @@ The support is provided by a new service: jbpm-service.
 		</dependency>
 }}}
 
-The service can be used as any other service of the framework or using a new core annotation: `@ImplementedByBPM`
+The service can be used as any other service of the framework or using the new core annotation: `@ImplementedByBPM`. Using this annotation you can provide the implementation of one method with a BPM process:
+
+|| Attribute || Description ||
+|| bpmServiceRef || Service name of the bpm service, by default "jbpmService" ||
+|| processKey || The key name of the process ||
+
+For example:
+
+{{{
+@ImplementedByBPM(processKey="Order")
+public Object executeOrder(InvokerParams params);
+}}}
+
+This method will invoke the process "Order" with the parameters "params".
+
+In order to this annotation to work the process file must follow a template (this is no true if you are using the service directly:
+
+{{{
+<process name="Order" xmlns="http://jbpm.org/4.0/jpdl">
+  //Order is the key name of the process.
+  
+  <start g="16,19,48,48">
+    <transition to="invoke" />
+  </start>
+   
+// After the the start you can invoke as many services you want, having in mind that the 
+//initial params are stored: service_param_0, service_param_1,..., service_param_n
+//cmtService and serviceExecutor are services from the jEmbedded Container.
+  <java name="invoke" expr="#{cmtService}" method="service" var="result_service_1">
+   		<transition name="to_invoke" to="invoke2" />
+  </java>
+   
+  <java name="invoke2" 
+        expr="#{serviceExecutor}"
+        method="execute" var="result_service_end"
+        g="215,17,99,52">
+    
+    <arg><object expr="#{service_param_0}"/></arg>
+    <arg><object expr="#{result_service_1}"/></arg>
+    <transition to="wait" />
+  </java>
+  
+// This wait state is needed so the service will be able to retrieve the result
+//This will be stored as "result_service_end"
+  <state name="wait" g="352,17,88,52">
+   <transition to="end" />
+  </state>
+  
+  <end name="end" g="269,20,48,48"/>
+
+</process>
+}}}
+
+And the template could be something like this:
+
+{{{
+<process name="process.key" xmlns="http://jbpm.org/4.0/jpdl">
+  //Order is the jey name of the process.
+  
+  <start g="16,19,48,48">
+    <transition to="invoke_service_1" />
+  </start>
+
+  <java name="invoke" expr="#{service_1}" method="service_1_method" var="result_service_1">
+        <arg><object expr="#{service_param_0}"/></arg>
+        <arg><object expr="#{service_param_1}"/></arg>
+        <arg><object expr="#{service_param_n}"/></arg>
+   	<transition to="invoke_service_2 />
+  </java>
+  
+  <java name="invoke" expr="#{service_2}" method="service_2_method" var="result_service_2">
+                <arg><object expr="#{result_service_1}"/></arg>
+   		<transition to="invoke_service_n />
+  </java>
+  
+   <java name="invoke" expr="#{service_n}" method="service_n_method" var="result_service_end">
+                <arg><object expr="#{result_service_n-1}"/></arg>
+   		<transition to="wait />
+  </java>
 
 
+ <state name="wait" g="352,17,88,52">
+   <transition to="end" />
+  </state>
+  
+  <end name="end" g="269,20,48,48"/>
 
+</process>
+}}}
 
+This annotation complements very well another core annotation `@ImplementedBy` that allows to implement an abstract method using another Service from the container. 
+You can use this two annotations in the same service (for instance, an `AbstractService`):
+{{{
+@AbstractService(id="process", resources={JBPMServiceImpl.class, PropertiesService.class})
+public interface ProcessService extends Service {
+
+	@ImplementedBy(ref="jbpmService", refMethodName="startProcessByKey")
+	public ProcessInstance executeProcess(String processKey);
+	
+	
+	@ImplementedByBPM(bpmServiceRef="jbpmService", processKey="Order")
+	public Object executeOrder(InvokerParams params);
+}
+}}}
+
+The first method invokes directly the jBPMService whereas the second implements a BPM process.
