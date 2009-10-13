@@ -26,6 +26,7 @@ The support is provided by a new service: jbpm-service.
 
 The service can be used as any other service of the framework or using the new core annotation: `@ImplementedByBPM`. Using this annotation you can provide the implementation of one method with a BPM process:
 
+`@ImplementedByBPM`
 || Attribute || Description ||
 || bpmServiceRef || Service name of the bpm service, by default "jbpmService" ||
 || processKey || The key name of the process ||
