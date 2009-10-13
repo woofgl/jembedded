@@ -1,7 +1,7 @@
-*  [jEServicesElements  jEmbedded Services]
-     *  [jEmbeddedJettyService jEmbedded Jetty Service]
-     *  [jEmbeddedTomcatService  jEmbedded Tomcat Service]
-     *  [jEmbeddedJettyService jEmbedded Mule Service]
+  *  [jEServicesElements  jEmbedded Services]
+    *  [jEmbeddedJettyService jEmbedded Jetty Service]
+    *  [jEmbeddedTomcatService  jEmbedded Tomcat Service]
+    *  [jEmbeddedJettyService jEmbedded Mule Service]
 
 ==jEmbedded Services and Other Elements==
 
