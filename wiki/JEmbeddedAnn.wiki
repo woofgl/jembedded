@@ -6,7 +6,7 @@ The annotations can be imported as separate module if needed, for example to cre
 
 Most of the annotations can be used at a method level and at a method level. Some even at a field level.
 
-As it's been told before the container it's a composition of 1-n repositories, so most of the annotations refers to these repositories and to the container. Except the `@Container` annotation that refers only to the Container.
+As it's been told before the container it's a composition of 1-n @Repositories, so most of the annotations refers to these repositories and to the container. Except the `@Container` annotation that refers only to the Container.
 
 
 == Container Annotations == 
@@ -34,15 +34,15 @@ EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(WebServer.class);
 handler.start();
 }}}
 
-As that container is associated with the current thread it can be retrieved using of course the declared handler but also from any other class using the class ContainerHolder:
+As that container is associated with the current thread it can be retrieved using of course the declared handler but also from any other class using the class `ContainerHolder`:
 
 {{{
 EmbeddedHandler handler = ContainerHolder.getCurrentThreadContainer();
 }}}
 
-This configuration is useful when you need to create a fresh container everytime a new thread is created and disposing the container when the thread is destroyed. For instance, you want to associate a container to a Controller Thread (MVC).
+This configuration is useful when you need to create a fresh container every time a new thread is created and disposing the container when the thread is destroyed. For instance, if you wanted to associate a container to a Controller Thread (MVC).
 
-You have to be careful with this type of container though, as if you create another container in the same thread, the older one will be reused and you can get weird behavior.
+You have to be careful with this type of container though, because if you create another container in the same thread, the older one will be reused and you can get weird behavior.
 
 
 @Container
@@ -50,7 +50,7 @@ You have to be careful with this type of container though, as if you create anot
 || instanceType:ContainerInstanceType || Type of container instance ||PROTOTYPE_BY_THREAD, PROTOTYPE_BY_VM,  SINGLETON_VM||
 
 
-If you need to have several containers in the same application a safer bet it's to use the PROTOTYPE_BY_VM type. Everytime a container is instanced it's created from scratch and it's not associated with the current thread. Obviously this container can not be accessed through the `ContainerHolder` class.
+If you need to have several containers in the same application a safer bet it's to use the PROTOTYPE_BY_VM type. Every time a container is instanced it's created from scratch and it's not associated with the current thread. Obviously this container can not be accessed through the `ContainerHolder` class.
 
 Finally, if only one instance of the container is needed for the whole application, you need to use the SINGLETON_VM type. Once one instance is created, if another one is created an exception will be thrown (if the previous one hasn't been disposed). The `ContainerHolder` can be used to retrieve the container.
 
@@ -67,10 +67,10 @@ The jEmbedded container is a composition of 1-n Repositories:
 
 Obviously @Repository it's much more that just a holder, as it has additional functionality as it can manage the life cycle of the elements that it holds.
 
-So by now it's clear that the basic element of jEmbedded it's the @Repository. In fact, you can create your own Container using them.
+So by now it's clear that the basic element of `jEmbedded` it's the @Repository. In fact, you can create your own Container using them.
 
-In this case jEmbedded is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a ServiceLayer whose parent it's an IntegrationLayer. 
-The good about this approach it's that an element in the ServicesLayer can have access to elements in the IntegrationLayer, but not the other way.
+In this case `jEmbedded` is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a ServiceLayer whose parent it's an `IntegrationLayer`. 
+The good about this approach it's that an element in the `ServicesLayer` can have access to elements in the `IntegrationLayer`, but not the other way.
 
 As I said before you don't need to use this @Repository annotation and that's because one Repository it's created by default if any annotation it's given:
 
@@ -89,7 +89,7 @@ public class IntegrationWebServerTest {
 }
 }}}
 
-In the code above a @Repository is created for you, being the entry point to the IntegrationWebServerTest.class.
+In the code above a @Repository is created for you, being the entry point to it the `IntegrationWebServerTest.class`.
 
 The @Include annotation will add the resources to the @Repository and the custom annotations @WebClient and @PropertiesService will have the same effect.
 
@@ -100,7 +100,7 @@ So the equivalent @Repository declaration would be:
 @WebClient
 @PropertiesService
 
-@Repository(id="integrationWebServerTest", resources=WebServer.class)
+@Repository(id="integrationWebServerRepo", resources=WebServer.class)
 public class IntegrationWebServerTest {
 
         @Before
@@ -113,7 +113,7 @@ public class IntegrationWebServerTest {
 
 Or you can just declare this way just using just the service class declarations:
 {{{
-@Repository(id="integrationWebServerTest", resources={WebServer.class, 
+@Repository(id="integrationWebServerRepo", resources={WebServer.class, 
 HttpClient.class, PropertiesService.class})
 public class IntegrationWebServerTest {
 
@@ -125,6 +125,36 @@ public class IntegrationWebServerTest {
 }
 }}}
 
+The advantage of creating a @Repository or more within the container it's the re usability and the grouping of elements in just one class. This way you can import the repository in another class (and therefore in another @Repository):
+
+{{{
+@Include (resource=IntegrationWebServerTest.class)
+public class AnotherTest {
+
+        @Before
+	public void init() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();
+	}
+}
+}}}
+
+Furthermore you can create a hierarchy of repositories just using the repositories ids:
+
+{{{
+@Include (resource=IntegrationWebServerTest.class)
+@Repository(id="anotherRepo", parent="integrationWebServerRepo")
+public class AnotherTest {
+
+        @Before
+	public void init() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();
+	}
+}
+}}}
+
+This way the "anotherRepo" repository will have access to the "integrationWebServerRepo" elements.
 
 @Repository
 || *Attribute* || *Description* || * Values * ||
