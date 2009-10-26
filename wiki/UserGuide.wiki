@@ -1,23 +1,27 @@
 #labels Phase-Requirements,Phase-Deploy
-<wiki:toc max_depth="3" />
+<wiki:toc max_depth="4" />
 
 ==jEmbedded==
 *  [jEmbeddedUserGuide User's Guide]
   *  [jEInstallNotes How to install jEmbedded]
   *  [jEGettingStarted How to get started in 5 minutes (more or less)]
   *  [jEmbeddedCore jEmbedded Core Container]
-  *  [jEServicesElements  jEmbedded Services]
+     *  [JEmbeddedAnn jEmbedded Core Annotations]
+     *  [jEServicesElements  jEmbedded Services]
      *  [jEmbeddedJettyService jEmbedded Jetty Service]
   *  [jEmbeddedSpring jEmbedded Spring Native Support]
     *  [jEmbeddedSpringMVC jEmbedded Spring MVC Integration]
     *  [jEmbeddedSpringExporter jEmbedded Spring Service Exporter]
     *  [jEmbeddedSpringAnnotation jEmbedded Spring Container Annotation]
   *  [jBPMSupport jEmbedded jBPM native support]
+  *  [jEmbeddedRIA jEmbedded RIA Support-GWT]
+  *  []EmbeddedGwlet jEmbedded Portal - Gwlet/Widglet]
   *  [jEmbeddedPlugin jEmbedded Maven Plugin]
   *  [jECaseStudy Integration/ESB case study]
   *  [jExamples jEmbedded Examples]
     *  [jECaseStudy Integration/ESB case study]
   *  [jFaq jEmbedded FAQ]
+
 
 Note: The documentation of jIntegrationTest is deprecated until next version 1.0
 ==jIntegrationTest==
