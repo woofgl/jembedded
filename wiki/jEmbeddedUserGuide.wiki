@@ -13,12 +13,16 @@ So that was how I designed jEmbedded, as a container for services (embedded or n
 
 So what you can do with jEmbedded:
 
-- Easy prototyping and testing of Integration/SOA or standalone/web applications (not only prototypes of course, can be used in final apps), using the provided services. Have a look at the ESB case study.
+- Rich Applications Container: integrated with GWT/Spring MVC to create RIA applications (SOA oriented).
 
-- Create services, package and distribute them. Then you can reuse them easily using service composition.
+- Rich Portal Application Provider: introducing the concepts of Gwlets/Widglets to power RIA portals.
 
-- As a container for the embedded services provided (jetty, tomcat, activemq, mule etc..)
+- Integration Container: as container for application integration, using an ESB, messaging services etc...
 
-- As a another IoC Container.
+-Web enviroment: can be used in any web enviroment, as a holder of a services layer, for example. Have a look at the case study example as it shows the provided integration with SpringMVC.
 
-- As a helper container for Spring providing services or a facade layer of services. Have a look at the ESB case study and the spring-integration module.
+- Standalone container: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
+
+- Integrated with Spring: you can access Spring beans from jEmbedded or just create an ApplicationContext? (as another service of the container) and access those beans.
+
+- Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For instance, it's faster to test your integration/soa designs this way. Have a look at the case study example for an example of this.
