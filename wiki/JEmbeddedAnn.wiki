@@ -6,7 +6,7 @@ The annotations can be imported as separate module if needed, for example to cre
 
 Most of the annotations can be used at a method level and at a method level. Some even at a field level.
 
-As it's been told before the container it's a composition of 1-n repositories, so most of the annotations refers to these repositories and to the container. Ex
+As it's been told before the container it's a composition of 1-n repositories, so most of the annotations refers to these repositories and to the container. Except the @Container annotation that refers only to the Container.
 
 
 == Container Annotations == 
@@ -14,7 +14,10 @@ As it's been told before the container it's a composition of 1-n repositories, s
 
 ´@Container´
 
-This annotation 
+This annotation allows to configure the core container.
+
+
+
 
 
 
