@@ -1,8 +1,8 @@
 = Introduction =
 
-Note: The jBPM support will be available in the next RC version.
+jBPM it's the leading Open Source BPM from jBoss. I've been using for years so I think I can recommend it.  
 
-jBPM it's a Open Source BPM that I've been using for years, 5 years I think so I can recommend it, even though it had some performance problems in the past now it's excellent. I took some heat to use it years ago mainly because people didn't understand what a BPM is. You can't use for everything (as you have to pay the price of resources) but when you got a clear case of business work flow that it's likely to change or if you need to create new functionality invoking different systems, resources, services etc.. in other words composition of services. 
+You can't use for everything though (as you have to pay the price of resources) but when you got a clear case of business work flow that it's likely to change or if you need to create new functionality invoking different systems, resources, services etc.. in other words services composition.
 
 The BPM gives you the flexibility of composing services in a graphical way (using a Eclipse plugin, GPDL) that generates a readable xml. This way you can create/change without having to glue the services together and without having to code (well not that much :))
 
