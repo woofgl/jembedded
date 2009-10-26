@@ -1,7 +1,7 @@
 #labels Featured
 == Project Setup ==
 
-Once you have installed the framework, you’d need to declare the dependencies in your pom. 
+Once you have installed the framework, you will need to declare the dependencies in your pom. 
 *  The core dependency (jembedded-core).
 {{{
                  <dependency>
@@ -10,7 +10,7 @@ Once you have installed the framework, you’d need to declare the dependencies 
                         <version>0.1.x</version>
 		</dependency>
 }}}
-*  Any service dependency you are planning to use. For instance, if you want to use the jetty-service you need to include:
+*  Any service dependency you are planning to use. For instance, if you want to use the jetty-service you would need to include:
 {{{
 
                  <dependency>
@@ -26,13 +26,22 @@ Now that you have the framework classes available to your project, you can start
 
 There are many ways you could use jEmbedded:
 
-  * Standalone framework: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
+  * Rich Applications Container: integrated with GWT/Spring MVC.
 
-  * Integrated with Spring: you can access spring beans from jEmbedded or just create an ApplicationContext (as another service of the container) and access those beans.
+  * Rich Portal Application Provider: 
 
-  * Web enviroment: can be used in any web enviroment, have a look at the invoicing-server example. It shows the provided integration with SpringMVC.
+  * Integration Container:
 
-  * Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For example, it's faster to test your integration/soa designs this way. Have a look at the invoicing-server example for an example of this (even though it's a bit complex for the sake of showing more jEmbedded features).
+  * Web enviroment: can be used in any web enviroment, as a holder of a services layer, for example. Have a look at the case study  example as it shows the provided integration with SpringMVC. 
+
+  * Standalone container: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
+
+  * Integrated with Spring: you can access Spring beans from jEmbedded or just create an ApplicationContext (as another service of the container) and access those beans.
+
+  * Web enviroment: can be used in any web enviroment, have a look at the case study example. It shows the provided integration with SpringMVC.
+
+  * Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For instance, it's faster to test your integration/soa designs this way. Have a look at the case study example for an example of this.
+
 
 
 === Services Examples & How to create them ===
