@@ -1,13 +1,15 @@
-#summary One-sentence summary of this page.
+*  [jEmbeddedCore jEmbedded Core Container]
+     *  [JEmbeddedAnn jEmbedded Core Annotations]
+     *  [jEServicesElements  jEmbedded Services]
+     *  [jEmbeddedJettyService jEmbedded Jetty Service]
+
 
 = Introduction =
 
-Add your content here.
+The container it's the most important component of jEmbedded as everything revolves around it. And at the end it's not more that a very complex map of elements. 
 
 
-= Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+
+
+
