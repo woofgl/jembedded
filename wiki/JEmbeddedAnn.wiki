@@ -57,8 +57,80 @@ Finally, if only one instance of the container is needed for the whole applicati
 
 == Container & Repository Annotations == 
 
-`@Repository`
+@Repository
 
-The 
+This annotation it's one of the most important ones, even though you don't need to use it if you don't want.
 
+The jEmbedded container is a composition of 1-n Repositories:
+
+ *A @Repository is a holder for a collection of elements(services, components...) grouped logically or not* 
+
+Obviously @Repository it's much more that just a holder, as it has additional functionality as it can manage the life cycle of the elements that it holds.
+
+So by now it's clear that the basic element of jEmbedded it's the @Repository. In fact, you can create your own Container using them.
+
+In this case jEmbedded is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a ServiceLayer whose parent it's an IntegrationLayer. 
+The good about this approach it's that an element in the ServicesLayer can have access to elements in the IntegrationLayer, but not the other way.
+
+As I said before you don't need to use this @Repository annotation and that's because one Repository it's created by default if any annotation it's given:
+
+{{{
+@WebClient
+@PropertiesService
+
+@Include(resources={WebServer.class})
+public class IntegrationWebServerTest {
+
+        @Before
+	public void init() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();
+	}
+}
+}}}
+
+In the code above a @Repository is created for you, being the entry point to the IntegrationWebServerTest.class.
+
+The @Include annotation will add the resources to the @Repository and the custom annotations @WebClient and @PropertiesService will have the same effect.
+
+So the equivalent @Repository declaration would be:
+
+
+{{{
+@WebClient
+@PropertiesService
+
+@Repository(id="integrationWebServerTest", resources=WebServer.class)
+public class IntegrationWebServerTest {
+
+        @Before
+	public void init() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();
+	}
+}
+}}}
+
+Or you can just declare this way just using just the service class declarations:
+{{{
+@Repository(id="integrationWebServerTest", resources={WebServer.class, 
+HttpClient.class, PropertiesService.class})
+public class IntegrationWebServerTest {
+
+        @Before
+	public void init() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();
+	}
+}
+}}}
+
+
+@Repository
+|| *Attribute* || *Description* || * Values * ||
+
+|| id || repository id in the container ||String ||
+|| resources || elements the repository will hold ||*.class ||
+|| managedElements || elements the repository will manage ||collection of Service id's ||
+|| parent || parent repository reference || parent repository id in the container ||
  
