@@ -12,7 +12,7 @@ As it's been told before the container it's a composition of 1-n repositories, s
 == Container Annotations == 
 
 
-`@Container`
+@Container
 
 This annotation allows to configure the core container. Can be declared at a class level and only one annotation is allowed per container.
 
@@ -45,7 +45,7 @@ This configuration is useful when you need to create a fresh container everytime
 You have to be careful with this type of container though, as if you create another container in the same thread, the older one will be reused and you can get weird behavior.
 
 
-´@Container´
+@Container
 || *Attribute* || *Description* || * Values * ||
 || instanceType:ContainerInstanceType || Type of container instance ||PROTOTYPE_BY_THREAD, PROTOTYPE_BY_VM,  SINGLETON_VM||
 
@@ -63,7 +63,7 @@ This annotation it's one of the most important ones, even though you don't need 
 
 The jEmbedded container is a composition of 1-n Repositories:
 
- *A @Repository is a holder for a collection of elements(services, components...) grouped logically or not* 
+*A @Repository is a holder for a collection of elements(services, components...) grouped logically or not*.
 
 Obviously @Repository it's much more that just a holder, as it has additional functionality as it can manage the life cycle of the elements that it holds.
 
