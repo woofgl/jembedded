@@ -15,7 +15,7 @@
     *  [jEmbeddedSpringAnnotation jEmbedded Spring Container Annotation]
   *  [jBPMSupport jEmbedded jBPM native support]
   *  [jEmbeddedRIA jEmbedded RIA Support-GWT]
-  *  []EmbeddedGwlet jEmbedded Portal - Gwlet/Widglet]
+  *  [JEmbeddedGwlet jEmbedded Portal - Gwlet/Widglet]
   *  [jEmbeddedPlugin jEmbedded Maven Plugin]
   *  [jECaseStudy Integration/ESB case study]
   *  [jExamples jEmbedded Examples]
