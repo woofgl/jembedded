@@ -2,7 +2,7 @@
 
 jEmbedded was born out of the necessity to use a container on the go, lighter and faster.
 
-As I work as an Architect (any employers out there please contact me :) ) I find myself doing a lot of prototypes for applications or just trying new technologies so I need to create stuff pretty fast and if it doesn't work trying another one.
+As I work as an Architect I find myself doing a lot of prototypes for applications or just trying new technologies so I need to create stuff pretty fast and if it doesn't work trying another one.
 
 Many times this is not possible, because you have to install servers, frameworks, create services etc.. and then glue it all. Just try to make an Integration/SOA prototype with Mule (that is great by the way, hands off to the developers), you have to code, compile then copy the jars to the lib, setup the other servers you may need etc etc and then run, test, error.. you know what I mean.
 
