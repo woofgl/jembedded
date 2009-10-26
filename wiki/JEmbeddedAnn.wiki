@@ -158,9 +158,8 @@ This way the "anotherRepo" repository will have access to the "integrationWebSer
 
 @Repository
 || *Attribute* || *Description* || * Values * ||
-
 || id || repository id in the container ||String ||
-|| resources || elements the repository will hold ||*.class ||
+|| resources || elements the repository will hold ||class ||
 || managedElements || elements the repository will manage ||collection of Service id's ||
 || parent || parent repository reference || parent repository id in the container ||
  
