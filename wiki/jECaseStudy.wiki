@@ -2,7 +2,7 @@
 
 = Case study: Electrical Measures & Invoicing =
 
-So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every building and then send it to a central system that will calculate and print the invoices. 
+So let's say we need to build a quick prototype for the company "Electrical" that wants to implement a new system that will capture the electrical readings in every building and then send thm to a central system that will calculate and print the invoices. 
 
 In order to connect to the central system, we'd need a device in every building that gets the readings and send them through the internet.
 
@@ -24,9 +24,10 @@ Now with the description of the system at hand we can came up with the services,
 
   * Electrical measures devices: they will take the measures and send them to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
 
-The agent will connect via HTTP, we'll use the HTTP-Client component for that.
+  * Meter-Hub: aggregate all the data collected by the meter readers and send them via HTTP (we'll use the HTTP-Client component for that).
 
   * Central system: it will be created as a composition of several services and entry points.
+
   * Invoicing system: a composition of services + the provided invoices-service.
  
 === Entry Points ===
@@ -48,17 +49,13 @@ It's a good idea to group the application services in a logical fashion, in othe
 
 - A Service Layer that will work as a facade for the entry points. It's a good idea that the external clients (whatever they might be) access just a facade that shields it from changes and don't expose more than the necessary interface.
 
-The Service Layer will be composed as a hierarchy having as a parent a Persistence Layer and an Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the persistence layer.
-
-- A Persistence Layer that will hold the customer database (a derby embedded database) and the necessary DAO's to retrieve the data. We'll implement this layer using Spring to take advantage of it's transactional services and to show the jEmbedded integration
+The Service Layer will be composed as a hierarchy having as a parent the Integration Layer. This way the service layer will have access to all the services, but for instance the Integration layer won't have access to the services layer.
 
 - A Integration Layer that's the interface to the external systems, in this case it's the Invoicing-Server that's is modelled by composition of a few services.
 
 || *Service* || *Layer* || *Implementation* ||
 || Invoicing Facade || ServicesLayer || AbstractService ||
 || Invoicing Service || ServicesLayer || AbstractService ||
-|| Customer Database || PersistenceLayer || Embedded-Database(Derby) ||
-|| Customer DAO || PersistenceLayer || SpringJDBC ||
 || ESB || IntegrationLayer || Mule-Service ||
 || Messaging Facility  || IntegrationLayer || JMS-Broker-Service ||
 
@@ -74,7 +71,7 @@ All the layers are implemented using AbstractServices and composition so there i
 
 == Application Flow. ==
 
-The requests sent by the measure agents will be received from any of the 2 entry points. If the http entry point received a request, a controller will be invoked with the two parameters needed to calculate the invoice. The controller has access to the Service Layer and its facade invoking the Invoicing Service facade.
+The requests sent by the meter-hub will be received from any of the 2 entry points. If the http entry point received a request, a controller will be invoked with the two parameters needed to calculate the invoice. The controller has access to the Service Layer and its facade invoking the Invoicing System.
 
 This service is implemented using an AbstractService and jBPM process, that basically retrieves the customer data and sends it to the invoicing-server using the messaging-service. The only implementation needed here it's the DAO and that also could be generated for the most part.
 
