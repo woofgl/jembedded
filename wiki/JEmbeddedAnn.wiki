@@ -1,13 +1,26 @@
-#summary One-sentence summary of this page.
-
 = Introduction =
 
-Add your content here.
+The core container provides a set of annotations that allows to configure the different elements of the framework.
+
+The annotations can be imported as separate module if needed, for example to create a new service that doesn't need the whole framework dependency.
+
+Most of the annotations can be used at a method level and at a method level. Some even at a field level.
+
+As it's been told before the container it's a composition of 1-n repositories, so most of the annotations refers to these repositories and to the container. Ex
 
 
-= Details =
+== Container Annotations == 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+
+´@Container´
+
+This annotation 
+
+
+
+== Repository Annotations == 
+
+
+
+
+ 
