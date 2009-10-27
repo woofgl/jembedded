@@ -57,7 +57,7 @@ Finally, if only one instance of the container is needed for the whole applicati
 
 == Container & Repository Annotations == 
 
-@Repository
+== @Repository Annotation == 
 
 This annotation it's one of the most important ones, even though you don't need to use it if you don't want.
 
@@ -65,7 +65,7 @@ The jEmbedded container is a composition of 1-n Repositories:
 
 *A @Repository is a holder for a collection of elements(services, components...) grouped logically or not*.
 
-Obviously @Repository it's much more that just a holder, as it has additional functionality as it can manage the life cycle of the elements that it holds.
+Obviously @Repository it's much more that just a holder, it's an IoC container of it's own as it has additional functionality and can instantiate, inject and manage the life cycle of the elements that it holds (specially Services as this a Service Oriented Container).
 
 So by now it's clear that the basic element of `jEmbedded` it's the @Repository. In fact, you can create your own Container using them.
 
@@ -156,10 +156,80 @@ public class AnotherTest {
 
 This way the "anotherRepo" repository will have access to the "integrationWebServerRepo" elements.
 
+=== @Repository Annotation Attributes=== 
+
 @Repository
 || *Attribute* || *Description* || * Values * ||
 || id || repository id in the container ||String ||
 || resources || elements the repository will hold ||class ||
 || managedElements || elements the repository will manage ||collection of Service id's ||
 || parent || parent repository reference || parent repository id in the container ||
- 
+|| iocProviders || ioc container reference || collection of @SpringRepository reference||
+
+
+- iocProviders:
+
+As it's been said before the @Repository it's an implementation of the IoC pattern but an expanded one (with dynamic injection, annotations, etc..) but following the same principles.
+
+There are a lot of IoC containers out there but it's very likely that you are using Spring   so I added native Spring integration to the container. In order to have access to it you will need to add the spring-support module to your project.
+
+There are a few ways in which the container it's integrated with Spring and I'll explain that further in the proper section. In this section I'll explain the integration with the @Repository.
+
+The integration of the @Repository with a Spring Context (`ApplicationContext`) it's made through the @SpringRepository annotation declaration. It can be used at a class level or method level. 
+
+@SpringRepository
+ç}|| *Attribute* || *Description* || * Values * ||
+|| configurationFile|| location of the Spring XML context file ||String ||
+
+This annotation will create a Spring Application Context with the given configuration file. This context it's treated as another @Repository by the container and that means you can have access to it:
+
+{{{
+Repository springRepository = embeddedHandler.getRepository("springRepository");
+
+Object bean = springRepository.getBean("beanId");
+}}}
+
+So let's say you'd need that some of that Spring's beans to be injected or used in any of your services. That's a very easy thing to do, once the `@SpringAnnotation` is declared, add the reference to the @Repository that holds the services using the attribute `iocProviders`:
+
+{{{
+@SpringRepository(configurationFile = "embedded-database-service/persistence-layer.xml")
+
+@Repository(id="invoicesService",  resources={EmbeddedDatabase.class}, 
+		iocProviders = {"springRepository"})
+@AbstractService(id="invoicesService", resources=InvoiceServiceImpl.class)
+public interface InvoiceService  extends Service {
+}
+}}}
+
+Now you can reference any of the Spring beans in any Service of the @Repository:
+
+{{{
+@AnnotatedService(id = "invoicesServiceImpl", resources={RulesServiceImpl.class}, 
+		managedElements={"rulesService"})
+public class InvoiceServiceImpl extends AbstractCMTService implements
+		InvoiceService {
+
+	@Inject (ref = "customerDao") // this bean comes from the SpringRepository
+	private CustomerDAO customerDao = null;	
+}
+}}}
+
+This is the Spring context file:
+
+{{{
+<beans
+
+<import resource="classpath:META-INF/invoices-service/properties-service/properties-service.xml"/>
+           
+<bean id="customerDao" class="org.jsemantic.services.examples.energy.invoice.dao.CustomerDAO" autowire="autodetect"/>	
+</beans>
+}}}
+
+In order to inject the Spring beans in the `@AnnotatedService` you will need to use the 
+ the @Inject annotation (at a field level) like this:
+
+{{{
+
+@Inject (ref = "customerDao"), being the ref attribute the id of the bean in 
+the Spring Context.
+}}}
