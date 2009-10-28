@@ -178,7 +178,7 @@ There are a few ways in which the container it's integrated with Spring and I'll
 The integration of the @Repository with a Spring Context (`ApplicationContext`) it's made through the @SpringRepository annotation declaration. It can be used at a class level or method level. 
 
 @SpringRepository
-ç}|| *Attribute* || *Description* || * Values * ||
+|| *Attribute* || *Description* || * Values * ||
 || configurationFile|| location of the Spring XML context file ||String ||
 
 This annotation will create a Spring Application Context with the given configuration file. This context it's treated as another @Repository by the container and that means you can have access to it:
