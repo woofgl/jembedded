@@ -52,28 +52,6 @@ that provides an infrastructure of storage, managing, execution and support for 
 
 The container is the entry point to the framework and the instance you need to create to power your application. Sometimes the creation it will transparent for you depending of the environment. Essentially it's a composition of @Repositories:
  
-
-Componente
-Descripción
-EmbeddedHandler
-Componente core que proporciona una infraestructura común de almacenamiento, ejecución y de soporte a los servicios.
-Container
-Servicio que proporciona acceso a ficheros .properties.
-EmbeddedFactory
-Factoría que se encarga de instanciar el contenedor mediante ficheros de configuración.
-Respository
-Listener encargado de instanciar el contenedor en ambiente web (spring-web).
-InstanceManager
-Registro de servicios del contenedor.
-Service
-Elemento que proporciona la funcionalidad necesaria para convertir un POJO en servicio.
-Context
-Elemento que permite el acceso al entorno de ejecución a los servicios, componentes y elementos gestionados por el contenedor.
- 
- 
- 
-with addittonal functionality (describe before) (it's not just a storage container). The @Repositories can be a simple instance, a hieracichla estructure (layers) or a custom one. These repos will be the holders and manage the services at basis level (just the lifecycle).
- 
 The jEmbedded Container it's represented by a handler that wraps it and can be obtained using a factory:
  
 {{{
@@ -82,15 +60,10 @@ container.start();
  
 FooBean  fooBean = (Foobean) container.getBean("fooBean");
 }}}
- 
- 
-Método EmbeddedHandlerFactory
-Descripción
-getInstance(classs:Classes[])
-Obtiene una servicio declarado en el contenedor por id.
-getInstace(ctx:Context, Classes[])
-Obtiene un componente declarado en el contenedor por id.
- 
+
+|| *Methdo* || *Description* || 
+|| getInstance(classs:Classes[])|| Creates a container instance (handler) ||
+|| getInstace(ctx:Context, Classes[])||  Creates a container instance with a given context||
  
 The handler represents the actual container (and all the repositories that containes) and can be used to retrieve any element: bean, service, component etc..
  
@@ -198,12 +171,12 @@ public class IntegrationContainerServicesTest {
 
 As you can see the container configuration it's quite flexible and can be done in may differente ways. You can see the class space as the XML/XML-SCHEMA configuration file (like in a IoC container as Spring) where you can declare the resources and elements you would need.
 
-The difference it's that the "space" here it's more specific and the classes shouldn't be big sandboxes as the XML files usually are. The classes space `@Repository` another one a @Service o just one big sandbox (this is not recomended because it does not promote reusability). Any of this class can used later for composition just importing it (using it class or @Include, etc...).
+The difference it's that the "space" here it's more specific and the classes shouldn't be big sandboxes as the XML files usually are.
 
-This "space" is created by the container for the @Repository, even if you don't declare it there is one @Repository created by default. So if you use the configuration of the first examples above the "space" of the @Repository (created by default) it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
+This "space" is created by the container for the @Repository, even if you don't declare it there is one @Repository created by default. So if you use the configuration of the first example above the "space" of the @Repository it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
  
 {{{
-<--- elements space (the whole class declaration)
+<--- repository space (the whole class declaration)
 @WebClient
 @Include(resources={FooBean.class})
 public class IntegrationContainerServicesTest {
@@ -218,7 +191,7 @@ public void setUp() {
 Also are the class's methods are included in the @Repository space.
 
 {{{
-<--- elements space (the whole class declaration)
+<--- repository space (the whole class declaration)
 @WebClient
 @Include(resources={FooBean.class})
 public class IntegrationContainerServicesTest {
@@ -229,7 +202,7 @@ public void setUp() {
               handler.start();
 }
  
-@PropertiesService <--- also elements space.
+@PropertiesService <--- also repository space.
 public getPropertiesService() {
 }
 }}}
@@ -238,10 +211,10 @@ Even the declared fields are included in the @Repository space (only for @Inject
  
 {{{
 @WebClient
-@Include(resources={FooBean.class})<--- elements space (the whole class declaration)
+@Include(resources={FooBean.class})<--- repository space (the whole class declaration)
 public class IntegrationContainerServicesTest {
  
-@Inject <--- also elements space (only for the @Inject annotation)
+@Inject <--- also repository space (only for the @Inject annotation)
 private FooBean fooBean = null;
  
 @Before
@@ -266,26 +239,10 @@ Of course you could do the following to expand the "repository space":
 @WebClient --> represents a custom @Annotation for a httpClient, it's the same if you'd add HttpClient.class
 public class IntegrationContainerServicesTest {
  
-handler = EmbeddedHandlerFactory.getInstance(FooBean.class, IntegrationContainerServicesTest.class) <--- elements space
+handler = EmbeddedHandlerFactory.getInstance(FooBean.class, IntegrationContainerServicesTest.class) <--- repository space
 }}}
 
-That means that you can use any class as @Repository space for your elements but it's better that any class declares the elements properly in a logical fashion, for instance a Layer class would declare a @Repository with it's resources,  a Service would declare @Service annotation of course. Other example would be a Test class that may declare any element or just a @Repository
- 
- 
- 
-Método Container
-Descripción
-getService(id:String):Service
-Obtiene una servicio declarado en el contenedor por id.
-getComponent(id:String):Component
-Obtiene un componente declarado en el contenedor por id.
-getBean(id:String):Object
-Obtiene un bean declarado en el contenedor por id.
-containsBean(id:String):Boolean
-Comprueba si un bean está declarado en el contenedor.
-setParetn
-Obtiene la capa “root” (por ejemplo web-layer).
- 
+That means that you can use any class as @Repository space for your elements but it's better that any class declares the elements properly in a logical fashion, for instance a Layer class would declare a @Repository with it's resources,  a Service would declare @Service annotation of course. Other example would be a Test class that may declare any element or just a @Repository.
  
 You should use a @Repository as entry point or a collection or logical elements, that can be reused. This would be the top element of the framework, A container 1-n Repo --> 1-n---> services --> 1-n components--> 1--n beans.
  
@@ -379,4 +336,3 @@ If you have a look at the complete example you would realize that you have only 
  
  
  
-
