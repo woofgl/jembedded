@@ -37,7 +37,7 @@ that provides an infrastructure of storage, managing, execution and support for 
  
 - Additional features of the SOC container:
  
-    * RIA SIC container:
+    * RIA SOC container:
              
             - integrated with GWT 1.5+ through MVC Controllers: no need to use the RPC infraestructure (server).
            -  invoking services from the RIA infrastructure in a easy way.
@@ -50,8 +50,18 @@ that provides an infrastructure of storage, managing, execution and support for 
 
 == The Container and Elements ==
 
-The container is the entry point to the framework and the instance you need to create to power your application. Sometimes the creation it will transparent for you depending of the environment. Essentially it's a composition of @Repositories:
+The container is the entry point to the framework and the instance you need to create to power your application. Sometimes the creation it will transparent for you depending of the environment.
  
+The jEmbedded container is a composition of 1-n Repositories:
+
+A @Repository is a holder for a collection of elements(services, components...) grouped logically or not.
+
+Obviously @Repository it's much more that just a holder, it's an IoC container of it's own as it has additional functionality and can instantiate, inject and manage the life cycle of the elements that it holds (specially Services as this a Service Oriented Container).
+
+So by now it's clear that the basic element of jEmbedded it's the @Repository. In fact, you can create your own Container using them.
+
+In this case jEmbedded is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a ServiceLayer whose parent it's an IntegrationLayer. The good about this approach it's that an element in the ServicesLayer can have access to elements in the IntegrationLayer, but not the other way.
+
 The jEmbedded Container it's represented by a handler that wraps it and can be obtained using a factory:
  
 {{{
