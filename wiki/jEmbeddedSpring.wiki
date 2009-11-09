@@ -14,12 +14,15 @@ The other way it's using a @SpringContext annotation to which you specify the lo
 == How to use the Spring integration ==
 
 Even though the Spring integration it's native (as it's made through jEmbedded Spring context) I decided to put it in a different module just in case you are not using it: 
-                
-                  <dependency>
+
+{{{                
+                 <dependency>
 			<groupId>org.jsemantic.jembedded</groupId>
 			<artifactId>jembedded-spring-support</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
+}}}
+
 
 Then you'd need to decide which way it's better for your purposes. If you'd already have a Spring context or a project that uses it maybe it's better to use the jEmbedded export container/services facility into the Spring context. This way Spring would act as the main container having access to the embedded services you just exported (or the whole jEmbedded container).
 
@@ -27,6 +30,21 @@ On the other hand if you are not using Spring or just need it in order to use on
 
 == Exporting Services. Spring as a the main Container == 
 
-Basically you need to put the services into the Spring context
+Basically you need to put the services into the Spring context and for that I provided a few configurations in the Spring way: as xml beans file.
+
+As usual you can find some reference configurations in the META-INF directory of the service, in this case it's a support module but still. These are only reference configurations you can use your own ones.
+
+== Exporting the container == 
+
+If you'd like to have the jEmbedded container as a whole availabe for your Spring beans you'd need to use the EmbeddedContainerRunner (as it will start the container for you, not only will export it).
+
+
+
+
+
+
+
+
+
 
 
