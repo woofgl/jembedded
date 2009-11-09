@@ -1,13 +1,32 @@
-#summary One-sentence summary of this page.
-
 = Introduction =
 
-Add your content here.
+jEmbedded it's a complete SOC container (IoC based) that you can use alone if you want or need as also provides a lot of different services that should cover most of the usual needs for a project (well, and integration/soa/ria project).
+
+But it's highly likely that you won't use this alone but with other frameworks as a service provider etc... and for sure one of this frameworks would be Spring as this would let you to use jEmbedded with other frameworks using Spring as a bridge (for instance, I integrated  jEmbedded with Mule this way because Mule configuration files are in fact Spring context files). And because it's most popular framework out there :)
 
 
-= Details =
+So I provided a few ways to integrate jEmbedded with Spring, one of them native through the jEmbedded context. In other words, jEmbedded (or some of its services) would live in the Spring context allowing Spring beans to have access to them. You could have a service layer exported to the Spring context file so it can be invoked or injected by any Spring bean. This way Spring would be the main container using jEmbedded as a helper one.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+
+The other way it's using a @SpringContext annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId"). This way jEmbedded it's the main container using Spring as a helper one.
+
+
+== How to use the Spring integration ==
+
+Even though the Spring integration it's native (as it's made through jEmbedded Spring context) I decided to put it in a different module just in case you are not using it: 
+                
+                  <dependency>
+			<groupId>org.jsemantic.jembedded</groupId>
+			<artifactId>jembedded-spring-support</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+
+Then you'd need to decide which way it's better for your purposes. If you'd already have a Spring context or a project that uses it maybe it's better to use the jEmbedded export container/services facility into the Spring context. This way Spring would act as the main container having access to the embedded services you just exported (or the whole jEmbedded container).
+
+On the other hand if you are not using Spring or just need it in order to use one of it's facilities maybe it's better to use the @SpringContext annotation and let jEmbedded be the main container. The Spring beans would be available to the jEmbedded services and resources using the @Inject annotation.
+
+== Exporting Services. Spring as a the main Container == 
+
+Basically you need to put the services into the Spring context
+
+
