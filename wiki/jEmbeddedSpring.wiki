@@ -34,17 +34,100 @@ Basically you need to put the services into the Spring context and for that I pr
 
 As usual you can find some reference configurations in the META-INF directory of the service, in this case it's a support module but still. These are only reference configurations you can use your own ones.
 
-== Exporting the container == 
+== Exporting the Container == 
 
-If you'd like to have the jEmbedded container as a whole availabe for your Spring beans you'd need to use the EmbeddedContainerRunner (as it will start the container for you, not only will export it).
+If you'd like to have the jEmbedded container as a whole available for your Spring beans you'd need to use the `EmbeddedContainerRunner` bean (as it will start the container for you, not only will export it).
+
+`EmbeddedContainerRunner bean`
+|| *Attribute* || *Description* || * Values * ||
+|| id || id in the spring context || handler||
+|| class || implementation class of the runner|| org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner||
+|| annotatedClasses || classes to be processed by jEmbedded || any list of services||
+|| autoStarted || whether the container should be started || boolean, true by default||
+
+For example we'd like to inject the `EmbeddedHandler` into a Spring bean:
+
+{{{
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+		
+	<bean id="handler" class="org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner">
+		<property name="annotatedClasses">
+			<list>
+				<value>org.jsemantic.service.SomeService</value>
+				<value>org.jsemantic.service.AnotherService</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>
+
+}}}
+
+And a Spring bean that injects it:
+
+{{{
+
+public class SomeSpringBean {
+
+private EmbeddedHandler handler = null;
+
+public void setEmbeddedHandler(EmbeddedHandler handler)
+this.handler = handler;
+}
+
+public SomeService getSomeService() {
+return handler.getService("someService");
+}
+
+public void doSomething() {
+
+getSomeService().execute();
+}
+}}}
+
+== Exporting Services == 
+
+You don't need to export the whole container, you can export a few services if you like using the `ServiceExporter" bean.
+
+`EmbeddedContainerRunner bean`autoStarted
+|| *Attribute* || *Description* || * Values * ||
+|| bean id || service id in the Spring context || Service id||
+|| class || implementation class of exporter|| org.jsemantic.jembedded.support.spring.exporter.ServiceExporter||
+|| annotatedClasses || classes to be processed by jEmbedded || any list of services||
+|| property id || service id in the jEmbedded container || Service id||
+
+For example, from the validation-service:
+
+{{{
+<bean id="validationService" class="org.jsemantic.jembedded.support.spring.exporter.ServiceExporter">
+		<property name="id" value="validationService"/>
+		
+		<property name="annotatedClasses">
+			<list>
+				<value>org.jsemantic.services.validationservice.impl.ValidationServiceImpl</value>
+			</list>
+		</property>
+	</bean>
+}}}
 
 
+And a Spring bean that injects it:
 
+{{{
+public class SomeSpringBean {
 
+private ValidationService validationService = null;
 
+public void setValidationService(ValidationService validationService)
+this.validationService = validationService;
+}
 
+public void validate(Object obj) {
+validationService.validate(obj);
+}
+}}}
 
-
-
-
+== Exporting a Service Layer == 
 
