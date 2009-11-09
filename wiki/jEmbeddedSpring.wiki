@@ -179,6 +179,12 @@ public class InvoicesAgentService extends GWTController implements AgentGWTServi
 
 This way you could use jEmbedded as a provider of services using layers, and Spring for MVC etc etc..
 
-Finally
+Finally you can put all the configuration in one XML file and use the Spring tag import (from the mule configuration file from the case study):
 
+{{{
+<beans>
+   <import resource="classpath:META-INF/invoices-service/invoices-service.xml"/>
+   <import resource="classpath:META-INF/validation-service/validation-service.xml"/>
+<beans>
+}}}
 
