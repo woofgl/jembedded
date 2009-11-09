@@ -40,10 +40,10 @@ If you'd like to have the jEmbedded container as a whole available for your Spri
 
 `EmbeddedContainerRunner bean`
 || *Attribute* || *Description* || * Values * ||
-|| id || id in the spring context || handler||
-|| class || implementation class of the runner|| org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner||
-|| annotatedClasses || classes to be processed by jEmbedded || any list of services||
-|| autoStarted || whether the container should be started || boolean, true by default||
+|| id || Id in the spring context || handler||
+|| class || Implementation class of the runner|| org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner||
+|| annotatedClasses || Classes to be processed by jEmbedded || any list of services||
+|| autoStarted || Whether the container should be started || boolean, true by default||
 
 For example we'd like to inject the `EmbeddedHandler` into a Spring bean:
 
@@ -91,12 +91,12 @@ getSomeService().execute();
 
 You don't need to export the whole container, you can export a few services if you like using the `ServiceExporter" bean.
 
-`EmbeddedContainerRunner bean`autoStarted
+`ServiceExporter bean`
 || *Attribute* || *Description* || * Values * ||
-|| bean id || service id in the Spring context || Service id||
-|| class || implementation class of exporter|| org.jsemantic.jembedded.support.spring.exporter.ServiceExporter||
-|| annotatedClasses || classes to be processed by jEmbedded || any list of services||
-|| property id || service id in the jEmbedded container || Service id||
+|| bean id || Service id in the Spring context || Service id||
+|| class || Implementation class of exporter|| org.jsemantic.jembedded.support.spring.exporter.ServiceExporter||
+|| annotatedClasses || Classes to be processed by jEmbedded || any list of services||
+|| property id || Service id in the jEmbedded container || Service id||
 
 For example, from the validation-service:
 
@@ -130,4 +130,55 @@ validationService.validate(obj);
 }}}
 
 == Exporting a Service Layer == 
+
+If you had configured your services in layers (have a look at the jEmbedded examples and the case study) it's a good idea to export just the `ServicesLayer` and then injecting it into a Spring bean, for example in a Spring MVC controller. This way jEmbedded would act as services middleware. In order to do this (you could do using the services exported as well) you'd need to use the `ServiceLayerExporter`.
+
+`ServiceLayerExporter bean`
+|| *Attribute* || *Description* || * Values * ||
+|| bean id || Service Layer id in the Spring context || Service Layer id||
+|| class || Implementation class of the layer exporter|| org.jsemantic.jembedded.support.spring.exporter.ServiceLayerExporter||
+|| annotatedClasses || Layers to be processed by jEmbedded || any list of layers||
+|| exportedLayer || Layer id in the jEmbedded container || Layer id||
+
+For example, from the invoicing-server (case study, services-layer.xml):
+
+{{{
+<bean id="servicesLayer" class="org.jsemantic.jembedded.support.spring.exporter.ServiceLayerExporter">
+		<property name="exportedLayer" value="serviceLayer"/>
+		<property name="annotatedClasses">
+			<list>
+				<value>${layer.integration}</value>
+				<value>${layer.services}</value>
+			</list>
+		</property>
+	</bean>
+
+<bean id="agentInvoicesService" class="org.jsemantic.jembedded.examples.invoicing.controller.InvoicesAgentService">
+		<property name="servicesLayer" ref="servicesLayer"/>
+</bean>
+
+}}}
+
+and the the Spring bean that injects it (it's a GWT controller):
+
+{{{
+public class InvoicesAgentService extends GWTController implements AgentGWTService {
+	
+	private ServicesLayer servicesLayer = null;
+
+	public void setServicesLayer(ServicesLayer servicesLayer) {
+		this.servicesLayer = servicesLayer;
+	}
+
+	public InvoiceDTO checkInvoices() {
+		return servicesLayer.getInvoicesData();
+	}
+
+}
+}}}
+
+This way you could use jEmbedded as a provider of services using layers, and Spring for MVC etc etc..
+
+Finally
+
 
