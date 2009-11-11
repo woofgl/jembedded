@@ -204,11 +204,73 @@ Finally you can put all the configuration in one XML file and use the Spring tag
 
 As I said in the introduction there maybe be some times when you'd need more interaction between Spring and jEmbedded to make some Spring mechanisms work. For example the TX&AOP facility, you could apply this to a jEmbedded Service using an advice. But how you let Spring (and the AOP mechanism) access the resources that jEmbedded has created as a dataSource for instance?
 
-For this you need to use the
+For this you will need to use the `ResourceExporter` bean:
 
-`ServiceLayerExporter bean`
+`ResourceExporter`
 || *Attribute* || *Description* || * Values * ||
-|| bean id || Service Layer id in the Spring context || Service Layer id||
-|| class || Implementation class of the layer exporter|| org.jsemantic.jembedded.support.spring.exporter.ServiceLayerExporter||
-|| annotatedClasses || Layers to be processed by jEmbedded || any list of layers||
-|| exportedLayer || Layer id in the jEmbedded container || Layer id||
+|| bean id || Resource id in the Spring context || Resource id||
+|| class || Implementation class of the resource exporter|| org.jsemantic.jembedded.support.spring.exporter.ResourceExporter||
+||id || Resource id in the jEmbedded container || Resource id||
+
+=== AOP&TX Spring Example with jEmbedded === 
+
+Let's say you'd need to export a `DataSource` resource to the Spring context:
+
+{{{
+<bean id="handler" 
+class="org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner"> 
+                <property name="useContext" value="false"/> 
+                <property name="annotatedClasses"> 
+                <list> 
+<value>org.jsemantic.services.examples.energy.invoice.InvoiceService</value> 
+                 </list> 
+                </property> 
+</bean> 
+
+<bean id="dataSource" 
+class="org.jsemantic.jembedded.support.spring.exporter.ResourceExporter" 
+autowire="autodetect" depends-on="handler"> 
+<property name="id" value="dataSource"/> 
+</bean>
+}}}
+
+Now you can see why it's an mixed approach as you'd need to export the jEmbedded container first (it creates the DataSource resource) and then all the resources you'd like to Spring has access. On the other hand, the jEmbedded container will be blocked from the Spring context (note the `useContext` attribute set to false) so it won't have access to it.
+
+And now let's say you'd need to apply the AOP&TX from Spring to the Invoices Service:
+
+{{{
+//continuing the previous file
+
+<bean id="invoicesService" 
+class="org.jsemantic.jembedded.support.spring.exporter.ResourceExporter" 
+autowire="autodetect" depends-on="handler"> 
+                <property name="id" value="invoicesService"/> 
+</bean>
+
+bean id="txManager" 
+class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+  <property name="dataSource" ref="dataSource"/> 
+ </bean> 
+ <tx:advice id="txAdvice" transaction-manager="txManager" > 
+  <tx:attributes> 
+   <tx:method name="get*" read-only="true"/> 
+   <tx:method name="load*" read-only="true"/> 
+   <tx:method name="select*" read-only="true"/> 
+   <tx:method name="query*" read-only="true"/> 
+   <tx:method name="criteria*" read-only="true"/> 
+   <tx:method name="find*" read-only="true"/> 
+   <tx:method name="generate*" read-only="false" propagation="REQUIRED" 
+rollback-for="Exception"/> 
+  </tx:attributes> 
+ </tx:advice> 
+ <aop:config> 
+  <aop:pointcut id="serviceOperation" 
+  expression="execution(* 
+org.jsemantic.services.examples.energy..*Service.*(..))"/> 
+  <aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvice"  /> 
+ </aop:config>  
+}}} 
+
+Of course you need to export the service to the Spring context to let the AOP mechanism creates a Proxy and the DataSource (we did this in the first step).
+
+Now you can retrieve from Spring the proxied Invoices Service (not from the jEmbedded container!).
