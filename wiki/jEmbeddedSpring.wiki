@@ -1,14 +1,14 @@
 = Introduction =
 
-jEmbedded it's a complete SOC container (IoC based) that you can use alone if you want or need as also provides a lot of different services that should cover most of the usual needs for a project (well, and integration/soa/ria project).
+jEmbedded it's a complete SOC container (IoC based) that you can use alone if you want or need becaue it provides a lot of different services that should cover most of the usual needs for a project (well, an integration/soa/ria project).
 
-But it's highly likely that you won't use this alone but with other frameworks as a service provider etc... and for sure one of this frameworks would be Spring as this would let you to use jEmbedded with other frameworks using Spring as a bridge (for instance, I integrated  jEmbedded with Mule this way because Mule configuration files are in fact Spring context files). And because it's most popular framework out there :)
+But it's highly likely that you won't use this alone but with other frameworks as a service provider etc... and for sure one of this frameworks would be Spring as that would let you to use jEmbedded with other frameworks using Spring as a bridge (for instance, I integrated  jEmbedded with Mule this way because Mule configuration files are in fact Spring context files).
 
+So I provided a few ways to integrate jEmbedded with Spring, one of them native through the jEmbedded context. In other words, jEmbedded integrates its context with the Spring Application Context allowing jEmbedded to have access to Spring beans and the Spring beans to the jEmbedded container. jEmbedded will use the Spring context for its injection process.
 
-So I provided a few ways to integrate jEmbedded with Spring, one of them native through the jEmbedded context. In other words, jEmbedded (or some of its services) would live in the Spring context allowing Spring beans to have access to them. You could have a service layer exported to the Spring context file so it can be invoked or injected by any Spring bean. This way Spring would be the main container using jEmbedded as a helper one.
+In order to do this you'd need to use the one of the exporters provided (Spring beans that export the jEmbedded container or its services into the Spring Context) so the jEmbedded container could access the Spring context. For instance, in this case as you are exporting the whole container you could inject it to any Spring bean. But using it like this, I guess it's better letting jEmbedded access any Spring bean that it needs for injection. 
 
-
-The other way it's using a @SpringContext annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId"). This way jEmbedded it's the main container using Spring as a helper one.
+The other way it's using a @SpringContext annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId").
 
 
 == How to use the Spring integration ==
@@ -28,9 +28,11 @@ Then you'd need to decide which way it's better for your purposes. If you'd alre
 
 On the other hand if you are not using Spring or just need it in order to use one of it's facilities maybe it's better to use the @SpringContext annotation and let jEmbedded be the main container. The Spring beans would be available to the jEmbedded services and resources using the @Inject annotation.
 
-== Exporting Services. Spring as a the main Container == 
+Finally, for the most complex cases, you'd need to use a mixed approach. For instance to use Spring TX mechanism with jEmbedded services. In this case you'd need to export the jEmbedded container and certain resources to the Spring context to make it work.. I added the ResorceExport for this matter. I will show this as an example of how you can make work  any Spring resource with jEmbedded.
 
-Basically you need to put the services into the Spring context and for that I provided a few configurations in the Spring way: as xml beans file.
+== Exporting Services into Spring context == 
+
+Basically you need to put the jEmbedded services or resources into the Spring context and for that I provided a few configurations in the Spring way: as beans.
 
 As usual you can find some reference configurations in the META-INF directory of the service, in this case it's a support module but still. These are only reference configurations you can use your own ones.
 
@@ -41,6 +43,7 @@ If you'd like to have the jEmbedded container as a whole available for your Spri
 `EmbeddedContainerRunner bean`
 || *Attribute* || *Description* || * Values * ||
 || id || Id in the spring context || handler||
+|| useContext || use Spring context or not || true/false||
 || class || Implementation class of the runner|| org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner||
 || annotatedClasses || Classes to be processed by jEmbedded || any list of services||
 || autoStarted || Whether the container should be started || boolean, true by default||
@@ -86,6 +89,13 @@ public void doSomething() {
 getSomeService().execute();
 }
 }}}
+
+Please note the `useContext` attribute as it's very important. By default it's true and it will work as described, the jEmbedded container will use the Spring context for its injection process. This is fine for most part of the cases but could lead to some circular reference problems if you are using the mixed approach. For example you are exporting a resource from jEmbedded to the Spring context and at the same time the jEmbedded container will try to use this same resource as it's in the Spring context. In this case you should set the `useContext` to false.
+
+In other word, if you export resources (with ResourceExport) you should block the jEmbedded context access to Spring and just let Spring take what it needs from jEmbedded. This not apply if you are just exporting Services with the ServiceExporter bean.
+
+In the former example it's safe as you are exporting the container and the injecting it to a Spring bean.
+
 
 == Exporting Services == 
 
@@ -187,4 +197,3 @@ Finally you can put all the configuration in one XML file and use the Spring tag
    <import resource="classpath:META-INF/validation-service/validation-service.xml"/>
 <beans>
 }}}
-
