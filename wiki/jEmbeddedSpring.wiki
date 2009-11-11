@@ -139,6 +139,8 @@ validationService.validate(obj);
 }
 }}}
 
+In this case the jEmbedded container it's blocked from the Spring context.
+
 == Exporting a Service Layer == 
 
 If you had configured your services in layers (have a look at the jEmbedded examples and the case study) it's a good idea to export just the `ServicesLayer` and then injecting it into a Spring bean, for example in a Spring MVC controller. This way jEmbedded would act as services middleware. In order to do this (you could do using the services exported as well) you'd need to use the `ServiceLayerExporter`.
@@ -197,3 +199,16 @@ Finally you can put all the configuration in one XML file and use the Spring tag
    <import resource="classpath:META-INF/validation-service/validation-service.xml"/>
 <beans>
 }}}
+
+== Exporting the Container & Resources: a mixed approach == 
+
+As I said in the introduction there maybe be some times when you'd need more interaction between Spring and jEmbedded to make some Spring mechanisms work. For example the TX&AOP facility, you could apply this to a jEmbedded Service using an advice. But how you let Spring (and the AOP mechanism) access the resources that jEmbedded has created as a dataSource for instance?
+
+For this you need to use the
+
+`ServiceLayerExporter bean`
+|| *Attribute* || *Description* || * Values * ||
+|| bean id || Service Layer id in the Spring context || Service Layer id||
+|| class || Implementation class of the layer exporter|| org.jsemantic.jembedded.support.spring.exporter.ServiceLayerExporter||
+|| annotatedClasses || Layers to be processed by jEmbedded || any list of layers||
+|| exportedLayer || Layer id in the jEmbedded container || Layer id||
