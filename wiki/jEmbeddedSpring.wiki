@@ -274,3 +274,80 @@ org.jsemantic.services.examples.energy..*Service.*(..))"/>
 Of course you need to export the service to the Spring context to let the AOP mechanism creates a Proxy and the DataSource (we did this in the first step).
 
 Now you can retrieve from Spring the proxied Invoices Service (not from the jEmbedded container!).
+
+== Embedding a Spring context: using the @SpringRepository annotation  ==
+ 
+I've already explained how to export any resource you'd need to a Spring context from jEmbedded: services, container and resources. In that case you'd already had (most likely) a Spring context you wanted to integrate with jEmbedded. But there are times when you just need a helper Spring context to use it with jEmbedded (to implement a complete persistence layer with Spring, for instance),  and let jEmbedded inject any beans from it to its own services. For that matter you can use the @SpringRepository Annotation.
+ 
+@SpringRepository
+ 
+|| *Attribute* || *Description* || * Values * ||
+|| id || Spring context service in the container|| "springRepository" by default||
+|| configurationFile || location of the Spring configuration file|| ${springRepository.configurationFile} by default||
+ 
+ 
+If you want this `@SpringRepository` will be used as an IocProvider by the jEmbedded container (so it can use the Spring beans to build the jEmbedded services or other components) you will need to declare a `@Repository` and add it to the `iocProviders` attribute:
+
+The definition would be something like this:
+
+{{{
+@SpringRepository(configurationFile = "META-INF/invoices-service/embedded-database-service/persistence-layer.xml")
+ 
+@Repository(id="invoicesService",  resources={EmbeddedDatabase.class, MockDataGenerator.class}, iocProviders = {"springRepository"})
+}}}
+ 
+And the complete example (from the invoices-service example):
+
+{{{
+@SpringRepository(configurationFile = "META-INF/invoices-service/embedded-database-service/persistence-layer.xml")
+ 
+@Repository(id="invoicesService",  resources={EmbeddedDatabase.class, MockDataGenerator.class},
+                            iocProviders = {"springRepository"})
+@AbstractService(id="invoicesService", resources=InvoiceServiceImpl.class)
+public interface InvoiceService  extends Service {
+             
+              @ImplementedBy(ref="invoicesServiceImpl")
+              public Invoice generateInvoice(ReadingDTO dto);
+             
+}
+}}}
+ 
+In this case we use the `@SpringRepository` to create the persistence layer, daos, datasources etc...and then jEmbedded will inject some of that resources to its services (some are used by the EmbeddedDatabase.class).
+ 
+In order to inject a Spring resource to a jEmbedded service or element you will need to use the `@Inject` annotation with the id of the bean (spring resource):
+ 
+ 
+{{{
+@Inject (ref="dataSource") // ref is the id of the Spring Bean resource
+private DataSource dataSource = null;
+ 
+}}}
+ 
+ 
+ 
+Also this annotation resolves into a jEmbedded Service that you could retrieve and use as usual:
+ 
+{{{
+@SpringRepository(configurationFile="META-INF/invoices-service/invoices-service.xml")
+public class SpringTest {
+ 
+private EmbeddedHandler handler = null;
+
+@Before public void setUp() {
+handler = EmbeddedHandlerFactory.getInstance(getClass());
+handler.start(); 
+}
+
+@After 
+public void release() {
+handler.stop();
+}
+ 
+public void test() {
+Repository repo = (Repository)handler.getService("springRepository");
+InvoiceService invoiceService = (InvoiceService) repo.getService("invoicesService");
+}
+}
+}}}
+ 
+In this case the jEmbedded container won't use the SpringContext for its injection process, but you can use this context for other porpuses as testing etc...
