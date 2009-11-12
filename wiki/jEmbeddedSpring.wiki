@@ -8,7 +8,7 @@ So I provided a few ways to integrate jEmbedded with Spring, one of them native 
 
 In order to do this you'd need to use the one of the exporters provided (Spring beans that export the jEmbedded container or its services into the Spring Context) so the jEmbedded container could access the Spring context. For instance, in this case as you are exporting the whole container you could inject it to any Spring bean. But using it like this, I guess it's better letting jEmbedded access any Spring bean that it needs for injection. 
 
-The other way it's using a @SpringContext annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId").
+The other way it's using a `@SpringRepository` annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId").
 
 
 == How to use the Spring integration ==
@@ -26,11 +26,11 @@ Even though the Spring integration it's native (as it's made through jEmbedded S
 
 Then you'd need to decide which way it's better for your purposes. If you'd already have a Spring context or a project that uses it maybe it's better to use the jEmbedded export container/services facility into the Spring context. This way Spring would act as the main container having access to the embedded services you just exported (or the whole jEmbedded container).
 
-On the other hand if you are not using Spring or just need it in order to use one of it's facilities maybe it's better to use the @SpringContext annotation and let jEmbedded be the main container. The Spring beans would be available to the jEmbedded services and resources using the @Inject annotation.
+On the other hand if you are not using Spring or just need it in order to use one of it's facilities maybe it's better to use the `@SpringRepository` annotation and let jEmbedded be the main container. The Spring beans would be available to the jEmbedded services and resources using the @Inject annotation.
 
 Finally, for the most complex cases, you'd need to use a mixed approach. For instance to use Spring TX mechanism with jEmbedded services. In this case you'd need to export the jEmbedded container and certain resources to the Spring context to make it work.. I added the ResorceExport for this matter. I will show this as an example of how you can make work  any Spring resource with jEmbedded.
 
-== Exporting Services into Spring context == 
+== Exporting Services into the Spring context == 
 
 Basically you need to put the jEmbedded services or resources into the Spring context and for that I provided a few configurations in the Spring way: as beans.
 
@@ -275,9 +275,9 @@ Of course you need to export the service to the Spring context to let the AOP me
 
 Now you can retrieve from Spring the proxied Invoices Service (not from the jEmbedded container!).
 
-== Embedding a Spring context: using the @SpringRepository annotation  ==
+== Embedding a Spring context: using the `@SpringRepository` annotation  ==
  
-I've already explained how to export any resource you'd need to a Spring context from jEmbedded: services, container and resources. In that case you'd already had (most likely) a Spring context you wanted to integrate with jEmbedded. But there are times when you just need a helper Spring context to use it with jEmbedded (to implement a complete persistence layer with Spring, for instance),  and let jEmbedded inject any beans from it to its own services. For that matter you can use the @SpringRepository Annotation.
+I've already explained how to export any resource you'd need to a Spring context from jEmbedded: services, container and resources. In that case you'd already had (most likely) a Spring context you wanted to integrate with jEmbedded. But there are times when you just need a helper Spring context to use it with jEmbedded (to implement a complete persistence layer with Spring, for instance),  and let jEmbedded inject any beans from it to its own services. For that matter you can use the `@SpringRepository` annotation.
  
 @SpringRepository
  
@@ -312,9 +312,9 @@ public interface InvoiceService  extends Service {
 }
 }}}
  
-In this case we use the `@SpringRepository` to create the persistence layer, daos, datasources etc...and then jEmbedded will inject some of that resources to its services (some are used by the EmbeddedDatabase.class).
+In this case we use the `@SpringRepository` to create the persistence layer, daos, datasources etc...and then jEmbedded will inject some of that resources to its services (some are used by the `EmbeddedDatabase.class`).
  
-In order to inject a Spring resource to a jEmbedded service or element you will need to use the `@Inject` annotation with the id of the bean (spring resource):
+In order to inject a Spring resource to a jEmbedded service or element you will need to use the `@Inject` annotation with the id of the bean (Spring resource):
  
  
 {{{
@@ -350,4 +350,4 @@ InvoiceService invoiceService = (InvoiceService) repo.getService("invoicesServic
 }
 }}}
  
-In this case the jEmbedded container won't use the SpringContext for its injection process, but you can use this context for other porpuses as testing etc...
+In this case the jEmbedded container won't use the Spring Context for its injection process, but you can use this context for other porpuses as testing etc...
