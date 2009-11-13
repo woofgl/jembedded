@@ -233,3 +233,81 @@ In order to inject the Spring beans in the `@AnnotatedService` you will need to 
 @Inject (ref = "customerDao"), being the ref attribute the id of the bean in 
 the Spring Context.
 }}}
+
+
+== @Inject Annotation ==
+
+The @Inject annotation plays a main role in the composition process of the services (or other elements). With this annotation you can tell the container what elements of your service must be composed with other elements from the same container or an external one (Spring for instance).
+
+== Injection by Type == 
+
+The basic usage it's quite simple:
+
+{{{
+@Inject
+private InvoicesService invoicesService = null;
+}}}
+
+The container will inject the instance of the `InvoicesService` that it should have in its repository. The drawback of using this kind of injection it's that you may only have one instance of the element in the container, as it will be found by type.
+
+The annotation must be made at at attribute level. Note that you don't need the setter method in order to inject the element.
+
+
+== Injection by Reference == 
+
+This kind of injection lets you specify which element of the container you'd like to use
+to inject any elements of your service. This kind of injection overcomes the limitations of the former by type, you don't need to have only one instance of the element in the container.
+
+You only need to provide the id of the element in the container:
+
+{{{
+@Inject(ref="invoicesService")
+private InvoicesService invoicesService = null;
+}}}
+
+You should use this method if you are injecting elements from another context (like Spring).
+
+== Injection by Value == 
+
+This a bit different as you won't be injecting references of other elements but values. This is useful for services that have properties that need to be configured, for example with a property file or just a fixed value.
+
+=== Case 1: Fixed values  ===
+
+This is a very simple example, but that is it how to inject a fixed value, just need to provide the value.
+
+{{{
+@AnnotatedBean(id="dependency")
+public class TestDependency {
+	
+@Inject(value="hi")
+private String msg = null;
+
+public String getMsg() {
+return msg;
+}
+}
+}}}
+
+=== Case 2: Using the Properties Service  ===
+
+This is a more complex example, 
+
+{{{
+@Inject(value="${jettyService.port}")
+private String port = "9005";
+	
+@Inject(value="${jettyService.host}")
+private String host = "127.0.0.1";
+	
+@Inject(value="${jettyService.root}")
+private String rootContext = "/";
+}}}
+
+
+
+@Repository
+|| *Attribute* || *Description* || * Values * ||
+|| id || tag id in the container ||String, not compulsory ||
+|| ref || id of the element referenced in the container || String, not compulsory ||
+|| value || value of the attribute | String, value to inject ||
+
