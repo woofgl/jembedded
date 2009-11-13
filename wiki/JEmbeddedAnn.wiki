@@ -158,7 +158,6 @@ This way the "anotherRepo" repository will have access to the "integrationWebSer
 
 === @Repository Annotation Attributes=== 
 
-@Repository
 || *Attribute* || *Description* || * Values * ||
 || id || repository id in the container ||String ||
 || resources || elements the repository will hold ||class ||
@@ -177,7 +176,7 @@ There are a few ways in which the container it's integrated with Spring and I'll
 
 The integration of the @Repository with a Spring Context (`ApplicationContext`) it's made through the @SpringRepository annotation declaration. It can be used at a class level or method level. 
 
-@SpringRepository
+`@SpringRepository`
 || *Attribute* || *Description* || * Values * ||
 || configurationFile|| location of the Spring XML context file ||String ||
 
@@ -299,8 +298,12 @@ In order to do this you can use one of the core services of `jEmbedded` the `Pro
 public class JettyService {
 }}}
 
-The `@PropertiesService` needs the location of property file in the classpath. You need then to add the the annotation as usual in the repository space.
+`@PropertiesService`
+|| *Attribute* || *Description* || * Values * ||
+|| propertiesFile|| location of the properties file in the classpath||String, compulsory||
 
+
+The `@PropertiesService` needs the location of property file in the classpath. You need then to add the the annotation as usual in the repository space.
 
 {{{
 @PropertiesService(propertiesFile="META-INF/web-server.properties")
@@ -319,7 +322,6 @@ private String rootContext = "/";
 
 === @Inject Annotation Attributes=== 
 
-@Inject
 || *Attribute* || *Description* || * Values * ||
 || id || tag id in the container ||String, not compulsory ||
 || ref || id of the element referenced in the container || String, not compulsory ||
