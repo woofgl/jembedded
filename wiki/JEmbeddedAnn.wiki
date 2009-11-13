@@ -290,9 +290,22 @@ return msg;
 
 === Case 2: Using the Properties Service  ===
 
-This is a more complex example, 
+It's very unlikely that you are going to set fixed values in your service though, as it's much better if you externalize those values to a properties file (name/value). 
+
+In order to do this you can use one of the core services of `jEmbedded` the `PropertiesService` that will parse any property value that it's defined with the notation "${propertyLabel}":
 
 {{{
+@PropertiesService(propertiesFile="META-INF/web-server.properties")
+public class JettyService {
+}}}
+
+The `@PropertiesService` needs the location of property file in the classpath. You need then to add the the annotation as usual in the repository space.
+
+
+{{{
+@PropertiesService(propertiesFile="META-INF/web-server.properties")
+public class JettyService {
+
 @Inject(value="${jettyService.port}")
 private String port = "9005";
 	
@@ -301,13 +314,13 @@ private String host = "127.0.0.1";
 	
 @Inject(value="${jettyService.root}")
 private String rootContext = "/";
+}
 }}}
 
+=== @Inject Annotation Attributes=== 
 
-
-@Repository
+@Inject
 || *Attribute* || *Description* || * Values * ||
 || id || tag id in the container ||String, not compulsory ||
 || ref || id of the element referenced in the container || String, not compulsory ||
-|| value || value of the attribute | String, value to inject ||
-
+|| value || value of the attribute | String, value to inject or "${value}" ||
