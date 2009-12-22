@@ -44,15 +44,11 @@ There are many ways you could use jEmbedded:
 
 === How to create a Service with jEmbeded ===
 
-The core of any application logic must be a handful of services that handle it. The services can be created fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just an abstract class (or interface)+annotations. 
-
-This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services or implementing a bpm process.
-
-There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" and using the `@AbstractAnnotatedService` annotation. This annotation is the most powerful of the framework and it's not only intended for abstract Services but for regular implemented Services as well. Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the the class using the AbstractCMService or the AbstractService abstract classes. You don't need to do this using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class. You can 
+There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" but using the `@AbstractAnnotatedService` annotation that it's the most powerful annotation within the framework and. Despite its name it's not only intended for abstract Services but for regular implemented Services as well. Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the class using the AbstractCMService or the AbstractService abstract classes. You don't need to do this using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class though. 
 
 == Tutorial 1: Hello world Service Example ==
  
-1 - Create an annotation with the default configuration for your service (id, singleton, class, etc. + your custom attributes).
+1 - Create an annotation with the default configuration for your service (id, singleton, resources,  etc... + your custom attributes).
 
 {{{
 @Retention(RetentionPolicy.RUNTIME)
@@ -62,18 +58,18 @@ public @interface HelloWorldAnnotatedService {
         // service id in the container
 	String id() default "helloService";
         
-        // service type to inherits
+        // service type to inherit
 	Class<?> inherits() default AbstractAnnotatedService.class;
         
-        //other services to load, none this time
+        //other services or resources to load, none this time
 	Class<?>[] resources();
         
-        //msg attribute
+        //dmsg attribute
         String msg() default="no message";
 }
 }}}
 
-2- In this case we have choosen the `@AbstractAnnotedService` but we'll  create an regular class as we don't need abstract methods but we don't want to extend any abstract class.
+2- In this case we have choosen the `@AbstractAnnotedService` but we'll  create an regular class as we don't need abstract methods but we don't want to extend any abstract class either.
 
 {{{
 @HelloWorld(msg="hello world")
@@ -82,7 +78,7 @@ public class HelloWorldService {
 }
 }}}
 
-3- Add the attributes, methods etc you would need, in this case we need a String attibute and a service method:
+3- Add the attributes, methods etc you would need, in this case we need a String attribute and a method that retrieves the message.
 
 {{{
 @HelloWorld(msg="hello world")
@@ -109,10 +105,10 @@ This value also can be populated using the properties service and a external pro
 4- Create a test unit using the jEmbedded integrations testing support.
 
 {{{
-@RunWith(IntegrationTestClassRunner.class)
+@RunWith(IntegrationTestClassRunner.class)//jEmbedded integration test runner
 @Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
 
-@Include(resources = {HelloWorldService.class})
+@Include(resources = {HelloWorldService.class})//included resources to test
 public class HelloWorldServiceTest {
 
 @Test
@@ -128,7 +124,7 @@ public void test() {
 }
 }}}
 
-5- You can change declare the service abstract and it will work fine, but now you could add abstract methods:
+5- You can change the service class declaring it abstract and it will work fine, but now of course you could add abstract methods:
 
 {{{
 @HelloWorld(msg="hello world")
@@ -143,15 +139,15 @@ return msg;
 }
 }}}
 
-6- A service can be started and stopped but both methods are called by the container (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations;
+6- A service can be started and stopped, both methods being called by the container (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations;
 
 {{{
 @AnnotatedHelloWorldService(msg = "hello world")
 public abstract class HelloWorldService {
     @Inject
-     private String msg;
+    private String msg;
 	
-    //to change the valuem not for the injection
+    //to change the value, not needed for injection
     public void setMsg(String msg) {
          this.msg = msg;
     }
