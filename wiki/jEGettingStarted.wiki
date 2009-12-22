@@ -7,7 +7,7 @@ Once you have installed the framework, you will need to declare the dependencies
                  <dependency>
 			<groupId>org.jsemantic</groupId>
 			<artifactId>jembedded-core</artifactId>
-                        <version>0.1.x</version>
+                        <version>0.1.3</version>
 		</dependency>
 }}}
 *  Any service dependency you are planning to use. For instance, if you want to use the jetty-service you would need to include:
@@ -42,11 +42,90 @@ There are many ways you could use jEmbedded:
 
 
 
-===How to create a Service with jEmbeded ===
+=== How to create a Service with jEmbeded ===
 
-The core of any application logic must be a handful of services that handle it. The services can be created fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just a interface+annotations. This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services or implementing a bpm process.
+The core of any application logic must be a handful of services that handle it. The services can be created fast using the dynamic injection/creation provided with jEmbedded, that allows you to create services with just an abstract class (or interface)+annotations. 
 
-=== Steps ===
+This kind of services are created with composition (and managing) of other elements. You can add additional application logic implementing methods from other services or implementing a bpm process.
+
+There are many ways you can create services with jEmbedded. Let's start with a business services "Hello World" and using an abstract class.
+
+== Hello world Service Example ==
+ 
+1 - Create an annotation with the default configuration for your service (id, singleton, class, etc. + your custom attributes).
+
+{{{
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD })
+public @interface HelloWorldAnnotatedService {
+	
+        // service id in the container
+	String id() default "helloService";
+        //Service clazz implementation
+        String clazz() default "orj.jsemantic.jembedded.HelloWorldService";
+
+	// service type to inherits
+	Class<?> inherits() default AbstractAnnotatedService.class;
+        
+        //other services to load, none this time
+	Class<?>[] resources();
+        
+        //msg attribute
+        String msg();
+}
+}}}
+
+2- In this case as we have choosen an abstract service create an abstract class and annotate it.
+{{{
+@HelloWorld(msg="hello world")
+public abstract class HelloWorldService {
+
+}
+
+3- Add the attributes, methods etc you would need, in this case we need a String attibute and a service method:
+
+{{{
+@HelloWorld(msg="hello world")
+public abstract class HelloWorldService {
+
+@Inject
+private String msg;
+
+public String getMessage(){
+return msg;
+}
+
+}
+}}}
+
+The inject annotation will associate the msg attribute to the Service, populating it with the value from the custom annotation.
+
+This value also can be populated using the properties service and a external properties file:
+
+{{{
+@Inject(val=${helloWorldService.msg}
+}}}
+
+4- Create a test unit using the jEmbedded integrations testing support.
+
+{{{
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
+@Include(resources = {HelloWorldService.class})
+public class HelloWorldServiceTest {
+
+@Test
+public void test() {
+	HelloWorldService service =(HelloWorldService) Assert.getService("helloService");
+		
+	assertEquals("hello world", service.getMsg());
+}	
+}
+}}}
+
+== Mule Service Example ==
+
 
 1 – Create an interface with the methods you would need and extends the Service interface.
 
