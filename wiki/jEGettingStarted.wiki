@@ -61,10 +61,8 @@ public @interface HelloWorldAnnotatedService {
 	
         // service id in the container
 	String id() default "helloService";
-        //Service clazz implementation
-        String clazz() default "orj.jsemantic.jembedded.HelloWorldService";
-
-	// service type to inherits
+        
+        // service type to inherits
 	Class<?> inherits() default AbstractAnnotatedService.class;
         
         //other services to load, none this time
