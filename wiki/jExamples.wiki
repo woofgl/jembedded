@@ -1,94 +1,291 @@
-= Introduction =
+== Mule Service Example ==
 
-A good example of what you can achieve with jEmbedded and service composition is an Embedded database that you can access locally from your application, just to test it or to help in development. 
+1 – Create an interface with the methods you would need and extends the Service interface.
 
-You have the option to store the data in memory or in files (HSQLDB/DERBY).
+public interface EchoMuleService extends Service {
+   public Service getMuleService();
+}
 
-To build this service we'll use the jdbc-service included in the distribution:
+
+2 - Annotate the service at a class level with the @AbstractdService annotation.
 
 {{{
+@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
+}}}
 
+`@AbstractService`:
+
+- id: service id in the container.
+
+- resources: elements the service will use for composition, that will be handled by the container.
+
+- managedElements: services managed by this service, that means that the service will handle their lifecycle (start&stop them), not the container.
+
+For example let's say you wantto run a mule based service from your application, for instance the echo example that cames with the distribution just for testing.
+
+Obviously you can do this from the mule directory etc.. but that's not easy and you can't import the example into your echo-application :)
+
+For this matter you can just declare the mule service and client services dependencies in your pom:
+{{{
                 <dependency>
 			<groupId>org.jsemantic.services</groupId>
-			<artifactId>jdbc-service</artifactId>
-			<version>0.4.5-SNAPSHOT</version>
+			<artifactId>mule-service</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsemantic.services</groupId>
+			<artifactId>mule-client-service</artifactId>
+			<version>0.2.0-SNAPSHOT</version>
 		</dependency>
 }}}
 
-The complete example it's in the examples directory.
-
-=== Implementation of the embedded database === 
-
-The interface of the service is:
+All the services provided with jEmbedded follows the same packaging pattern,  they provide you with an interface, an implementation, some customs annotations and  a META-INF/xxx-service directory with the needed resources, usually a xxx-service.xml file(to use it from Spring or any other framework that uses its ApplicationContext), some properties files, some other configuration stuff etc... In fact this is the way you should package your services for distribution:
 
 {{{
-@AnnotatedInterface(resources={JdbcServiceImpl.class})
-public interface EmbeddedDatabase extends Service {
+resources/
+         META-INF/
+                 xxx-service
+                 /....config files
+}}}
 
-	GenericEmbeddedDataSource getDatasource();
+So basically to use a service you can:
+
+*  Import it using the attribute "resources" with a class/interface depending how it was designed. This way you can externalize the configuration of your service using the @PropertiesService: `resources=MuleServiceImpl.class`
+
+*  Using its custom annotation:
+
+{{{
+@MuleService(configurationFile="echo-config.xml")
+public Service getMuleService();
+}}}
+
+The annotation can be declared at class or method level. If you want to have access to it, the best way it's to declare method that will implemented  by the service at runtime.
+
+{{{
+MuleService muleService = echoService.geMuleService();
+}}}
+
+Importing the service this way has the restriction that the configuration it's fixed on the annotation. This is not an issue when you want to develop and distribute a service like this one that is not likely to change.
+
+
+3 - Annotate the methods and add the additional services you may need.
+
+{{{
+@AbstractService(id="echoMuleService", 
+resources=MuleServiceImpl.class, managedElements="muleService")
+public interface EchoMuleService extends Service {
 	
-	public Map<String, Object> executeQuery(String query, Object... args);
-
+	@Inject(ref="muleService")
+	public MuleService getMuleService();
+	
+	@PropertiesService(propertiesFile=
+             "META-INF/web-server/mule-echo-service.properties")
+	public void getPropertiesService();
 }
 }}}
 
-Note the annotation adds some new semantics to the interface: any service that implements the interface should have the jdbc-service as an association in order to comply with the contract.
-
-The implementation of the service is:
+Note the I added the `PropertiesService` as it's needed to parse the properties file configuration (you can avoid this using the custom annotation). This service is used to add functionality to the service but it's not managed by it. Also you don't need it to declare it as method (I did it for the sake of the example):
 
 {{{
-@AnnotatedService(id="databaseService")
-@Include (resources=DerbyDataSource.class)
-public class DerbyEmbeddedDatabaseImpl extends AbstractCMTService implements EmbeddedDatabase {
+
+@PropertiesService(propertiesFile=
+             "META-INF/web-server/mule-echo-service.properties")
+
+@AnnotatedService(id="echoMuleService", 
+resources=MuleServiceImpl.class, managedElements="muleService")
+public interface EchoMuleService extends Service {
 	
-	@Inject
-	private JdbcService jdbcService = null;
+	@Inject(ref="muleService")
+	public MuleService getMuleService();
+}
+}}}
+
+4- At this point we could think that would be nice to add a method that actually invokes the model that mule service exposes. This model just echo whatever string you sent to it so we'll add the following method:
+
+{{{
+public Object sendEchoMessage(String echoEndPoint, String message);
+}}}
+
+Now you may think that you have to write an implementation class.. but no you are wrong :), you can implement this functionality just using composition:
+
+{{{
+@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
+public Object sendEchoMessage(String echoEndPoint, String message);
+}}}
+
+`@ImplementedBy annotation:`
+
+- ref: service or element that could implement this functionality (required).
+
+- refMethodName: method of the ref element that needs to be invoked (optional). If it's not provided the declared method name will be used.
+
+In this case we use the @MuleClient service to implement this method (with the paramas endpoint and message).
+
+{{{
+echoMuleService.sendEchoMessage("vm://echo", "hello dude!");
+}}}
+
+Finally the service looks like this:
+
+{{{
+@MuleClient
+@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class, 
+		managedElements="muleService")
+public interface EchoMuleService extends Service {
+	
+	@Inject(ref="muleService")
+	public MuleService getMuleService();
+	
+	@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
+	public void getPropertiesService();
+	
+	//We add custom functionality, using composition of elements
+	@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
+	public Object sendEchoMessage(String echoEndPoint, String message);
+}
+}}}
+
+And a stripped version:
+
+{{{
+@AbstractService(id="echoMuleService", 
+resources=MuleServiceImpl.class, MuleClientWrapperImpl.class,
+PropertiesService.class, 
+managedElements="muleService")
+public interface EchoMuleService extends Service {
 		
-	public Map<String, Object> executeQuery(String query, Object... args) {
-		return jdbcService.executeQuery(query, args);
+	@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
+	public Object sendEchoMessage(String echoEndPoint, String message);
+}
+}}}
+
+If you use this version you also will need add the configuration in a properties file in META-INF/repository.properties.
+
+As you can see jEmbedded gives a lot of flexibility in order to configure and compose the services or other elements as components or beans.
+
+
+4 – Now you have the service to ready to go, but how still you need and environment to run it.
+
+In order to do that you can use the EmbeddedHandlerFactory:
+
+{{{
+EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(Class<?>...…classes);
+}}}
+
+The factory accepts an array of classes. You should add here the services or elements you want to add to the container (most likely the entry point).
+
+For example: `EchoMuleService.class` or if you running it from a test unit:
+
+{{{
+//note if you not declare the @Respository annotation here, a default repository will
+//be created
+@Include(resources={EchoMuleService.class}) // include the service into the container
+public class TestEchoMuleService {
+	
+	private EmbeddedHandler handler = null;
+	
+	@Before
+	public void setUp() {
+		handler = EmbeddedHandlerFactory.getInstance(getClass());
+		handler.start();//start the container
 	}
-	...more methods
-
+	
+	@After
+	public void dispose() {
+		handler.stop(); //stop and dispose the container
+	}
+	@Test
+	public void test() {
 		
-
-	@Override
-	protected void release() {
-		jdbcService.stop();
+		EchoMuleService echoMuleService = (EchoMuleService)handler.getService("echoMuleService");
+		
+		String result = (String)echoMuleService.sendEchoMessage("vm://echo", "hello dude!");
+		assertEquals("hello dude!", result);
 	}
 }
 }}}
 
-The configuration is passed on the standard repository.properties file:(provided by the PropertiesService)
+5 - Now you can run the service for real using with the jEmbedded plugin.
+
+This plugin is for maven so you need to declare it in your pom:
 
 {{{
-#jdbcService.dataSource
-dataSource.uri=test
-dataSource.user=sa
-dataSource.password=
-dataSource.createSchemaScript=META-INF/database-service/scripts/schema.sql
-dataSource.populateSchemaScript=META-INF/database-service/scripts/populate-schema.sql
+	<plugins>
+		<plugin>
+		<groupId>org.jsemantic.jembedded</groupId>
+		<artifactId>jembedded-plugin</artifactId>
+		<version>0.2-SNAPSHOT</version>
+		<configuration>
+			<argLine>-Xms256m -Xmx512m</argLine>
+
+				<additionalClasspathElements>
+					<additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
+				</additionalClasspathElements>	
+				<useSystemClassLoader>true</useSystemClassLoader>
+					<container>
+						<id>test</id>
+						<classes>
+							<class>org.jsemantic.jembedded.examples.services.mule.EchoMuleService</class>
+							
+						</classes>
+					</container>
+				</configuration>
+		</plugin>
+	</plugins>
 }}}
 
-To get the service started and execute a query:
+To start the container: `mvn -o jembedded:start`
 
+Once the container it's started, you will prompted to enter something, just do it and you will have your echo, cool huh? ;)
+
+6 - Packaging and distribution.
+
+Now that you have a complete service you may think that you could distribute or reuse it using composition.
+
+In order to this you need to do:
+
+- Create a pom (have a look at any pom provided with the jembedded-services) that will package the classes and resources in a jar.
+
+- Create a custom annotation if you think that could be useful for the users of the service:
 {{{
-EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(DerbyEmbeddedDatabaseImpl.class);
-handler.start();
-
-EmbeddedDatabase database = (EmbeddedDatabase)handler.getService("databaseService");
-
-database.executeQueryForList("select * from test").size() == 3);
-handler.stop();
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD})
+public @interface EchoMuleService {
+	/**
+	 * 
+	 * @return
+	 */
+	AnnotatedService service() default @AnnotatedService(id="echoMuleService", clazz="org.jsemantic.jembedded.examples.services.mule.EchoMuleService");
+	
+        //you could declare more properties if needed
+}
 }}}
 
-If you want to declare it in a Spring context:
+This way anyone that wants to use the service only will need to declare the annotation (that it's using jEmbedded that is):
+
 {{{
-<bean id="embeddedContainerRunner" class="org.jsemantic.jembedded.support.spring.EmbeddedContainerRunner" >
+@EchoMuleService // include the service into the container
+public class TestEchoMuleService {
+	
+	private EmbeddedHandler handler = null;
+	
+..
+}
+}}}
+
+- Create a META-INF/echo-mule-service directory and include a properties file for configuration (if needed) and a xml beans file if you are planning to use this service from Spring or any framework that uses Spring's ApplicationContext (as such as Mule):
+{{{
+<bean id="echoMuleService" class="org.jsemantic.jembedded.support.spring.exporter.ServiceExporter">
+		<property name="id" value="echoMuleService"/>
+		
 		<property name="annotatedClasses">
 			<list>
-		         <value>
-                       org.jsemantic.jembedded.database.EmbeddedDatabaseImpl</value>
+	<value>org.jsemantic.jembedded.examples.services.mule.EchoMuleService</value>
 			</list>
 		</property>
-</bean>
+	</bean>
 }}}
+
+To use from Spring just use the import tag:
+
+`<import resource="classpath:META-INF/echo-mule-service/echo-mule-service.xml"/>`
