@@ -1,11 +1,11 @@
 == Mule Service Example ==
 
 1 – Create an interface with the methods you would need and extends the Service interface.
-
+{{{
 public interface EchoMuleService extends Service {
    public Service getMuleService();
 }
-
+}}}
 
 2 - Annotate the service at a class level with the @AbstractdService annotation.
 
@@ -19,9 +19,7 @@ public interface EchoMuleService extends Service {
 
 - resources: elements the service will use for composition, that will be handled by the container.
 
-- managedElements: services managed by this service, that means that the service will handle their lifecycle (start&stop them), not the container.
-
-For example let's say you wantto run a mule based service from your application, for instance the echo example that cames with the distribution just for testing.
+For example let's say you want to run a mule based service from your application, for instance the echo example that cames with the distribution just for testing.
 
 Obviously you can do this from the mule directory etc.. but that's not easy and you can't import the example into your echo-application :)
 
@@ -71,11 +69,10 @@ Importing the service this way has the restriction that the configuration it's f
 3 - Annotate the methods and add the additional services you may need.
 
 {{{
-@AbstractService(id="echoMuleService", 
-resources=MuleServiceImpl.class, managedElements="muleService")
-public interface EchoMuleService extends Service {
+@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class)
+public interface EchoMuleService {
 	
-	@Inject(ref="muleService")
+	@Compose(ref="muleService")
 	public MuleService getMuleService();
 	
 	@PropertiesService(propertiesFile=
@@ -91,11 +88,10 @@ Note the I added the `PropertiesService` as it's needed to parse the properties 
 @PropertiesService(propertiesFile=
              "META-INF/web-server/mule-echo-service.properties")
 
-@AnnotatedService(id="echoMuleService", 
-resources=MuleServiceImpl.class, managedElements="muleService")
-public interface EchoMuleService extends Service {
+@AnnotatedService(id="echoMuleService", resources=MuleServiceImpl.class)
+public interface EchoMuleService {
 	
-	@Inject(ref="muleService")
+	@Compose(ref="muleService")
 	public MuleService getMuleService();
 }
 }}}
@@ -129,11 +125,10 @@ Finally the service looks like this:
 
 {{{
 @MuleClient
-@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class, 
-		managedElements="muleService")
-public interface EchoMuleService extends Service {
+@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class)
+public interface EchoMuleService {
 	
-	@Inject(ref="muleService")
+	@Compose(ref="muleService")
 	public MuleService getMuleService();
 	
 	@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
@@ -149,10 +144,8 @@ And a stripped version:
 
 {{{
 @AbstractService(id="echoMuleService", 
-resources=MuleServiceImpl.class, MuleClientWrapperImpl.class,
-PropertiesService.class, 
-managedElements="muleService")
-public interface EchoMuleService extends Service {
+resources={MuleServiceImpl.class, MuleClientWrapperImpl.class,PropertiesService.class}
+public interface EchoMuleService {
 		
 	@ImplementedBy(ref="muleClient", refMethodName="sendMessage")
 	public Object sendEchoMessage(String echoEndPoint, String message);
@@ -179,25 +172,15 @@ For example: `EchoMuleService.class` or if you running it from a test unit:
 {{{
 //note if you not declare the @Respository annotation here, a default repository will
 //be created
+
+
 @Include(resources={EchoMuleService.class}) // include the service into the container
 public class TestEchoMuleService {
 	
-	private EmbeddedHandler handler = null;
-	
-	@Before
-	public void setUp() {
-		handler = EmbeddedHandlerFactory.getInstance(getClass());
-		handler.start();//start the container
-	}
-	
-	@After
-	public void dispose() {
-		handler.stop(); //stop and dispose the container
-	}
 	@Test
 	public void test() {
 		
-		EchoMuleService echoMuleService = (EchoMuleService)handler.getService("echoMuleService");
+		EchoMuleService echoMuleService =(EchoMuleService)Assert.getService("echoMuleService");
 		
 		String result = (String)echoMuleService.sendEchoMessage("vm://echo", "hello dude!");
 		assertEquals("hello dude!", result);
@@ -251,10 +234,7 @@ In order to this you need to do:
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.TYPE, ElementType.METHOD})
 public @interface EchoMuleService {
-	/**
-	 * 
-	 * @return
-	 */
+	
 	AnnotatedService service() default @AnnotatedService(id="echoMuleService", clazz="org.jsemantic.jembedded.examples.services.mule.EchoMuleService");
 	
         //you could declare more properties if needed
@@ -266,8 +246,6 @@ This way anyone that wants to use the service only will need to declare the anno
 {{{
 @EchoMuleService // include the service into the container
 public class TestEchoMuleService {
-	
-	private EmbeddedHandler handler = null;
 	
 ..
 }
