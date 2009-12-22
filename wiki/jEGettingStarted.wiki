@@ -81,6 +81,7 @@ public @interface HelloWorldAnnotatedService {
 public abstract class HelloWorldService {
 
 }
+}}}
 
 3- Add the attributes, methods etc you would need, in this case we need a String attibute and a service method:
 
@@ -124,8 +125,8 @@ public void test() {
 }
 }}}
 
-== Mule Service Example ==
 
+== Mule Service Example ==
 
 1 – Create an interface with the methods you would need and extends the Service interface.
 
