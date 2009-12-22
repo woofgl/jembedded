@@ -10,7 +10,7 @@ public interface EchoMuleService {
 2 - Annotate the service at a class level with the `@AbstractService` annotation.
 
 {{{
-@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class, managedElements="muleService")
+@AbstractService(id="echoMuleService", resources=MuleServiceImpl.class)
 }}}
 
 `@AbstractService`:
