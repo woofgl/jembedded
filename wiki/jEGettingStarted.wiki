@@ -49,7 +49,7 @@ Of course, you could use the `@AnnotatedService` for the latter ones but then yo
 
 == Tutorial 1: Hello world Service Example ==
  
-1 - Create an annotation with the default configuration needed for your service (id, singleton, resources... inherited from the `@AbstractAnnotatedService` annotation) + your custom attributes. It's like when you are writing a Spring bean configuration XML file, but with the annotations advantages: quite more reusable and easier to use that a XML file.
+1 - Create an annotation with the default configuration needed for your service (id, singleton, resources... inherited from the `@AbstractAnnotatedService` annotation) + your custom attributes. It's like when you are writing a Spring bean configuration XML file, but with the annotations advantages: quite more reusable and easier to use than a XML file.
 
 {{{
 @Retention(RetentionPolicy.RUNTIME)
@@ -77,7 +77,6 @@ public @interface HelloWorldAnnotatedService {
 {{{
 @HelloWorld(msg="hello world")
 public class HelloWorldService {
-
 }
 }}}
 
