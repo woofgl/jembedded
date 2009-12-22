@@ -26,20 +26,22 @@ Now that you have the framework classes available to your project, you can start
 
 There are many ways you could use jEmbedded:
 
+  * Business services container: create and manage your application business services, managing then in a layer integrated with Spring (aop, tx, hibernate..).
+
+  * Integration Container: as container for application integration, using an ESB, messaging services etc...
+
   * Rich Applications Container: integrated with GWT/Spring MVC to create RIA applications (SOA oriented).
 
   * Rich Portal Application Provider: introducing the concepts of Gwlets/Widglets to power RIA portals.
 
-  * Integration Container: as container for application integration, using an ESB, messaging services etc...
 
-  * Web enviroment: can be used in any web enviroment, as a holder of a services layer, for example. Have a look at the case study  example as it shows the provided integration with SpringMVC. 
+  * Web enviroment: can be used in any web enviroment, as a holder of a services layer for instance. Have a look at the case study  example as it shows the provided integration with SpringMVC. 
 
-  * Standalone container: implementing services (just one or a layer hierarchy), that you can use in any application. Or just a container for your application.
+  * Standalone container: implementing services (just one or a layer hierarchy), that you can use in any stand alone application (for example a Swing or a SWT based application).
 
-  * Integrated with Spring: you can access Spring beans from jEmbedded or just create an ApplicationContext (as another service of the container) and access those beans.
+  * Integrated with Spring: you can access Spring beans from jEmbedded using the native integration provided with the container or just create an `@SpringContext` 
 
-  * Easy prototyping: create services fast and then test them with jIntegration-Test. You can do this from eclipse or using the maven pluging included. You don't need to install for example a mule server or a web server etc... For instance, it's faster to test your integration/soa designs this way. Have a look at the case study example for an example of this.
-
+  * Easy prototyping: create services faster and test them with the integration test infrastructure included within the container and services.
 
 
 === How to create a Service with jEmbeded ===
@@ -47,7 +49,7 @@ There are many ways you could use jEmbedded:
 There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" but using the `@AbstractAnnotatedService` annotation that it's the most powerful annotation within the framework. Despite its name it's not only intended for abstract Services but for regular implemented Services as well. 
 Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the class using the `AbstractCMService` or the `AbstractService` abstract classes. You don't need to do that using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class though. 
 
-== Tutorial 1: Hello world Service Example ==
+== Tutorial 1: Hello World Service Example ==
  
 1 - Create an annotation with the default configuration needed for your service (id, singleton, resources... inherited from the `@AbstractAnnotatedService` annotation) + your custom attributes. It's like when you are writing a Spring bean configuration XML file, but with the annotations advantages: quite more reusable and easier to use than a XML file.
 
