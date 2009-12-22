@@ -44,27 +44,30 @@ There are many ways you could use jEmbedded:
 
 === How to create a Service with jEmbeded ===
 
-There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" but using the `@AbstractAnnotatedService` annotation that it's the most powerful annotation within the framework and. Despite its name it's not only intended for abstract Services but for regular implemented Services as well. Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the class using the AbstractCMService or the AbstractService abstract classes. You don't need to do this using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class though. 
+There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" but using the `@AbstractAnnotatedService` annotation that it's the most powerful annotation within the framework. Despite its name it's not only intended for abstract Services but for regular implemented Services as well. 
+Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the class using the `AbstractCMService` or the `AbstractService` abstract classes. You don't need to do that using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class though. 
 
 == Tutorial 1: Hello world Service Example ==
  
-1 - Create an annotation with the default configuration for your service (id, singleton, resources,  etc... + your custom attributes).
+1 - Create an annotation with the default configuration needed for your service (id, singleton, resources... inherited from the `@AbstractAnnotatedService` annotation) + your custom attributes. It's like when you are writing a Spring bean configuration XML file, but with the annotations advantages: quite more reusable and easier to use that a XML file.
 
 {{{
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.TYPE, ElementType.METHOD })
 public @interface HelloWorldAnnotatedService {
-	
+	 
+         // service type to inherit
+	Class<?> inherits() default AbstractAnnotatedService.class;
+       
+        //Inherited attribute
         // service id in the container
 	String id() default "helloService";
         
-        // service type to inherit
-	Class<?> inherits() default AbstractAnnotatedService.class;
-        
+        //Inherited attribute
         //other services or resources to load, none this time
 	Class<?>[] resources();
         
-        //dmsg attribute
+        //custom msg attribute
         String msg() default="no message";
 }
 }}}
@@ -78,7 +81,7 @@ public class HelloWorldService {
 }
 }}}
 
-3- Add the attributes, methods etc you would need, in this case we need a String attribute and a method that retrieves the message.
+3- Add the attributes, methods etc you would need. In this case we need a String attribute and a method that retrieves the message.
 
 {{{
 @HelloWorld(msg="hello world")
@@ -139,7 +142,7 @@ return msg;
 }
 }}}
 
-6- A service can be started and stopped, both methods being called by the container (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations;
+6- A service can be started and stopped being both methods called by the container (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations:
 
 {{{
 @AnnotatedHelloWorldService(msg = "hello world")
