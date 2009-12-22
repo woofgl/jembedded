@@ -50,7 +50,7 @@ This kind of services are created with composition (and managing) of other eleme
 
 There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" and using the `@AbstractAnnotatedService` annotation. This annotation is the most powerful of the framework and it's not only intended for abstract Services but for regular implemented Services as well. Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the the class using the AbstractCMService or the AbstractService abstract classes. You don't need to do this using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class. You can 
 
-== Hello world Service Example ==
+== Tutorial 1: Hello world Service Example ==
  
 1 - Create an annotation with the default configuration for your service (id, singleton, class, etc. + your custom attributes).
 
@@ -127,3 +127,71 @@ public void test() {
 }	
 }
 }}}
+
+5- You can change declare the service abstract and it will work fine, but now you could add abstract methods:
+
+{{{
+@HelloWorld(msg="hello world")
+public abstract class HelloWorldService {
+
+@Inject
+private String msg;
+
+public String getMessage(){
+return msg;
+}
+}
+}}}
+
+6- A service can be started and stopped but both methods are called by the container (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations;
+
+{{{
+@AnnotatedHelloWorldService(msg = "hello world")
+public abstract class HelloWorldService {
+    @Inject
+     private String msg;
+	
+    //to change the valuem not for the injection
+    public void setMsg(String msg) {
+         this.msg = msg;
+    }
+
+    @Start
+    public void start() {
+    	System.out.println("Start");
+    }
+    
+    @Stop
+    public void stop() {
+    	System.out.println("Stop");
+    }
+    
+    public String getMessage() {
+    	return msg;
+    }
+}
+}}}
+
+In this case we are not doing anything very exciting but we'll use these methods to change the message on the fly:
+
+{{{
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
+@Include(resources = {HelloWorldService.class, InterfaceHelloWorldService.class})
+public class HelloWorldServiceTest {
+	@Test
+	public void test() {
+		HelloWorldService service =(HelloWorldService)getService("helloService");
+		
+		assertEquals("hello world", service.getMessage());
+		
+		service.stop();
+		service.setMsg("goodbye world");	
+		service.start();
+		
+		assertEquals("goodbye world", service.getMessage());
+	}
+}
+}}}
+ 
