@@ -2,7 +2,7 @@
 
 1 – Create an interface with the methods you would need and extends the Service interface.
 {{{
-public interface EchoMuleService extends Service {
+public interface EchoMuleService {
    public Service getMuleService();
 }
 }}}
@@ -159,22 +159,17 @@ As you can see jEmbedded gives a lot of flexibility in order to configure and co
 
 4 – Now you have the service to ready to go, but how still you need and environment to run it.
 
-In order to do that you can use the EmbeddedHandlerFactory:
 
-{{{
-EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(Class<?>...…classes);
-}}}
-
-The factory accepts an array of classes. You should add here the services or elements you want to add to the container (most likely the entry point).
-
-For example: `EchoMuleService.class` or if you running it from a test unit:
+For example running it from a test unit:
 
 {{{
 //note if you not declare the @Respository annotation here, a default repository will
 //be created
 
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
 
-@Include(resources={EchoMuleService.class}) // include the service into the container
+@Include(resources=EchoMuleService.class) // include the service into the container
 public class TestEchoMuleService {
 	
 	@Test
@@ -235,7 +230,9 @@ In order to this you need to do:
 @Target( { ElementType.TYPE, ElementType.METHOD})
 public @interface EchoMuleService {
 	
-	AnnotatedService service() default @AnnotatedService(id="echoMuleService", clazz="org.jsemantic.jembedded.examples.services.mule.EchoMuleService");
+        String id() default "echoMuleService";
+        
+        Class<?> inherits() default AbstractService.class;
 	
         //you could declare more properties if needed
 }
