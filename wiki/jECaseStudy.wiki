@@ -22,7 +22,7 @@ First we can define the protocols we'll use to connect to the central system. We
 
 Now with the description of the system at hand we can came up with the services, components etc... that we'd need, trying to use as much service composition as possible:
 
-  * Electrical measures devices: they will take the measures and send them to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
+  * Meter reader agents: they will take the measures and send them to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
 
   * Meter-Hub: aggregate all the data collected by the meter readers and send them via HTTP (we'll use the HTTP-Client component for that).
 
@@ -83,15 +83,21 @@ The implementation of the prototype will be made using as little implementation 
 
 === Services Layer ===
 {{{
-
+@AnnotatedServicesLayer
 @Repository(id = "serviceLayer", parent = "persistenceLayer")
+public abstract class ServicesLayer {
 
-@AbstractService(id = "serviceLayer", resources={InvoicingService.class},
-managedElements="invoicingService")
-public interface ServicesLayer extends Service {
-
-	@Inject(ref="invoicingService")
-	public InvoicingService getInvoicingService();
+	@Inject(ref="dtoFactory")
+	private DtoFactory dtoFactory;
+		
+	@JmsClient(brokerUri="tcp://localhost:61618")
+	@Inject(ref="jmsClient")
+	public abstract org.jsemantic.services.amqservice.client.JmsClient getJmsClient();
+	
+	public void generateInvoice(String customerId, String kwh) {
+		ReadingDTO dto = dtoFactory.getInstance(customerId, kwh);
+		getJmsClient().sendObjectMessage("in.queue", dto);
+	}
 }
 }}}
 
