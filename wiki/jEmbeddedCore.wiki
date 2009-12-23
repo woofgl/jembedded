@@ -11,9 +11,9 @@ that provides an infrastructure of storage, managing, execution and support for 
  
   * Identification: each service is identified by the container using an id. The services can be singleton or prototype.
  
-  * Storage using Repositories: mini container with core functionality that can be composed in a hierarchical way, a single structure or a custom one. The @Repository is  the atomic element of the container. The services can be retrieved from these repositories at any moment through the container interface or using the helper class `ContainerHolder` or using  the `ContainerContext`.
+  * Storage using Repositories: mini container with core functionality that can be composed in a hierarchical way, a single structure or a custom one. The `@Repository` is  the atomic element of the container. The services can be retrieved from these repositories at any moment through the container interface or using the helper class `ContainerHolder` or using  the `ContainerContext`.
  
-  * Provides a infrastructure of classes + annotations in order to create the services: @AnnotatedService, @AnnotatedComponent, @AbstractService, @AnnotatedBean and @AbstractBean (java/ruby).
+  * Provides a infrastructure of classes + annotations in order to create the services: `@AbstractAnnotatedService`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
  
   * Managing the lifecyle (creation, init, start, stop, disposal) of the services and other elements.
  
@@ -21,30 +21,34 @@ that provides an infrastructure of storage, managing, execution and support for 
  
   * Standard composition of services: using 100% annotation configuration using any of the +20 services included or any custom one.
  
-  *  Dynamic Injection/Composition of services: expanding the IoC pattern:
+  *  Dynamic Injection/Composition of services: expanding the IoC pattern.
    
     - Standardad IoC 100% annotated oriented: core annotations provided + custom ones in order to create, compose and configure the services. Properties files are used to externalize some properties.
  
-    -  Dynamic composition of services: Abstract Services, that does not need implementation just a interface + annotations and other services for composition.
+    -  Dynamic composition of services: `@AbstractAnnotatedService` that does not need implementation just an abstract class (or interface) + annotations and other services for composition.
         
-      -The methods of an AbstractService can be implemented:
-       * through composition of other services.
-       * through a BPM process: invocation of any number of services using a process file.
+      - The methods of  `@AbstractAnnotatedService` (or `@AbstractService`) can be implemented:
+       
+       * regular methods. 
+       * through composition of other services (`@ImplemenentedBy`)
+       * through a BPM process: invocation of any number of services using a process file (`@ImplementedByBpm`).
  
    - Dynamic injection: the injection of services or other elements it's no fixed as a reference and can be done at runtime.
  
   * Management of the services: the services can be accesed and managed through JMX (from any standard JMX console as jConsole).
  
 - Additional features of the SOC container:
- 
+   
+    * Integration Container: integrated with MULE (as a service) + JMS, WS etc...
+    
+    * Business services Container: creating and managing a layer of business services (integrated with Spring, AOP, TX, Hibernate...).
+   
     * RIA SOC container:
              
             - integrated with GWT 1.5+ through MVC Controllers: no need to use the RPC infraestructure (server).
            -  invoking services from the RIA infrastructure in a easy way.
  
     * Portal SOC container: introducing the concepts of Gwlet and Widglet, portlet style components implement with GWT/Sprinng MVC/jEmbedded Services.
- 
-    * Integration Container: integrated with MULE (as a service) + many other services.
  
     * Web application container: integrated with Spring/Spring MVC + Jetty and Tomcat Services.
 
@@ -54,11 +58,11 @@ The container is the entry point to the framework and the instance you need to c
  
 The jEmbedded container is a composition of 1-n Repositories:
 
-A @Repository is a holder for a collection of elements(services, components...) grouped logically or not.
+A `@Repository` is a holder for a collection of elements(services, components...) grouped logically or not.
 
-Obviously @Repository it's much more that just a holder, it's an IoC container of it's own as it has additional functionality and can instantiate, inject and manage the life cycle of the elements that it holds (specially Services as this a Service Oriented Container).
+Obviously `@Repository` it's much more that just a holder, it's an IoC container of it's own as it has additional functionality and can instantiate, inject and manage the life cycle of the elements that it holds (specially Services as this a Service Oriented Container).
 
-So by now it's clear that the basic element of jEmbedded it's the @Repository. In fact, you can create your own Container using them.
+So by now it's clear that the basic element of jEmbedded it's the `@Repository`. In fact, you can create your own container using them.
 
 In this case jEmbedded is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a ServiceLayer whose parent it's an IntegrationLayer. The good about this approach it's that an element in the ServicesLayer can have access to elements in the IntegrationLayer, but not the other way.
 
@@ -71,32 +75,32 @@ container.start();
 FooBean  fooBean = (Foobean) container.getBean("fooBean");
 }}}
 
-|| *Methdo* || *Description* || 
+|| *Method* || *Description* || 
 || getInstance(classs:Classes[])|| Creates a container instance (handler) ||
 || getInstace(ctx:Context, Classes[])||  Creates a container instance with a given context||
  
-The handler represents the actual container (and all the repositories that containes) and can be used to retrieve any element: bean, service, component etc..
+The handler represents the actual container (and all the repositories that contains) and can be used to retrieve any element: bean, service, component etc..
  
-The factoty needs an array of classes that represents the elements the the container will be creating, handling and managimng. These elementes are reprented by it´s class or any other classed that may declare them.
+The factoty needs an array of classes (or just one) that represents the elements the the container will be creating, handling and managimng. These elementes are reprented by it´s class or any other classed that may declare them.
  
 In order a class to be recognised by the container it needs to declare any of the following annotations
 
  
-- Repositories: @Repository.
+- Repositories: `@Repository`.
  
-- Services: @AnnotatedService, @AbstractService
+- Services: `@AbstractAnnotatedService, @AnnotatedService, @AbstractService`.
  
-- Component: @AnnotatedComponent,
+- Component: `@AnnotatedComponent`.
  
-- Beans: @AnnotatedBean, @AbstractBean
+- Beans: `@AnnotatedBean`.
  
-- Core annotations: @Include (just to add more classes).
+- Core annotations: `@Include, @Inject, @Compose, @Start, @Stop, @
  
-- Modules annotations: @SpringContainer, .....
+- Module annotations: `@SpringContainer`
  
-- Custom Service annotations: @JMService, @JettyService....
+- Custom Service annotations: `@JMService, @JettyService`....
  
-- Any annotatios defined by you (following the container annotation definition).
+- Any annotations defined by you extending the core annotations.
  
  
 The minimal configuration (see above example) would be:
@@ -109,7 +113,6 @@ public class FooBean {
 public String getMessage() {
   return "Hi I'm Foo bean";
 }
- 
 }
 
 EmbeddedHandler container = EmbeddedHandlerFactory.getInstance(FooBean.class);
@@ -122,27 +125,18 @@ FooBean  fooBean = (FooBean) container.getBean("fooBean");
 And that would be all. Let's say now that you want to test this in a Unit Test class:
  
 {{{
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
 @Include(resources={FooBean.class})
 public class IntegrationContainerServicesTest {
              
-              private EmbeddedHandler handler;
-             
-              @Before
-              public void setUp() {
-                 handler = EmbeddedHandlerFactory.getInstance(getClass());
-                 handler.start();
-              }
- 
-              @After
-              public void release() {
-                 handler.stop();
-              }
-             
+          
               @Test
               public void test() {
                  assertExistBean("fooBean");
                            
-                 FooBean fooBean = (FooBean) container.getBean("fooBean");
+                 FooBean fooBean = (FooBean) Assert.getBean("fooBean");
                  fooBean.getMessage();
               }
 }
@@ -154,21 +148,11 @@ The only difference from the previous example is that we are using the `@Include
 The following declaration it's also valid:
  
 {{{
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
 public class IntegrationContainerServicesTest {
              
-              private EmbeddedHandler handler;
-             
-              @Before
-              public void setUp() {
-                 handler = EmbeddedHandlerFactory.getInstance(FooBean.class)
-                 handler.start();
-              }
- 
-              @After
-              public void release() {
-                 handler.stop();
-              }
-             
+            
               @Test
               public void test() {
                  assertExistBean("fooBean");
@@ -183,61 +167,47 @@ As you can see the container configuration it's quite flexible and can be done i
 
 The difference it's that the "space" here it's more specific and the classes shouldn't be big sandboxes as the XML files usually are.
 
-This "space" is created by the container for the @Repository, even if you don't declare it there is one @Repository created by default. So if you use the configuration of the first example above the "space" of the @Repository it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
+This "space" is created by the container for the `@Repository`, even if you don't declare it there is one `@Repository` created by default. So if you use the configuration of the first example above the "space" of the `@Repository` it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
  
 {{{
-<--- repository space (the whole class declaration)
+<--- repository space (class declaration level)
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
 @WebClient
 @Include(resources={FooBean.class})
 public class IntegrationContainerServicesTest {
  
-@Before
-public void setUp() {
-       handler = EmbeddedHandlerFactory.getInstance(getClass());
-       handler.start();
-}
 }}}
  
-Also are the class's methods are included in the @Repository space.
+The class's methods and fields are also included in the `@Repository` space.
 
 {{{
-<--- repository space (the whole class declaration)
+<--- repository space (class declaration level)
 @WebClient
 @Include(resources={FooBean.class})
 public class IntegrationContainerServicesTest {
  
-@Before
-public void setUp() {
-              handler = EmbeddedHandlerFactory.getInstance(getClass());
-              handler.start();
-}
- 
 @PropertiesService <--- also repository space.
-public getPropertiesService() {
+public Service getPropertiesService() {
 }
 }}}
  
-Even the declared fields are included in the @Repository space (only for @Inject, though);
+Even the fields are included in the `@Repository` space (only for `@Inject and @Compose`, though);
  
 {{{
 @WebClient
-@Include(resources={FooBean.class})<--- repository space (the whole class declaration)
+@Include(resources={FooBean.class})<--- repository space (class declaration field)
 public class IntegrationContainerServicesTest {
  
 @Inject <--- also repository space (only for the @Inject annotation)
 private FooBean fooBean = null;
- 
-@Before
-public void setUp() {
-        handler = EmbeddedHandlerFactory.getInstance(getClass());
-        handler.start();
-}
 }}}
  
  
-All the annotations will result in services or elementes added to the default @Repository, in this case a WebClient and the FooBean.
+All the annotations will result in services or elementes added to the default `@Repository`, in this case a WebClient and the FooBean.
  
-The second configuration has a restricted @Repository space just the classes added to the container directly:
+The second configuration has a restricted `@Repository` space just to the classes added to the container directly:
 
 {{{
 handler = EmbeddedHandlerFactory.getInstance(FooBean.class) <--- elements space
@@ -252,11 +222,11 @@ public class IntegrationContainerServicesTest {
 handler = EmbeddedHandlerFactory.getInstance(FooBean.class, IntegrationContainerServicesTest.class) <--- repository space
 }}}
 
-That means that you can use any class as @Repository space for your elements but it's better that any class declares the elements properly in a logical fashion, for instance a Layer class would declare a @Repository with it's resources,  a Service would declare @Service annotation of course. Other example would be a Test class that may declare any element or just a @Repository.
+That means that you can use any class as `@Repository` space for your elements but it's better that any class declares the elements properly in a logical fashion, for instance a Layer class would declare a `@Repository` with it's resources,  a Service would declare @Service annotation of course. Other example would be a Test class that may declare any element or just a `@Repository`.
  
-You should use a @Repository as entry point or a collection or logical elements, that can be reused. This would be the top element of the framework, A container 1-n Repo --> 1-n---> services --> 1-n components--> 1--n beans.
+You should use a `@Repository` as entry point or a collection or logical elements, that can be reused. This would be the top element of the framework, A container 1-n Repo --> 1-n---> services --> 1-n components--> 1--n beans.
  
-So let's see how would be look the former example a as @Repository:
+So let's see how would be look the former example a as `@Repository`:
  
 {{{
 @WebClient
@@ -265,17 +235,12 @@ public class IntegrationContainerServicesTest {
  
 @Inject
 private FooBean fooBean = null;
- 
-@Before
-public void setUp() {
-              handler = EmbeddedHandlerFactory.getInstance(getClass());
-              handler.start();
-}
+
 }
 }}}
 
-Well there is not much difference with the former configuration as in fact a @Repository was created by default, but declaring one @Repository yourself give  more control
- as you can access it by id from the container and compose a @Repository structure if needed.
+Well there is not much difference with the former configuration as in fact a `@Repository` was created by default, but declaring one `@Repository` yourself give  more control
+ as you can access it by id from the container and compose a `@Repository` structure if needed.
  
 {{{
 Repository repo = handler.getRepository("containerService");
@@ -284,15 +249,15 @@ FooBean bean = (FooBean)repo.getBean("fooBean);
 }}}
 
 
-Let's see another example of a @Repository, a more meaningful one:
+Let's see another example of a `@Repository`, a more meaningful one:
  
 {{{
 @Repository(id="servicesLayer")) <--- Repository space
  
-@AbstractService(id="servicesLayer, resources=FacadeService.class, managedElements={"facadeService"}))
+@AbstractService(id="servicesLayer, resources=FacadeService.class)
 public interface ServicesLayer  {
              
-            @Inject(ref="facadeService")
+            @Compose(ref="facadeService")
             public FacadeService getFacadeService();
 }
 }}}
@@ -312,25 +277,15 @@ public interface FacadeService  {
 And a unit test:
 
 {{{
+@RunWith(IntegrationTestClassRunner.class)
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
 @Include(resources={ServicesLayer.class}) <--- Repository space
 public class IntegrationContainerServicesTest {
-             
-              private EmbeddedHandler handler;
-             
-              @Before
-              public void setUp() {
-                     handler = EmbeddedHandlerFactory.getInstance(getClass());
-                     handler.start();
-              }
- 
-              @After
-              public void release() {
-                     handler.stop();
-              }
-             
+                     
               @Test
               public void test() {
-                      ServicesLayer serviceLayer = (ServicesLayer) container.getService("servicesLayer");
+                      ServicesLayer serviceLayer = (ServicesLayer)Asssert.getService("servicesLayer");
                       FacadeService facadeService = serviceLayer.getFacadeService();
                       String msg = facadeService.getMessage();
                       assertEquals("", msg);
