@@ -1,6 +1,6 @@
 ==jEmbedded Services and Other Elements==
 
-The jEmbedded container can handle many different elements as Services, Dynamic Services, Components, Beans and Abstract Beans. All of them can be created and managed through annotations.
+The jEmbedded container can handle many different elements as Services, Abstract Services, Components and beans. All of them can be created and managed through annotations.
 
 Can be deduced from the name of the framework that there is one kind of "special element" and that it's the embedded service:
 
@@ -19,11 +19,11 @@ All the services should implement the interface `Service`.
 This is the standard service, implementing an interface and extending an abstract class to  get its functionality(this is changing and in the next version of `jService` there won't be any need of abstract classes, won't be deprecated though).
 
 {{{
-@AnnotatedService(id="jdbcService", resources=DataSource.class,
-managedElements="jdbcTemplate")
+@AnnotatedService(id="jdbcService", resources=DataSource.class
 public class JdbcServiceImpl extends AbstractCMTService implements
 		JdbcService {
 
+        @Compose(ref="jdbcService)
 	private JdbcTemplate jdbcTemplate;
 	
 	@Inject(ref="dataSource")
@@ -55,17 +55,16 @@ A service can manage: services, components, beans  and entities.
 
 This service would the same as the former if it wasn't because you don't need to supply an implementation for it, just and interface + some annotations. That's the reason why it's an `AbstractService`:
 {{{
-@AnnotatedService(id="webServer", resources=JettyServiceImpl.class, 
-		managedElements={"httpService"})
+@AnnotatedService(id="webServer", resources=JettyServiceImpl.class)
 public interface WebServer extends Service {
 	
 	//This service one is managed by the WebServer, started and stopped by it.
-	@Inject(ref="httpService")
-	public void getHttpService(JettyService httpService);
+	@Compose(ref="httpService")
+	public HttpService getHttpService(JettyService httpService);
 	
 	//This service is just for composition, but its lifecycle is managed by the container, not the WebServer
 	@PropertiesService(propertiesFile="META-INF/web-server/web-server.properties")
-	public void getPropertiesService();
+	public PropertiesService getPropertiesService();
 	// end of service composition
 	
 	//Added functionality, you can create dynamic invoking methods from any service
@@ -171,7 +170,3 @@ public class TestDependency {
 	}
 }
 }}}
-
-== Abstract Bean == 
-
-// TO DO
