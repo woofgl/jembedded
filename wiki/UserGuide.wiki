@@ -2,7 +2,7 @@
 <wiki:toc max_depth="4" />
 
 ==jEmbedded==
-{{{
+
 * [jEmbeddedUserGuide User's Guide]
   * [jEInstallNotes How to install jEmbedded]
   * [jEGettingStarted How to get started in 5 minutes (more or less)]
@@ -22,4 +22,3 @@
   * [jExamples jEmbedded Examples]
     * [jECaseStudy Integration/ESB case study]
   * [jFaq jEmbedded FAQ]
-}}}
