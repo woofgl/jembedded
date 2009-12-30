@@ -1,4 +1,4 @@
-== Mule Service Example 1. Using @AbstractAnnotatedService ==
+== Mule Service Example 1. Using `@AbstractAnnotatedService` ==
 
 To create this service we are gonna use an `@AbstractAnnotatedService`. This is not the only way to do it, jEmbedded gives you a lot of freedom and options to implement your services or other elements.  For instance, you could also create it using an `@AbstractService` (look at the next example) or just an `@AnnotatedService`. 
 
@@ -9,7 +9,7 @@ In this case we are implementing the example provided with the Mule distribution
 
 === Steps ===
 
-1 - Well, we know what are going to do so the first step would be to consider with services we could use to compose our new service. In this case it's quite obvious: MuleService (to expose the service) and the MuleClient (to send messages to the service).
+1 - Well, we know what are going to do so the first step would be to consider with services we could use to compose our new service. In this case it's quite obvious: `MuleService` (to expose the service) and the `MuleClient` (to send messages to the service).
 
 2 - Now you can create your custom annotation for  the service. This is not required, but it's a good practice to reuse, simplifly and organize the resources:
 
@@ -33,7 +33,7 @@ public @interface AnnotatedEchoService {
 
 It's quite similar to write a bean XML definition for a IoC container (like a Spring). You don't need to provide the Service class implementation as the container will do it for you.
 
-When you code a custom annotation like this you are overriding the annotation definition you are inheriting from, in this case AbstractAnnotatedService:
+When you code a custom annotation like this you are overriding the annotation definition you are inheriting from, in this case `AbstractAnnotatedService`:
 {{{
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.TYPE})
