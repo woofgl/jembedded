@@ -21,18 +21,3 @@
   *  [jExamples jEmbedded Examples]
     *  [jECaseStudy Integration/ESB case study]
   *  [jFaq jEmbedded FAQ]
-
-
-Note: The documentation of jIntegrationTest is deprecated until next version 1.0
-==jIntegrationTest==
-* [UserGuide User's Guide]
-  * [Motivation Motivation]
-  * [InstallNotes How to install the framework]
-  * [GettingStarted How to get started]
-  * [IntegrationTests Integration Tests]
-    * [WebApplicationIntegrationTest Web Integration Test]
-    * [SpringMVCIntegrationTest Spring / Spring MVC Integration Test]
-    * [EmbeddedDatabaseIntegrationTest Database Integration Test]
-    * [JSFIntegrationTest MyFaces Integration Test]
-    * [JMSIntegrationTest ActiveMQ Integration Test]
-    * [ESBIntegrationTest Mule ESB Integration Test]
