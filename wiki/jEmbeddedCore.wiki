@@ -1,7 +1,7 @@
 *  [jEmbeddedCore jEmbedded Core Container]
      *  [JEmbeddedAnn jEmbedded Core Annotations]
      *  [jEServicesElements  jEmbedded Services]
-     *  [jEmbeddedJettyService jEmbedded Jetty Service]
+     *  [jEmbeddedJettyService]
 
 
 = Introduction =
