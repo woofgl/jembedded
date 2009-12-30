@@ -1,6 +1,167 @@
-== Mule Service Example ==
+== Mule Service Example 1. Using @AbstractAnnotatedService ==
 
-1 – Create an interface with the methods you would need and extends the Service interface.
+To create this service we are gonna use an `@AbstractAnnotatedService`. This is not the only way to do it, jEmbedded gives you a lot of freedom and options to implement your services or other elements.  For instance, you could also create it using an `@AbstractService` (look at the next example) or just an `@AnnotatedService`. 
+
+The advantages of using the `@AbstractAnnotatedService` annotation it that lets you use a regular class or a abstract class but you don't need to extend any class or implement any interface.
+
+In this case we are implementing the example provided with the Mule distribution Echo. It's a simple example, you provide a string and the service just echoes it. We are gonna use the services provide within jEmbedded, so you don't need to install or create the jars etc etc you'd normally use to test or create this example.
+
+
+=== Steps ===
+
+1 - Well, we know what are going to do so the first step would be to consider with services we could use to compose our new service. In this case it's quite obvious: MuleService (to expose the service) and the MuleClient (to send messages to the service).
+
+2 - Now you can create your custom annotation for  the service. This is not required, but it's a good practice to reuse, simplifly and organize the resources:
+
+
+{{{
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD })
+public @interface AnnotatedEchoService {
+
+	//id of the service in the container
+	String id() default "echoMuleService";
+   
+        // we are using an AbstractAnnotatedService, and inheriting behaviour and
+        // attributes.
+	Class<?> inherits() default AbstractAnnotatedService.class;
+
+	//resources we'll need to inject (mule-service and client implementations)
+	Class<?>[] resources() default {MuleServiceImpl.class,  MuleClientWrapperImpl.class};	
+}
+}}}
+
+It's quite similar to write a bean XML definition for a IoC container (like a Spring). You don't need to provide the Service class implementation as the container will do it for you.
+
+When you code a custom annotation like this you are overriding the annotation definition you are inheriting from, in this case AbstractAnnotatedService:
+{{{
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE})
+public @interface AbstractAnnotatedService {
+	
+	String id() default "";
+
+	boolean isSingleton() default true;
+	
+	boolean isLazy() default false;
+
+	Class<?>[] resources() default {};
+}
+}}}
+
+If you don't override the attribute isSingleton() for example, the default will be used: true.
+
+So check the annotation definition for any type you inherit.
+
+3 - Once the annotation it's been created, we need to create the service class. You can choose between a regular class or an abstract class. In this case we choose and abstract class as we are going to use abstract methods:
+
+{{{
+@AnnotatedEchoService
+public abstract class EchoMuleService {
+}}}
+
+Note that as we are using the custom annotation, the default attributes we provided apply (id, resources etc..). You can override them though:
+
+{{{
+@AnnotatedEchoService (id="echoMuleServiceMK2)
+public abstract class EchoMuleService {
+}}}
+
+
+4 - When you are creating new services, keep in mind you should reuse and compose as much as possible (using the provided services or your own ones). In order to do that you have two available annotations (@Inject->associate or aggregation and @Compose-> composition). 
+
+In our example we have two resources to handle, the mule service and the client. We choose to compose the mule-service (its life cycle will be handled by our service, starting and stopping it, that is) and the client only associated to it (its lyfecycle will be handled by the container). In fact, the client in the real life would be located in another jvm, but for the sake of simplicity we'll do it this way.
+
+You can choose to do nothing instead (neither compose or inject) so the resources would be handled by the container. But if you do that you can't access them using the abstract methods provided below:
+
+{{{
+@AnnotatedEchoService
+public abstract class EchoMuleService {
+
+//composed, referenced by it's service id. 
+@Compose(ref="muleService")
+public abstract MuleService getMuleService();
+
+//injected	
+@Inject(ref="muleClient")
+public abstract MuleClientWrapper getMuleClient();
+}}}
+
+Note the abstract methods, that can be used to retrieved the service and client. These method will be implemented by the container and can be used in the regular methods implemented by the service.
+
+5 - Once we have composed our service and we have available the resources we'd need we can implement the business methods of our service. We can do this using abstract methods that will be implemented by the container or just regular ones:
+
+{{{
+@AnnotatedEchoService
+public abstract class EchoMuleService {
+		
+	//traditional way
+	public Object sendEchoMessage(String echoEndPoint, String message) {
+		return getMuleClient().sendMessage(echoEndPoint, message);
+	}
+	
+	//could be implement this way as well, using an abstract method
+	@ImplementedBy(ref = "muleClient", refMethodName="sendMessage")
+	public abstract Object sendAbstractEchoMessage(String echoEndPoint, String message);
+}
+}}}
+
+The two methods are identical. The difference it's that if you use an abstract method you need to provide the service and the method needed to implement the method.
+
+6 - We'll need a final step to provide the needed configuration. In order to do that, jEmbedded provides a `@PropertiesService` that will load a properties file containing the service configuration:
+{{{
+@Compose(ref="propertiesService")
+	@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
+	public abstract org.jsemantic.jirepository.core.services.properties.PropertiesService getPropertiesService();
+}}}
+
+A simpler way to do it:
+
+{{{
+//the service will be injected this way, not composed.
+@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
+@AnnotatedEchoService
+public abstract class EchoMuleService {
+}}}
+
+7 - Finally we can create a unit test. In order to do that you can use the jEmbedded test infrastructure:
+{{{
+//jEmbedded test runner
+@RunWith(IntegrationTestClassRunner.class)
+
+//The container must be associated to the actual thread.
+@Container(instanceType = ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
+//The Service and other resources you'd need for the test
+@Include(resources = { EchoMuleService.class })
+public class TestEchoMuleService {
+
+//Needed to create a fresh container per test method
+//don't needed if you need to reuse the container between methods.
+@After
+public void dispose() {
+ ContainerHolder.releaseCurrentThreadContainer();
+}
+
+@Test
+public void test() {
+// retrieves the service using the static Assert
+EchoMuleService echoMuleService = (EchoMuleService) Assert
+				.getService("echoMuleService");
+		
+assertNotNull(echoMuleService.getMuleService());
+		
+String result = (String) echoMuleService.sendEchoMessage("vm://echo",
+				"hello dude!");
+assertEquals("hello dude!", result);
+}
+}}}
+
+
+== Mule Service Example 2. Using @AbstractService 
+
+
+1 – Create an interface with the methods you would need.
 {{{
 public interface EchoMuleService {
    public Service getMuleService();
