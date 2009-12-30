@@ -2,7 +2,7 @@
 
 jBPM it's the leading Open Source BPM from jBoss. I've been using it for years so I think I can recommend it.  
 
-You can't use it for everything though (as you have to pay the price of resources) but  you can use it when you have a business use case that it's likely to change over the time or it needs to invoke different systems, resources, services etc... (in other words a workflow) in order to implement the functionality.
+You should avoid using it for everything though (as you have to pay the price of resources) but  you can use it when you have a business use case that it's likely to change over the time or it needs to invoke different systems, resources, services etc... (in other words a workflow) in order to implement the functionality.
  
 That kind of functionality can be provided through service composition than can be achieved in a programatic way (or if you use jEmbedded using annotation/services) or using a BPM engine. A BPM gives you the flexibility of composing services in a graphical way (using a Eclipse plugin, GPDL) that generates a readable xml. This way you can create/change without having to glue the services together and without having to code (well not that much :))
 
