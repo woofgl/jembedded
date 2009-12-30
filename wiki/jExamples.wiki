@@ -16,7 +16,7 @@ public class CalculatorService extends AbstractCMTService {
 }
 }}}
 
-Note that you need tyo extends an abstract class: `AbstractCMTService`. This is not needed if you use more advanced annotations like `@AbstractAnnotatedService`.
+Note that you need to extends an abstract class: `AbstractCMTService`. This is not needed if you use more advanced annotations like `@AbstractAnnotatedService`.
 
 2 - Once the implementation class is created you need to complete the annotation with the needed attributes and resources you'd need to use:
 
@@ -102,7 +102,7 @@ assertEquals(sum, 80);
 }}}
 
 
-== Calculator Service Example 2. Using `@AnnotatedService` and custom annotations ==
+== Calculator Service Example 2. Using `@AnnotatedService` and a custom annotation ==
 
 This example is the same that the previous one but instead of using the `@AnnotatedService` to annotate the service we'll create a custom annotation that inherits from `@AnnotatedService`. This is not required (as seen in the previous example) but it's a good practice to reuse, simplifly and organize the resources.
 
@@ -119,7 +119,7 @@ public @interface AnnotatedCalculatorService {
 	//id of the service in the container
 	String id() default "calculatorService";
         
-        String clazz() default "";        
+        String clazz() default "org.jsemantic.jembedded.examples.services.ruby.CalculatorService";        
 
         // we are using an AnnotatedService and inheriting behaviour and
         // attributes.
@@ -156,7 +156,6 @@ So check the annotation definition for any type you inherit.
 
 2 - Annotate the service with the custom annotation.
 
-
 {{{
 @AnnotatedCalculatorService
 public class CalculatorService extends AbstractCMTService {
@@ -170,7 +169,61 @@ private SumService sumService;
 3 - The rest remains the same as the previous example.
 
 
+== Calculator Service Example 3. Using `@AbstractAnnotatedService`.
 
+
+
+1 - Create the custom annotation.
+
+{{{
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD })
+public @interface AnnotatedCalculatorService {
+
+	//id of the service in the container
+	String id() default "calculatorService";
+        
+        // we are using an AbstractAnnotatedService and inheriting behaviour and
+        // attributes.
+	Class<?> inherits() default AbstractAnnotatedService.class;
+
+	//resources we'll need to inject or compose
+	Class<?>[] resources() default {SumService.class};	
+}
+}}}
+
+2 - Annotate the service with the custom annotation.
+
+{{{
+@AnnotatedCalculatorService
+public abstract class CalculatorService {
+
+@Compose(ref="sumService")
+private SumService sumService;
+	
+}
+}}}
+
+3 - Now we can add the business methods we need, in this case a sum (abstract) and a multiply method:
+
+{{{
+@AnnotatedService(id="calculatorService", resources=SumService.class)
+public abstract class CalculatorService {
+
+@Compose(ref="sumService")
+private SumService sumService;
+
+@ImplementedBy(ref="sumService")        
+public abstract int sum(int a, int b);
+	
+public int multiply (int a, int b) {
+	return a*b;
+}
+
+}
+}}}
+
+4 - The rest of steps remains the same as seen on previous examples.
 
 == Mule Service Example 1. Using `@AbstractAnnotatedService` ==
 
