@@ -102,6 +102,76 @@ assertEquals(sum, 80);
 }}}
 
 
+== Calculator Service Example 2. Using `@AnnotatedService` and custom annotations ==
+
+This example is the same that the previous one but instead of using the `@AnnotatedService` to annotate the service we'll create a custom annotation that inherits from `@AnnotatedService`. This is not required (as seen in the previous example) but it's a good practice to reuse, simplifly and organize the resources.
+
+
+=== Steps === 
+
+1 - Create the custom annotation.
+
+{{{
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD })
+public @interface AnnotatedCalculatorService {
+
+	//id of the service in the container
+	String id() default "calculatorService";
+        
+        String clazz() default "";        
+
+        // we are using an AnnotatedService and inheriting behaviour and
+        // attributes.
+	Class<?> inherits() default AnnotatedService.class;
+
+	//resources we'll need to inject or compose
+	Class<?>[] resources() default {SumService.class};	
+}
+}}}
+
+It's quite similar to write a bean XML definition for a IoC container (like a Spring). You don't need to provide the Service class implementation as the container will do it for you.
+
+When you code a custom annotation like this you are overriding the annotation definition you are inheriting from, in this case `AbstractAnnotatedService`:
+{{{
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE})
+public @interface AnnotatedService {
+	
+	String id() default "";
+        
+        String clazz() default "";            
+    
+	boolean isSingleton() default true;
+	
+	boolean isLazy() default false;
+
+	Class<?>[] resources() default {};
+}
+}}}
+
+If you don't override the attribute isSingleton() for example, the default will be used: true.
+
+So check the annotation definition for any type you inherit.
+
+2 - Annotate the service with the custom annotation.
+
+
+{{{
+@AnnotatedCalculatorService
+public class CalculatorService extends AbstractCMTService {
+
+@Compose(ref="sumService")
+private SumService sumService;
+	
+}
+}}}
+
+3 - The rest remains the same as the previous example.
+
+
+
+
 == Mule Service Example 1. Using `@AbstractAnnotatedService` ==
 
 To create this service we are gonna use an `@AbstractAnnotatedService`. This is not the only way to do it, jEmbedded gives you a lot of freedom and options to implement your services or other elements.  For instance, you could also create it using an `@AbstractService` (look at the next example) or just an `@AnnotatedService`. 
@@ -116,7 +186,6 @@ In this case we are implementing the example provided with the Mule distribution
 1 - Well, we know what are going to do so the first step would be to consider with services we could use to compose our new service. In this case it's quite obvious: `MuleService` (to expose the service) and the `MuleClient` (to send messages to the service).
 
 2 - Now you can create your custom annotation for  the service. This is not required, but it's a good practice to reuse, simplifly and organize the resources:
-
 
 {{{
 @Retention(RetentionPolicy.RUNTIME)
