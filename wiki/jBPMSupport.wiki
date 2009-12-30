@@ -6,7 +6,7 @@ You should avoid using it for everything though (as you have to pay the price of
  
 That kind of functionality can be provided through service composition than can be achieved in a programatic way (or if you use jEmbedded using annotation/services) or using a BPM engine. A BPM gives you the flexibility of composing services in a graphical way (using a Eclipse plugin, GPDL) that generates a readable xml. This way you can create/change without having to glue the services together and without having to code (well not that much :))
 
-Basically you need to design a state diagram and the transitions between them (fired by events). Ywill need some basic knowledge of how jBPM works, so I recommend you the official tutorial for that. You don't need to know all the gory details but at least how to compose a jPDL diagram as most of the technical details are wrapped up by the service.
+Basically you need to design a state diagram and the transitions between them (fired by events). You will need some basic knowledge of how jBPM works, so I recommend you the official tutorial for that. You don't need to know all the gory details but at least how to compose a jPDL diagram as most of the technical details are wrapped up by the service.
 
 
 == jEmbedded jBPM Support ==
