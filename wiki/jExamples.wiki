@@ -1,3 +1,107 @@
+All these examples can be found in the jEmbedded distribution: examples/services-examples. Also have a look at the Getting Started section. There you can find the `HelloWorldService` example.
+
+== Calculator Service Example 1. Using `@AnnotatedService` ==
+
+So let's get started with a very simple service, just a calculator that sums and multiply two integer numbers. In order to do it more interesting and demonstrate how to compose services, the sum functionality will be provided by a external service: `SumService`. This service it's implemented in Ruby in fact, but forget this by now because it will be provided to you as a 3th party service.
+
+
+=== Steps ===
+
+1 - jEmbedded as you will see in further examples gives you a lot of freedom and options to implement your services. We choose this time a simple way to do it, a regular implemented service handled by the container (CMT) In order to do that we can use the `@AnnotatedService` annotation:
+
+{{{
+@AnnotatedService()
+public class CalculatorService extends AbstractCMTService {
+	
+}
+}}}
+
+Note that you need tyo extends an abstract class: `AbstractCMTService`. This is not needed if you use more advanced annotations like `@AbstractAnnotatedService`.
+
+2 - Once the implementation class is created you need to complete the annotation with the needed attributes and resources you'd need to use:
+
+{{{
+@AnnotatedService(id="calculatorService", resources=SumService.class)
+public class CalculatorService extends AbstractCMTService {
+	
+}
+}}}
+
+There are more attributes available (singleton, lazy etc..) but we'll discuss the 2 basic ones: id and resources.
+
+- id: id of the service within the container. A string that will be used to identify and retrieve the service. In this case it's "calculatorService".
+
+- resources: array of resources that the service will need (other services, components, beans etc). This resources are expressed using the resource class, that may be a class, and interface or a abstract class. In this case the service only a need a resource the `SumService=SumService.class`.
+
+By default the resources will be handled and associated to the containe. To aggregate/associate or compose the resources to the service jEmbedded provides 2 annotations: `@Inject` and `@Compose`.
+
+3 - Once the service has the resources available we need to decide how to handle them, let the container do it (then we need to do nothing) or the service (using `@Inject` or `@Compose`).
+
+It makes sense that the `CalculatorService` owns (the resource) and handle the lifecycle of the `SumService`. When the calculator starts we need that the sum service it's started and when the calculator it's not longer needed neither is the sum service. 
+
+In order to do that we need to use the `@Compose` annotation. If we'd used the `@Inject` annotation, the sum service would be associated to the service but not its lifecycle (only the resource). The lifecyle would be handled by the container and there is no guarantee that the `SumService` would be started when the `CalculatorService` is.
+
+{{{
+@AnnotatedService(id="calculatorService", resources=SumService.class)
+public class CalculatorService extends AbstractCMTService {
+
+@Compose(ref="sumService")
+private SumService sumService;
+	
+}
+}}}
+
+4 - Now we can add the business methods we need, in this case a sum and a multiply method:
+
+{{{
+@AnnotatedService(id="calculatorService", resources=SumService.class)
+public class CalculatorService extends AbstractCMTService {
+
+@Compose(ref="sumService")
+private SumService sumService;
+        
+public int sum(int a, int b) {
+        return sumService.sum(a,b);
+}
+	
+public int multiply (int a, int b) {
+	return a*b;
+}
+}
+}}}
+
+The sum method it's implemented using the composed service and the multiply method just coding it.
+
+5 - Finally we can create a unit test. In order to do that you can use the jEmbedded test infrastructure:
+{{{
+//jEmbedded test runner
+@RunWith(IntegrationTestClassRunner.class)
+
+//The container must be associated to the actual thread.
+@Container(instanceType = ContainerInstanceType.PROTOTYPE_BY_THREAD)
+
+//The Service and other resources you'd need for the test
+
+@Include(resources = CalculatorService.class)
+public class CalculatorServiceTest {
+
+//Needed to create a fresh container per test method
+//don't needed if you need to reuse the container between methods.
+@After
+public void dispose() {
+ ContainerHolder.releaseCurrentThreadContainer();
+}
+
+@Test
+public void testSum() {
+// retrieves the service using the static Assert
+CalculatorService calculator = (CalculatorService) getService("calculatorService");
+int sum = calculator.sum(30, 50);
+assertEquals(sum, 80);
+}
+}}}
+
+
 == Mule Service Example 1. Using `@AbstractAnnotatedService` ==
 
 To create this service we are gonna use an `@AbstractAnnotatedService`. This is not the only way to do it, jEmbedded gives you a lot of freedom and options to implement your services or other elements.  For instance, you could also create it using an `@AbstractService` (look at the next example) or just an `@AnnotatedService`. 
