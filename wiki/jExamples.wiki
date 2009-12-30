@@ -158,7 +158,7 @@ assertEquals("hello dude!", result);
 }}}
 
 
-== Mule Service Example 2. Using @AbstractService 
+== Mule Service Example 2. Using `@AbstractService` ==
 
 
 1 – Create an interface with the methods you would need.
