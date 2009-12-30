@@ -233,7 +233,28 @@ public int multiply (int a, int b) {
 }
 }}}
 
-4 - The rest of steps remains the same as seen on previous examples.
+4 - A service can be started and stopped being both methods called by the container or other service (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations:
+
+{{{
+@AnnotatedService(id="calculatorService", resources=SumService.class)
+public abstract class CalculatorService {
+
+@Start
+public void start() {
+   System.out.println("Start");
+}
+    
+@Stop
+public void stop() {
+   System.out.println("Stop");
+}
+
+}
+}}}
+
+5 - The rest of steps remains the same as seen on previous examples.
+
+
 
 == Mule Service Example 1. Using `@AbstractAnnotatedService` ==
 
