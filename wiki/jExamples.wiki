@@ -45,6 +45,7 @@ In order to do that we need to use the `@Compose` annotation. If we'd used the `
 @AnnotatedService(id="calculatorService", resources=SumService.class)
 public class CalculatorService extends AbstractCMTService {
 
+
 @Compose(ref="sumService")
 private SumService sumService;
 	
