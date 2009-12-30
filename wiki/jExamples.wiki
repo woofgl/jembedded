@@ -169,9 +169,18 @@ private SumService sumService;
 3 - The rest remains the same as the previous example.
 
 
-== Calculator Service Example 3. Using `@AbstractAnnotatedService`.
+== Calculator Service Example 3. Using `@AbstractAnnotatedService` ==
+
+The advantages of using the `@AbstractAnnotatedService` annotation it's that lets you to use a regular class or a abstract class but you don't need to extend any abstract class or implement any interface provided by the container. 
+
+It's more powerful than the `@AnnotatedService` as the container will provide for you implementation of some abstract methods (get methods and the ones that use the annotation `@ImplementedBy`) and you can mix abstract and and regular methods.
+
+You don't need to implement the `@Service` annotation but you can actually cast the service to it if you need it.
+
+Keep in mind that the container will provide you with a proxy not a regular implementation of a service when using this annotation. That can produce some use limitations and a little perfomance overhead.
 
 
+=== Steps ===
 
 1 - Create the custom annotation.
 
@@ -229,7 +238,7 @@ public int multiply (int a, int b) {
 
 To create this service we are gonna use an `@AbstractAnnotatedService`. This is not the only way to do it, jEmbedded gives you a lot of freedom and options to implement your services or other elements.  For instance, you could also create it using an `@AbstractService` (look at the next example) or just an `@AnnotatedService`. 
 
-The advantages of using the `@AbstractAnnotatedService` annotation it that lets you use a regular class or a abstract class but you don't need to extend any class or implement any interface.
+The advantages of using the `@AbstractAnnotatedService` annotation it's that lets you to use a regular class or a abstract class but you don't need to extend any class or implement any interface.
 
 In this case we are implementing the example provided with the Mule distribution Echo. It's a simple example, you provide a string and the service just echoes it. We are gonna use the services provide within jEmbedded, so you don't need to install or create the jars etc etc you'd normally use to test or create this example.
 
