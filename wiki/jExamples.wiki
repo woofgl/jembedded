@@ -217,7 +217,7 @@ private SumService sumService;
 3 - Now we can add the business methods we need, in this case a sum (abstract) and a multiply method:
 
 {{{
-@AnnotatedService(id="calculatorService", resources=SumService.class)
+@AnnotatedCalculatorService
 public abstract class CalculatorService {
 
 @Compose(ref="sumService")
@@ -236,7 +236,7 @@ public int multiply (int a, int b) {
 4 - A service can be started and stopped being both methods called by the container or other service (as the service it's CMT) but you can override its behaviour using the `@Start` and `@Stop` annotations:
 
 {{{
-@AnnotatedService(id="calculatorService", resources=SumService.class)
+@AnnotatedCalculatorService
 public abstract class CalculatorService {
 
 @Start
