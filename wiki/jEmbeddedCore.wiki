@@ -1,29 +1,29 @@
 *  [jEmbeddedCore jEmbedded Core Container]
      *  [JEmbeddedAnn jEmbedded Core Annotations]
      *  [jEServicesElements  jEmbedded Services]
-     *  [jEmbeddedJettyService]
-
+  
 
 = Introduction =
 
-The framework it's build around the concept of a _Service Oriented Container_ or _SOC_
-that provides an infrastructure of storage, managing, execution and support for  services and other elements (such as components, beans.. ): 
+The jEmbedded framework it's build around the concept of a _Service Oriented Container_ or _SOC_
+that provides an infrastructure of storage, management, execution and support for  services and other elements (such as components, beans.. ): 
  
-  * Identification: each service is identified by the container using an id. The services can be singleton or prototype.
+  * Identification: each element is identified by the container using an id. The elements can be singleton or prototype.
  
-  * Storage using Repositories: mini container with core functionality that can be composed in a hierarchical way, a single structure or a custom one. The `@Repository` is  the atomic element of the container. The services can be retrieved from these repositories at any moment through the container interface or using the helper class `ContainerHolder` or using  the `ContainerContext`.
+  * Storage using Repositories: a repository it's a bare container that can be composed in a hierarchical way, a single structure or a custom one. The `@Repository` is  the atomic element of the container. 
+The elements can be retrieved from these repositories at any moment through the container interface or using the helper class `ContainerHolder` or using  the `ContainerContext`.
  
-  * Provides a infrastructure of classes + annotations in order to create the services: `@AbstractAnnotatedService`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
+  * Provides a set of annotations (and classes) in order to create the elements: `@AbstractAnnotatedService`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
  
-  * Managing the lifecyle (creation, init, start, stop, disposal) of the services and other elements.
+  * Management of the lifecyle (creation, init, start, stop, disposal) of the services and other elements.
  
   * Runtime and execution support: the container creates a context that can be accessed  from any given service allowing access to the container itself an its external enviroment (for example a Spring context). 
  
-  * Standard composition of services: using 100% annotation configuration using any of the +20 services included or any custom one.
+  * Standard composition of services and elements: using 100% annotation configuration using any of the +20 services included or any custom one.
  
-  *  Dynamic Injection/Composition of services: expanding the IoC pattern.
+  *  Dynamic creation and composition of services: expanding the IoC pattern.
    
-    - Standardad IoC 100% annotated oriented: core annotations provided + custom ones in order to create, compose and configure the services. Properties files are used to externalize some properties.
+    - Standardad IoC 100% annotated oriented: core annotations provided + custom ones in order to create, compose and configure the services or elements. Properties files are used to externalize some properties.
  
     -  Dynamic composition of services: `@AbstractAnnotatedService` that does not need implementation just an abstract class (or interface) + annotations and other services for composition.
         
@@ -33,7 +33,7 @@ that provides an infrastructure of storage, managing, execution and support for 
        * through composition of other services (`@ImplemenentedBy`)
        * through a BPM process: invocation of any number of services using a process file (`@ImplementedByBpm`).
  
-   - Dynamic injection: the injection of services or other elements it's no fixed as a reference and can be done at runtime.
+    - Dynamic injection: the injection of services or other elements can be changed at runtime if needed.
  
   * Management of the services: the services can be accesed and managed through JMX (from any standard JMX console as jConsole).
  
@@ -52,19 +52,20 @@ that provides an infrastructure of storage, managing, execution and support for 
  
     * Web application container: integrated with Spring/Spring MVC + Jetty and Tomcat Services.
 
-== The Container and Elements ==
+== The Container ==
 
-The container is the entry point to the framework and the instance you need to create to power your application. Sometimes the creation it will transparent for you depending of the environment.
+The container is the entry point to the framework and the instance you need to create to handle your application. Sometimes this instance will be created for you, depending on the enviroment you are working with (a web enviroment for instance).
+
  
 The jEmbedded container is a composition of 1-n Repositories:
 
 A `@Repository` is a holder for a collection of elements(services, components...) grouped logically or not.
 
-Obviously `@Repository` it's much more that just a holder, it's an IoC container of it's own as it has additional functionality and can instantiate, inject and manage the life cycle of the elements that it holds (specially Services as this a Service Oriented Container).
+Obviously `@Repository` it's much more that just a holder, it's a basic container and can create, inject and manage the life cycle of the elements that it holds (specially Services as this a Service Oriented Container).
 
 So by now it's clear that the basic element of jEmbedded it's the `@Repository`. In fact, you can create your own container using them.
 
-In this case jEmbedded is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a ServiceLayer whose parent it's an IntegrationLayer. The good about this approach it's that an element in the ServicesLayer can have access to elements in the IntegrationLayer, but not the other way.
+In this case jEmbedded is a group of repositories that can be configured as a hierarchy, for instance a hierarchy of layers (group of logical elements). For example, a `ServiceLayer` whose parent it's an `IntegrationLayer`. The good about this approach it's that an element in the `ServicesLayer` can have access to elements in the `IntegrationLayer` but not the other way around.
 
 The jEmbedded Container it's represented by a handler that wraps it and can be obtained using a factory:
  
@@ -81,7 +82,7 @@ FooBean  fooBean = (Foobean) container.getBean("fooBean");
  
 The handler represents the actual container (and all the repositories that contains) and can be used to retrieve any element: bean, service, component etc..
  
-The factoty needs an array of classes (or just one) that represents the elements the the container will be creating, handling and managimng. These elementes are reprented by it´s class or any other classed that may declare them.
+The factory needs an array of classes (or just one) that represents the elements the container will be handling. These elements are represented by it´s class or any other classes that may declare them.
  
 In order a class to be recognised by the container it needs to declare any of the following annotations
 
@@ -94,7 +95,7 @@ In order a class to be recognised by the container it needs to declare any of th
  
 - Beans: `@AnnotatedBean`.
  
-- Core annotations: `@Include, @Inject, @Compose, @Start, @Stop, @
+- Core helper annotations: `@Include, @Inject, @Compose, @Start, @Stop`
  
 - Module annotations: `@SpringContainer`
  
@@ -103,8 +104,16 @@ In order a class to be recognised by the container it needs to declare any of th
 - Any annotations defined by you extending the core annotations.
  
  
-The minimal configuration (see above example) would be:
- 
+=== Container configuration ===
+
+The container configuration it's quite simple and it's made through annotations (of course).
+
+
+
+
+=== Elements configuration: Repositories, Services, Components and Beans ===
+
+jEmbedded gives you a lot of freedom to configure your elements (services etc..) as
 
 {{{
 @AnnotatedBean(id="fooBean")
@@ -122,13 +131,13 @@ FooBean  fooBean = (FooBean) container.getBean("fooBean");
 
 }}}
  
-And that would be all. Let's say now that you want to test this in a Unit Test class:
+And that would be all. Let's say now that you want to test this in a unit test:
  
 {{{
 @RunWith(IntegrationTestClassRunner.class)
 @Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
 
-@Include(resources={FooBean.class})
+@Include(resources=FooBean.class)
 public class IntegrationContainerServicesTest {
              
           
@@ -145,29 +154,14 @@ public class IntegrationContainerServicesTest {
 
 The only difference from the previous example is that we are using the `@Include` annotation instead of using the `FooBean.class` directly.
  
-The following declaration it's also valid:
- 
-{{{
-@RunWith(IntegrationTestClassRunner.class)
-@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
-public class IntegrationContainerServicesTest {
-             
-            
-              @Test
-              public void test() {
-                 assertExistBean("fooBean");
-                           
-                 FooBean  fooBean = (Foobean) container.getBean("fooBean");
-                 fooBean.getMessage();
-              }
-}
-}}}
 
 As you can see the container configuration it's quite flexible and can be done in may differente ways. You can see the class space as the XML/XML-SCHEMA configuration file (like in a IoC container as Spring) where you can declare the resources and elements you would need.
 
+You can also create your own annotations 
+
 The difference it's that the "space" here it's more specific and the classes shouldn't be big sandboxes as the XML files usually are.
 
-This "space" is created by the container for the `@Repository`, even if you don't declare it there is one `@Repository` created by default. So if you use the configuration of the first example above the "space" of the `@Repository` it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
+This "space" is created by the container for the `@Repository` even if you don't declare it there is one `@Repository` created by default. So if you use the configuration of the first example above the "space" of the `@Repository` it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
  
 {{{
 <--- repository space (class declaration level)
@@ -297,7 +291,9 @@ If you have a look at the complete example you would realize that you have only 
  
  
  
- 
+=== Container Test infrastructure ===
+
+
  
  
  
