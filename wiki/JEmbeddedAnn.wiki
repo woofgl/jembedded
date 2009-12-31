@@ -9,54 +9,6 @@ Most of the annotations can be used at a method level and at a method level. Som
 As it's been told before the container it's a composition of 1-n @Repositories, so most of the annotations refers to these repositories and to the container. Except the `@Container` annotation that refers only to the Container.
 
 
-== Container Annotations == 
-
-
-@Container
-
-This annotation allows to configure the core container. Can be declared at a class level and only one annotation is allowed per container.
-
-If no annotation is declared one is created by default:
-
-{{{
-@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
-
-@AbstractService(id="webServer")
-public class WebServer {
-
-}
-}}}
-
-The above declaration (or the lack of it) means that any thread that accesses the container creation code(see the snippet below) will create a new container and it will be associated with that thread.
-
-{{{
-EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(WebServer.class);
-handler.start();
-}}}
-
-As that container is associated with the current thread it can be retrieved using of course the declared handler but also from any other class using the class `ContainerHolder`:
-
-{{{
-EmbeddedHandler handler = ContainerHolder.getCurrentThreadContainer();
-}}}
-
-This configuration is useful when you need to create a fresh container every time a new thread is created and disposing the container when the thread is destroyed. For instance, if you wanted to associate a container to a Controller Thread (MVC).
-
-You have to be careful with this type of container though, because if you create another container in the same thread, the older one will be reused and you can get weird behavior.
-
-
-@Container
-|| *Attribute* || *Description* || * Values * ||
-|| instanceType:ContainerInstanceType || Type of container instance ||PROTOTYPE_BY_THREAD, PROTOTYPE_BY_VM,  SINGLETON_VM||
-
-
-If you need to have several containers in the same application a safer bet it's to use the PROTOTYPE_BY_VM type. Every time a container is instanced it's created from scratch and it's not associated with the current thread. Obviously this container can not be accessed through the `ContainerHolder` class.
-
-Finally, if only one instance of the container is needed for the whole application, you need to use the SINGLETON_VM type. Once one instance is created, if another one is created an exception will be thrown (if the previous one hasn't been disposed). The `ContainerHolder` can be used to retrieve the container.
-
-
-== Container & Repository Annotations == 
-
 == @Repository Annotation == 
 
 This annotation it's one of the most important ones, even though you don't need to use it if you don't want.
