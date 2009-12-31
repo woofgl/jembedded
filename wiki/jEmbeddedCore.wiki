@@ -78,7 +78,7 @@ FooBean  fooBean = (Foobean) container.getBean("fooBean");
 
 || *Method* || *Description* || 
 || getInstance(classs:Classes[])|| Creates a container instance (handler) ||
-|| getInstace(ctx:Context, Classes[])||  Creates a container instance with a given context||
+|| getInstance(ctx:Context, Classes[])||  Creates a container instance with a given context||
  
 The handler represents the actual container (and all the repositories that contains) and can be used to retrieve any element: bean, service, component etc..
  
@@ -108,7 +108,47 @@ In order a class to be recognised by the container it needs to declare any of th
 
 The container configuration it's quite simple and it's made through annotations (of course).
 
+Basically you can setup how the container is going to be created: one per thread, a singleton or as many as you need per vm.
 
+`@Container`
+
+@Container
+|| *Attribute* || *Description* || * Values * ||
+|| instanceType:ContainerInstanceType || Type of container instance ||PROTOTYPE_BY_THREAD, PROTOTYPE_BY_VM,  SINGLETON_VM||
+
+This annotation enables to configure the core container. Can be declared at a class level and only one annotation is allowed per container.
+
+If no annotation is provided one is created by default:
+
+`@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_VM)`
+
+This means that a fresh container is created each time you ask for an instance using the handler factory:
+
+{{{
+@Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_VM)
+
+@AbstractAnnotatedService(id="webServer")
+public class WebServer {
+
+}
+
+EmbeddedHandler handler = EmbeddedHandlerFactory.getInstance(WebServer.class);
+handler.start();
+}}}
+
+If you need to have several containers in the same application this is the type to use. Every time a container is requires it's created from scratch and it's not associated with the current thread. Obviously this container can not be accessed through the `ContainerHolder` class.
+
+Now let's suppose you need to create a fresh container every time a new thread is created and disposing the container when the thread is destroyed. For instance, if you are working in a Web enviroment and you need to associate the container instance to request thread.
+
+As that container is associated with the current thread it can be retrieved using of course the declared handler but also from any other class using the class `ContainerHolder`:
+
+{{{
+EmbeddedHandler handler = ContainerHolder.getCurrentThreadContainer();
+}}}
+
+You have to be careful with this type of container though, because if you create another container in the same thread, the older one will be reused and you can get weird behaviour.
+
+Finally, if only one instance of the container is needed for the whole application, you need to use the SINGLETON_VM type. Once one instance is create and if another one is created an exception will be thrown (if the previous one hasn't been disposed). The `ContainerHolder` can be used to retrieve the container.
 
 
 === Elements configuration: Repositories, Services, Components and Beans ===
@@ -288,7 +328,10 @@ public class IntegrationContainerServicesTest {
 }}}
 
 If you have a look at the complete example you would realize that you have only implemented the FooBean and the test. This is a good example of how the dynamic composition works, you can use any service included in the jEmbedded framework or any you have implmeneted to compose on the fly new services.
+
  
+
+=== Container Context ===
  
  
 === Container Test infrastructure ===
