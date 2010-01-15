@@ -1,19 +1,13 @@
 = Introduction =
 
-jEmbedded was born out of the necessity to use a container on the go, lighter and faster.
-
-As I work as an Architect I find myself doing a lot of prototypes for applications or just trying new technologies so I need to create stuff pretty fast and if it doesn't work trying another one.
-
-Many times this is not possible, because you have to install servers, frameworks, create services etc.. and then glue it all. Just try to make an Integration/SOA prototype with Mule (that is great by the way, hands off to the developers), you have to code, compile then copy the jars to the lib, setup the other servers you may need etc etc and then run, test, error.. you know what I mean.
-
-First I designed jIntegration-Test, a integration testing framework to test the prototypes faster. That was good, I saved sometime but still I missed the possibility to compose this prototypes in a fast and reusable way, so I didn't have to start from scratch every time and in some way avoiding to install all that additional servers.
-
-So that was how I designed jEmbedded, as a container for services (embedded or not) or other elements, that promotes re usability and composition and easy configuration. I started to code a few embedded services (services that run in the same VM) as a Web Server, a Embedded Database, a Mule Service etc.. so I didn't need to install them in my environment. And jEmbeded was born.
+jEmbedded is a Service Oriented Container (SOC) for services (embedded or not) or other elements, that promotes re usability and composition through easy configuration (annotations + abstract clases).
 
 
-So what you can do with jEmbedded:
+What you can do with jEmbedded:
 
-- Business services container: create and manage your application business services, managing then in a layer integrated with Spring (aop, tx, hibernate..).
+- Business Services Container: create and manage your application business services, managing then in a layer integrated with Spring (aop, tx, hibernate..).
+
+- Implements lighweight SOA using JEE, Java and Ruby: plain services, workflows of services, ESB, Web Services, JMS etc..
 
 - Integration Container: as container for application integration, using an ESB, messaging services etc...
 
