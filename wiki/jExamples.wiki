@@ -1,5 +1,10 @@
 All these examples can be found in the jEmbedded distribution: examples/services-examples. Also have a look at the Getting Started section. There you can find the `HelloWorldService` example.
 
+The first 3 examples refers to the same service: CalculatorService created in different ways. The first 2 uses the @AnnotatedService that requires that you extend an abstract class and the third to the most advanced (and recommended) @AbstractAnnotatedService that will create a proxy for you and not requires to extend or implement any interface.
+
+
+
+
 == Calculator Service Example 1. Using `@AnnotatedService` ==
 
 So let's get started with a very simple service, just a calculator that sums and multiply two integer numbers. In order to do it more interesting and demonstrate how to compose services, the sum functionality will be provided by a external service: `SumService`. This service it's implemented in Ruby in fact, but forget this by now because it will be provided to you as a 3th party service.
@@ -369,17 +374,10 @@ The two methods are identical. The difference it's that if you use an abstract m
 {{{
 @Compose(ref="propertiesService")
 	@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
-	public abstract org.jsemantic.jirepository.core.services.properties.PropertiesService getPropertiesService();
+public abstract AnnotatedPropertiesService getPropertiesService();
 }}}
 
-A simpler way to do it:
 
-{{{
-//the service will be injected this way, not composed.
-@PropertiesService(propertiesFile="META-INF/mule-service/mule-echo-service.properties")
-@AnnotatedEchoService
-public abstract class EchoMuleService {
-}}}
 
 7 - Finally we can create a unit test. In order to do that you can use the jEmbedded test infrastructure:
 {{{
