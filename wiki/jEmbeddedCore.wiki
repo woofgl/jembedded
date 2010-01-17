@@ -5,6 +5,8 @@
 
 = Introduction =
 
+Please also have a look at the source code as I'm updating the documentation and examples. Most of the documantition still refers to the previous version. 
+
 The jEmbedded framework it's build around the concept of a _Service Oriented Container_ or _SOC_
 that provides an infrastructure of storage, management, execution and support for  services and other elements (such as components, beans.. ): 
  
@@ -13,7 +15,7 @@ that provides an infrastructure of storage, management, execution and support fo
   * Storage using Repositories: a repository it's a bare container that can be composed in a hierarchical way, a single structure or a custom one. The `@Repository` is  the atomic element of the container. 
 The elements can be retrieved from these repositories at any moment through the container interface or using the helper class `ContainerHolder` or using  the `ContainerContext`.
  
-  * Provides a set of annotations (and classes) in order to create the elements: `@AbstractAnnotatedService`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
+  * Provides a set of annotations (and classes) in order to create the elements: `@AbstractAnnotatedService`, `@AbstractAnnotatedComponent`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
  
   * Management of the lifecyle (creation, init, start, stop, disposal) of the services and other elements.
  
@@ -21,9 +23,9 @@ The elements can be retrieved from these repositories at any moment through the 
  
   * Standard composition of services and elements: using 100% annotation configuration using any of the +20 services included or any custom one.
  
-  *  Dynamic creation and composition of services: expanding the IoC pattern.
+  *  Dynamic creation and composition of services.
    
-    - Standardad IoC 100% annotated oriented: core annotations provided + custom ones in order to create, compose and configure the services or elements. Properties files are used to externalize some properties.
+    - Standard IoC 100% annotated oriented: core annotations provided + custom ones (through annotation inheritance) in order to create, compose and configure the services or elements. Also you can use Spring as an additional IoC provider.
  
     -  Dynamic composition of services: `@AbstractAnnotatedService` that does not need implementation just an abstract class (or interface) + annotations and other services for composition.
         
@@ -91,15 +93,15 @@ In order a class to be recognised by the container it needs to declare any of th
  
 - Services: `@AbstractAnnotatedService, @AnnotatedService, @AbstractService`.
  
-- Component: `@AnnotatedComponent`.
+- Component: `@AbstractAnnotatedComponent`.`@AnnotatedComponent`.
  
 - Beans: `@AnnotatedBean`.
  
-- Core helper annotations: `@Include, @Inject, @Compose, @Start, @Stop`
+- Core helper annotations: `@Include, @Inject, @Compose, @Start, @Stop, @Init, @Dispose`
  
-- Module annotations: `@SpringContainer`
+- Module annotations: `@AnnotatedSpringContainer`
  
-- Custom Service annotations: `@JMService, @JettyService`....
+- Custom Service annotations: `@AnnotatedJMService, @HttpServer`....
  
 - Any annotations defined by you extending the core annotations.
  
@@ -197,14 +199,19 @@ The only difference from the previous example is that we are using the `@Include
 
 As you can see the container configuration it's quite flexible and can be done in may differente ways. You can see the class space as the XML/XML-SCHEMA configuration file (like in a IoC container as Spring) where you can declare the resources and elements you would need.
 
-You can also create your own annotations 
+You can also create your own annotations extending from the core annotations using the attribute inherits.
 
 The difference it's that the "space" here it's more specific and the classes shouldn't be big sandboxes as the XML files usually are.
 
-This "space" is created by the container for the `@Repository` even if you don't declare it there is one `@Repository` created by default. So if you use the configuration of the first example above the "space" of the `@Repository` it's the `IntegrationContainerServicesTest` class and it's open to all the declarations you'd want:
- 
+The annotation space covers all the class including class declaration level, fields and methods. You can use all the space o part of it, depends on your needs. 
+
+As a rule of thumb, class declaration level should annotated to indicate if the class it's going to be a service, component or bean and what kind. Also to include some general resources for the element.
+
+Field annotation space could be used to Inject or Compose resources that the Service or other elements would need and methods 
+
+
 {{{
-<--- repository space (class declaration level)
+<--- Annotation space (class declaration level)
 @RunWith(IntegrationTestClassRunner.class)
 @Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
 
@@ -214,49 +221,48 @@ public class IntegrationContainerServicesTest {
  
 }}}
  
-The class's methods and fields are also included in the `@Repository` space.
 
 {{{
-<--- repository space (class declaration level)
+<--- annotation space (class declaration level)
 @WebClient
 @Include(resources={FooBean.class})
 public class IntegrationContainerServicesTest {
  
-@PropertiesService <--- also repository space.
+@PropertiesService <--- Annotation space.
 public Service getPropertiesService() {
 }
 }}}
  
-Even the fields are included in the `@Repository` space (only for `@Inject and @Compose`, though);
+Even the fields are included in the annottion space (only for `@Inject and @Compose`, though);
  
 {{{
 @WebClient
-@Include(resources={FooBean.class})<--- repository space (class declaration field)
+@Include(resources={FooBean.class})<--- Annotation space (class declaration).
 public class IntegrationContainerServicesTest {
  
-@Inject <--- also repository space (only for the @Inject annotation)
+@Inject <--- Annotation space (only for the @Inject or @ Compose annotations)
 private FooBean fooBean = null;
 }}}
  
  
-All the annotations will result in services or elementes added to the default `@Repository`, in this case a WebClient and the FooBean.
+All the annotations will result in services or elements added to the default `@Repository`, in this case a WebClient and the FooBean.
  
-The second configuration has a restricted `@Repository` space just to the classes added to the container directly:
+The second configuration has a restricted Anotation space just to the classes added to the container directly:
 
 {{{
 handler = EmbeddedHandlerFactory.getInstance(FooBean.class) <--- elements space
 }}}
 
-Of course you could do the following to expand the "repository space":
+Of course you could do the following to expand the Annotation space:
  
 {{{
 @WebClient --> represents a custom @Annotation for a httpClient, it's the same if you'd add HttpClient.class
 public class IntegrationContainerServicesTest {
  
-handler = EmbeddedHandlerFactory.getInstance(FooBean.class, IntegrationContainerServicesTest.class) <--- repository space
+handler = EmbeddedHandlerFactory.getInstance(FooBean.class, IntegrationContainerServicesTest.class) <--- Annotation space
 }}}
 
-That means that you can use any class as `@Repository` space for your elements but it's better that any class declares the elements properly in a logical fashion, for instance a Layer class would declare a `@Repository` with it's resources,  a Service would declare @Service annotation of course. Other example would be a Test class that may declare any element or just a `@Repository`.
+That means that you can use any class as Annotation space for your elements but it's better that any class declares the elements properly in a logical fashion, for instance a Layer class would declare a `@Layer` with it's resources,  a Service would declare @Service annotation of course. Other example would be a Test class that may declare any element or just a `@Repository`.
  
 You should use a `@Repository` as entry point or a collection or logical elements, that can be reused. This would be the top element of the framework, A container 1-n Repo --> 1-n---> services --> 1-n components--> 1--n beans.
  
@@ -264,7 +270,7 @@ So let's see how would be look the former example a as `@Repository`:
  
 {{{
 @WebClient
-@Repository (id="containerServices", resouces=Foobean.class)<--- Repository space (the whole class declaration)
+@Repository (id="containerServices", resouces=Foobean.class)<--- Annotation space (the whole class declaration)
 public class IntegrationContainerServicesTest {
  
 @Inject
@@ -286,7 +292,7 @@ FooBean bean = (FooBean)repo.getBean("fooBean);
 Let's see another example of a `@Repository`, a more meaningful one:
  
 {{{
-@Repository(id="servicesLayer")) <--- Repository space
+@Repository(id="servicesLayer")) <--- Annotation space
  
 @AbstractService(id="servicesLayer, resources=FacadeService.class)
 public interface ServicesLayer  {
@@ -314,7 +320,7 @@ And a unit test:
 @RunWith(IntegrationTestClassRunner.class)
 @Container(instanceType=ContainerInstanceType.PROTOTYPE_BY_THREAD)
 
-@Include(resources={ServicesLayer.class}) <--- Repository space
+@Include(resources={ServicesLayer.class}) <--- Annotation space
 public class IntegrationContainerServicesTest {
                      
               @Test
