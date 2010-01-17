@@ -207,7 +207,9 @@ The annotation space covers all the class including class declaration level, fie
 
 As a rule of thumb, class declaration level should annotated to indicate if the class it's going to be a service, component or bean and what kind. Also to include some general resources for the element.
 
-Field annotation space could be used to Inject or Compose resources that the Service or other elements would need and methods 
+Field annotation space could be used to inject or compose resources that the Service or other elements would need.
+
+Methods annotations also can be used to declare resources, inject adn compose.
 
 
 {{{
