@@ -70,7 +70,7 @@ public @interface HelloWorldAnnotatedService {
 	Class<?>[] resources();
         
         //custom msg attribute
-        String msg() default="no message";
+        String msg() default="${helloWorldService.msg}";
 }
 }}}
 
@@ -103,7 +103,7 @@ The inject annotation will associate the msg attribute to the Service, populatin
 This value also can be populated using the properties service and a external properties file:
 
 {{{
-@Inject(val=${helloWorldService.msg}
+@Inject(val="${helloWorldService.msg"}
 }}}
 
 4- Create a test unit using the jEmbedded integrations testing support.
