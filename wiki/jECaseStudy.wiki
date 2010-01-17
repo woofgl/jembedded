@@ -54,21 +54,6 @@ The Service Layer will be composed as a hierarchy having as a parent the Integra
 
 - A Integration Layer that's the interface to the external systems, in this case it's the Invoicing-Server that's is modelled by composition of a few services.
 
-|| *Service* || *Layer* || *Implementation* ||
-|| Invoicing Facade || ServicesLayer || AbstractService ||
-|| Invoicing Service || ServicesLayer || AbstractService ||
-|| ESB || IntegrationLayer || Mule-Service ||
-|| Messaging Facility  || IntegrationLayer || JMS-Broker-Service ||
-
-All the layers are implemented using AbstractServices and composition so there is no need of any implementation (just the interface).
-
-- Invoicing server
-
-|| *Service* || *Model* || *Implementation* ||
-|| Invoicing Server || Mule-Model || Abstract Service ||
-|| Customer validator  || Mule-Model || Mule-Validation-Service ||
-|| Invoices Service  || Mule-Model || Invoices Service (provided) ||
-
 
 == Application Flow. ==
 
