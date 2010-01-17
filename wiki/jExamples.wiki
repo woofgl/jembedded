@@ -1,6 +1,6 @@
 All these examples can be found in the jEmbedded distribution: examples/services-examples. Also have a look at the Getting Started section. There you can find the `HelloWorldService` example.
 
-The first 3 examples refers to the same service: CalculatorService created in different ways. The first 2 uses the @AnnotatedService that requires that you extend an abstract class and the third to the most advanced (and recommended) @AbstractAnnotatedService that will create a proxy for you and not requires to extend or implement any interface.
+The first 3 examples refers to the same service: Calculator Service created in different ways. The first 2 uses the `@AnnotatedService`that requires that you extend an abstract class and the third to the most advanced (and recommended) `@AbstractAnnotatedService` that will create a proxy for you and not requires to extend or implement any interface.
 
 
 
