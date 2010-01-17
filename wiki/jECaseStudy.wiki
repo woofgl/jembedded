@@ -1,4 +1,5 @@
-#summary Integration/ESB case study using jEmbedded.
+#summary LightWeight Case Study using jEmbedded. Under construction for 0.2 version, please have a look at the source code.
+
 
 = Case study: Electrical Measures & Invoicing =
 
@@ -18,11 +19,11 @@ For instance, if you need to deploy a service or just a class in Mule, after you
 
 == Prototype ==
 
-First we can define the protocols we'll use to connect to the central system. We could think that JMS over HTTP will be the safest one to use, but for the purposes of the prototype we'll use the  SOAP/HTTP protocol through we services. Also we'll use plain HTTP protocol so we can have another entry point if the web service is not available or just to invoke the invoices system on line through a web application (to correct or create manually an invoice).
+First we can define the protocols we'll use to connect to the central system. We could think that JMS over HTTP will be the safest one to use but for the purposes of the prototype we'll use the  SOAP/HTTP protocol through web services. Also we'll use plain HTTP protocol so we can have another entry point if the web service is not available or just to invoke the invoices system on line through a web application (to correct or create manually an invoice).
 
 Now with the description of the system at hand we can came up with the services, components etc... that we'd need, trying to use as much service composition as possible:
 
-  * Meter reader agents: they will take the measures and send them to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it:
+  * Meter reader agents: they will take the measures and send them to the central system every x days. We'll model them as agents that will connect to the central system through HTPP sending semi random data. As we have an agent-service available we'll use it.
 
   * Meter-Hub: aggregate all the data collected by the meter readers and send them via HTTP (we'll use the HTTP-Client component for that).
 
@@ -83,16 +84,16 @@ The implementation of the prototype will be made using as little implementation 
 
 === Services Layer ===
 {{{
-@AnnotatedServicesLayer
-@Repository(id = "serviceLayer", parent = "persistenceLayer")
+
+@Layer(id="serviceLayer", parent = "persistenceLayer")
 public abstract class ServicesLayer {
 
 	@Inject(ref="dtoFactory")
 	private DtoFactory dtoFactory;
-		
-	@JmsClient(brokerUri="tcp://localhost:61618")
-	@Inject(ref="jmsClient")
-	public abstract org.jsemantic.services.amqservice.client.JmsClient getJmsClient();
+	
+        @Inject	
+	@AnnotatedJmsClient(brokerUri="tcp://localhost:61618")
+	public abstract JmsClient getJmsClient();
 	
 	public void generateInvoice(String customerId, String kwh) {
 		ReadingDTO dto = dtoFactory.getInstance(customerId, kwh);
@@ -132,77 +133,10 @@ public class Controller extends AbstractController {
 }
 }}}
 
-The controller retrieves and invoke the `InvoicingService` with the http params:
-
-{{{
-@MuleClient
-@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
-@AbstractService (id="invoicingService", resources={JBPMServiceImpl.class}, 
-		managedElements={"jbpmService"})
-public interface InvoicingService extends Service {
-	
-	
-	@ImplementedByBPM(bpmServiceRef="jbpmService", processKey="invoicing")
-	public void generateInvoice(String customerId, String kwh);
-	
-}
-}}}
+The controller retrieves and invoke the `InvoicingService` with the http params.
 
 
 
-The invoicing service "lives" in the service layer, acting as a mediator to the rest of the services, accessing the persistence layer (to retrieve the customer) and the integration layer to call the invoicing server. This is done by a jBPM process:
-
-{{{
-<?xml version="1.0" encoding="UTF-8"?>
-
-<process name="invoicing" xmlns="http://jbpm.org/4.0/jpdl">
-
-  <start g="147,55,48,48">
-    <transition to="invoke"/>
-  </start>
-   //invokes the dao
-  <java expr="#{customerDao}" method="getInvoiceCustomerData" name="invoke" var="result_service_1" g="129,139,80,40">
-   		<arg><object expr="#{service_param_0}"/></arg>
-   		<arg><object expr="#{service_param_1}"/></arg>
-   		<transition name="to_invoke" to="invoke2" g="-52,-18"/>
-  </java>
-   //sends a message to the invoicing server
-  <java expr="#{muleClient}" g="120,226,99,52" method="sendObjectMessage" name="invoke2" var="result_service_end">
-    
-    <arg><object expr="jms://in.queue"/></arg>
-    <arg><object expr="#{result_service_1}"/></arg>
-    <transition to="wait"/>
-  </java>
-  
-  <state g="125,321,88,52" name="wait">
-   <transition to="end"/>
-  </state>
-  
-  <end g="148,415,48,48" name="end"/>
-
-</process>
-}}}
-
-
-=== Persistence Layer ===
-
-The persistence layer contains the embedded database and the DAO's.
-
-{{{
-@Repository(id="persistenceLayer",  iocProviders = { "springRepository" },
-		parent="integrationLayer")
-
-@AbstractService(id="persistenceLayer", resources={EmbeddedDatabase.class}, 
-		managedElements="embeddedDatabase")
-public interface PersistenceLayer extends Service {
-
-	@PropertiesService(propertiesFile="META-INF/invoicing-server.properties")
-	public Service getPropertiesService();
-	
-	@SpringRepository(configurationFile = "META-INF/invoices-app/layers/persistence-layer.xml")
-	public Service getSpringRepository();
-}
-}}}
 
 === Integration Layer == 
 
@@ -211,31 +145,20 @@ The integration layer it's the interface to the external systems, in this case i
 The invoicing-server doesn't get all the requests upfront, there is queue that gets all the petitions, a validation-service that validates the msg and then if it's correct it's passed to the invoces-service (if not it's redirected to and error queue).
 
 {{{
-@Repository(id = "integrationLayer")
-@AbstractService(id="integrationLayer", resources={InvoicingServer.class}, 
-		managedElements={"invoicingServer", "jmsBrokerService"})
-public interface IntegrationLayer  extends Service {
+
+@Layer(id = "integrationLayer")
+public abstract class IntegrationLayer {
 	
-	@JmsBroker(connector="tcp://localhost:61618")
+        @Compose
+	@AnnotatedJmsBroker(connector="tcp://localhost:61618")
 	public Service getJmsBroker();
 	
-	@Inject(ref="invoicingServer")
-	public InvoicingServer getInvoicingServer();
+	@Compose
+	@AnnotatedMuleService(configurationFile="META-INF/invoices-app/services/mule-service/invoicing-system-config.xml")
+	public MuleService getMuleService();
 }
 }}}
 
-=== The Invoicing-Server ===
-
-{{{
-@AbstractService(id="invoicingServer", managedElements="muleService")
-public interface InvoicingServer extends Service {
-	
-	@MuleService(
-			configurationFile="META-INF/invoices-app/services/mule-service/invoicing-system-config.xml")
-	public Service getMuleService();
-	
-}
-}}}
 
 So the invoicing server can be created with composition: a mule service, a validation-service and a invoices-service (the one that actually creates the invoices). In the layer it's only declared the mule-service as the rest of services are handled by mule (but both services are created by jEmbedded and imported by mule):
 
