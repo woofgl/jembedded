@@ -5,7 +5,7 @@
 
 So let's say we need to build a quick prototype for the company "Electrical & CO" that wants to implement a new system that will capture the electrical readings in every building and then send them to a central system that will calculate and print the invoices. 
 
-In order to connect to the central system, we'd need a device in every building that gets the readings and send them through the internet.
+In order to connect to the Central System, we'd need a device in every building that gets the readings and send them through the internet.
 
 We can think about that device as an embedded pc system with an IP and an id that will connect to the internet and send the data to the central system through a few protocols. This device will have to get the measures from every home, so we'd still new some electrical meters in place and connect them to the embedded device.
 
@@ -13,7 +13,7 @@ As the "Electrical Co" already has a Invoicing System and doesn't want to replac
 
 It seems that we got a pretty clear case of System's Integration so using an SOA/Integration architecture is in place.
 
-So how do we build the proyotype? We can just get the ESB and a bunch of frameworks and start integratiog then, etc... but that takes time and certainly don't promote reuse (it's a prototype but still), so why don't use a ready framework for that, that implemens service composition, that has ready to go services, promotes reuse and eases all the integration pain? :)
+So how do we build the proyotype? We can just get the ESB and a bunch of frameworks and start integrating then, etc... but that takes time and certainly don't promote reuse (it's a prototype but still), so why don't use a ready framework for that, that implemens service composition, that has ready to go services, promotes reuse and eases all the integration pain? :)
 
 
 == Prototype ==
@@ -56,22 +56,26 @@ The Service Layer will be composed as a hierarchy having as a parent the Integra
 
 == Application Flow. ==
 
-The requests sent by the meter-hub will be received by the HTTP entry point (the Spring MVC Controller).The controller will be invoked receiving the two parameters needed to calculate the invoice. The controller has a reference to the Service Layer and its facade invoking the Invoicing System.
+The requests sent by the Meter-Hub will be received by the HTTP entry point (the Spring MVC Controller).The controller will be invoked receiving the two parameters needed to calculate the invoice. The controller has a reference to the Service Layer and its facade invoking the Invoicing System.
 
-The Service Later is implemented using the @Layer that it's a Service itself (well, more like a repository).   that basically retrieves the customer data and sends it to the invoicing-server using the messaging-service.
+The Service Later is implemented using the `@Layer` annotation that it's a Service itself (well, more like a repository). It has a method `generateInvoice` that basically retrieves generates a DTO with the received data (reading) and sends it to the Invoicing-Service using JMS:
+
+{{{
+public void generateInvoice(String customerId, String kwh) {
+    ReadingDTO dto = dtoFactory.getInstance(customerId, kwh);
+    getJmsClient().sendObjectMessage("in.queue", dto);
+}
+}}}
 
  
-Once the Invoicing-Server receives the customer data in it's inbound queue, this Customer Data is validated buy the Mule-Validation-Service. If the data it's wrong, it will dispatched to a error queue. If it's correct it will be dispatched to the invoices-service, that will generate the invoice and then send it to the outbound queue and store the invoice in a xml format in a directory.
+Once the Invoicing-Server receives the DTO in it's inbound queue it's validated by the Mule-Validation-Service. If the data it's wrong, it will dispatched to a error queue. If it's correct it will be dispatched to the Invoices-Service, that will generate the invoice, will send it to the outbound queue and store the invoice in a xml format in a directory.
 
 == Implementation == 
 
 The implementation of the prototype will be made using as little implementation as possible using composition with abstracts services.
 
 
-
 === Services Layer ===
-
-
 
 {{{
 @AnnotatedJmxServer
@@ -118,16 +122,14 @@ public class Controller extends AbstractController {
 }
 }}}
 
-The controller retrieves and invoke the `InvoicingService` with the http params.
-
-
+The controller invokes a method of the the Service Layer that will be generate the invoice.
 
 
 === Integration Layer == 
 
-The integration layer it's the interface to the external systems, in this case it's the invoicing-server that's is handled by a MULE ESB.
+The integration layer it's the interface to the external systems, in this case it's the invoices-service that's is handled by a MULE ESB.
 
-The invoicing-server doesn't get all the requests upfront, there is queue that gets all the petitions, a validation-service that validates the msg and then if it's correct it's passed to the invoces-service (if not it's redirected to and error queue).
+The invoices-service doesn't get all the requests upfront, there is queue that gets all the petitions, a validation-service that validates the msg and then if it's correct it's passed to it(if not it's redirected to and error queue).
 
 {{{
 @Layer(id="integrationLayer")
@@ -148,7 +150,7 @@ public abstract class IntegrationLayer  {
 So the invoicing server can be created with composition: a mule service, a validation-service and a invoices-service (the one that actually creates the invoices). In the layer it's only declared the mule-service as the rest of services are handled by mule (but both services are created by jEmbedded and imported by mule):
 
 {{{
-spring:beans>
+<spring:beans>
    <spring:import resource="classpath:META-INF/invoices-service/invoices-service.xml"/>
    <spring:import resource="classpath:META-INF/validation-service/validation-service.xml"/>
 }}}
