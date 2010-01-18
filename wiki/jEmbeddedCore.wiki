@@ -5,7 +5,7 @@
 
 = Introduction =
 
-Please also have a look at the source code as I'm updating the documentation and examples. Most of the documantition still refers to the previous version. 
+Please also have a look at the source code as I'm updating the documentation and examples. Some of the documentation still may refer to the previous version.
 
 The jEmbedded framework it's build around the concept of a _Service Oriented Container_ or _SOC_
 that provides an infrastructure of storage, management, execution and support for  services and other elements (such as components, beans.. ): 
@@ -13,9 +13,12 @@ that provides an infrastructure of storage, management, execution and support fo
   * Identification: each element is identified by the container using an id. The elements can be singleton or prototype.
  
   * Storage using Repositories: a repository it's a bare container that can be composed in a hierarchical way, a single structure or a custom one. The `@Repository` is  the atomic element of the container. 
+
 The elements can be retrieved from these repositories at any moment through the container interface or using the helper class `ContainerHolder` or using  the `ContainerContext`.
- 
-  * Provides a set of annotations (and classes) in order to create the elements: `@AbstractAnnotatedService`, `@AbstractAnnotatedComponent`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
+  
+  * Layer hierarchies: the services an other elements can be organized in a logical fashion using the `@Layer` annotation. It's a mix between a service and a repository.
+
+  * Provides a set of core annotations (and classes) in order to create the elements: `@AbstractAnnotatedService`, `@AbstractAnnotatedComponent`, `@AnnotatedService`, `@AnnotatedComponent`, `@AbstractService` and `@AnnotatedBean`.
  
   * Management of the lifecyle (creation, init, start, stop, disposal) of the services and other elements.
  
@@ -41,7 +44,7 @@ The elements can be retrieved from these repositories at any moment through the 
  
 - Additional features of the SOC container:
    
-    * Integration Container: integrated with MULE (as a service) + JMS, WS etc...
+    * Lightweight SOA: integrated with MULE (as a service) + JMS, WS etc...
     
     * Business services Container: creating and managing a layer of business services (integrated with Spring, AOP, TX, Hibernate...).
    
@@ -90,18 +93,20 @@ In order a class to be recognised by the container it needs to declare any of th
 
  
 - Repositories: `@Repository`.
- 
+
+- Layers: `@Layer`.
+
 - Services: `@AbstractAnnotatedService, @AnnotatedService, @AbstractService`.
  
-- Component: `@AbstractAnnotatedComponent`.`@AnnotatedComponent`.
+- Component: `@AbstractAnnotatedComponent, @AnnotatedComponent`.
  
 - Beans: `@AnnotatedBean`.
  
 - Core helper annotations: `@Include, @Inject, @Compose, @Start, @Stop, @Init, @Dispose`
  
-- Module annotations: `@AnnotatedSpringContainer`
+- IoC provider annotations: `@AnnotatedSpringContainer`
  
-- Custom Service annotations: `@AnnotatedJMService, @HttpServer`....
+- Provided Service annotations: `@AnnotatedJMService, @HttpServer`....
  
 - Any annotations defined by you extending the core annotations.
  
@@ -153,7 +158,7 @@ You have to be careful with this type of container though, because if you create
 Finally, if only one instance of the container is needed for the whole application, you need to use the SINGLETON_VM type. Once one instance is create and if another one is created an exception will be thrown (if the previous one hasn't been disposed). The `ContainerHolder` can be used to retrieve the container.
 
 
-=== Elements configuration: Repositories, Services, Components and Beans ===
+=== Elements configuration: Layers, Repositories, Services, Components and Beans ===
 
 jEmbedded gives you a lot of freedom to configure your elements (services etc..) as
 
@@ -196,7 +201,6 @@ public class IntegrationContainerServicesTest {
 
 The only difference from the previous example is that we are using the `@Include` annotation instead of using the `FooBean.class` directly.
  
-
 As you can see the container configuration it's quite flexible and can be done in may differente ways. You can see the class space as the XML/XML-SCHEMA configuration file (like in a IoC container as Spring) where you can declare the resources and elements you would need.
 
 You can also create your own annotations extending from the core annotations using the attribute inherits.
@@ -291,27 +295,24 @@ FooBean bean = (FooBean)repo.getBean("fooBean);
 }}}
 
 
-Let's see another example of a `@Repository`, a more meaningful one:
- 
-{{{
-@Repository(id="servicesLayer")) <--- Annotation space
- 
-@AbstractService(id="servicesLayer, resources=FacadeService.class)
-public interface ServicesLayer  {
+Let's see an example of a `@Layer`: 
+{{{ 
+@Layer(id="servicesLayer, resources=FacadeService.class)
+public abstract class ServicesLayer  {
              
-            @Compose(ref="facadeService")
-            public FacadeService getFacadeService();
+     @Compose(ref="facadeService")
+     public abstract FacadeService getFacadeService();
 }
 }}}
 
 
 and the FacadeService:
 {{{
-@AbstractService(id="facadeService", resources=FooBean.class)
-public interface FacadeService  {
+@AnnotatedAbstractService(id="facadeService", resources=FooBean.class)
+public abstract class FacadeService  {
  
               @ImplementedBy(ref="fooBean")
-              public String getMessage();
+              public abstract String getMessage();
  
 }
 }}}
