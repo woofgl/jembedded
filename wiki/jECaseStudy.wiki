@@ -5,7 +5,7 @@
 
 So let's say we need to build a quick prototype for the company "Electrical & CO" that wants to implement a new system that will capture the electrical readings in every building and then send them to a central system that will calculate and print the invoices. 
 
-In order to connect to the Central System, we'd need a device in every building that gets the readings and send them through the internet.
+In order to connect to the Central System, we'll need a device in every building that gets the readings and send them through the internet.
 
 We can think about that device as an embedded pc system with an IP and an id that will connect to the internet and send the data to the central system through a few protocols. This device will have to get the measures from every home, so we'd still new some electrical meters in place and connect them to the embedded device.
 
