@@ -1,5 +1,7 @@
 ==jEmbedded Services and Other Elements==
 
+Deprecated, please refer to the source code.
+
 The jEmbedded container can handle many different elements as Services, Abstract Services, Components and beans. All of them can be created and managed through annotations.
 
 Can be deduced from the name of the framework that there is one kind of "special element" and that it's the embedded service:
