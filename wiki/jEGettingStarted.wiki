@@ -2,7 +2,8 @@
 == Project Setup ==
 
 Once you have installed the framework, you will need to declare the dependencies in your pom. 
-*  The core dependency (jembedded-core).
+
+The core dependency (jembedded-core).
 {{{
                  <dependency>
 			<groupId>org.jsemantic</groupId>
@@ -10,13 +11,14 @@ Once you have installed the framework, you will need to declare the dependencies
                         <version>0.2.0</version>
 		</dependency>
 }}}
-*  Any service dependency you are planning to use. For instance, if you want to use the jetty-service you would need to include:
+
+Any service dependency you are planning to use. For instance, if you want to use the jetty-service you would need to include:
 {{{
 
                  <dependency>
 			<groupId>org.jsemantic.services</groupId>
 			<artifactId>jetty-service</artifactId>
-                        <version>0.4.0-SNAPSHOT</version>
+                        <version>0.6.0-SNAPSHOT</version>
 		</dependency>
 }}}
 
@@ -26,7 +28,9 @@ Now that you have the framework classes available to your project, you can start
 
 There are many ways you could use jEmbedded:
 
-  * Business services container: create and manage your application business services, managing then in a layer integrated with Spring (aop, tx, hibernate..).
+  * Business services container: create and manage your application business services, managing then in layers integrated with Spring (aop, tx, hibernate..).
+
+  * Lightweight SOA to create SOA applications without using complex SOA suites.
 
   * Integration Container: as container for application integration, using an ESB, messaging services etc...
 
@@ -49,11 +53,12 @@ There are many ways you could use jEmbedded:
 Please also have a look at the source code as I'm updating the documentation and examples.
 
 There are many ways you can create services with jEmbedded. Let's start with a simple service "Hello World" but using the `@AbstractAnnotatedService` annotation that it's the most powerful annotation within the framework. Despite its name it's not only intended for abstract Services but for regular implemented Services as well. 
+
 Of course, you could use the `@AnnotatedService` for the latter ones but then you would need to extend the class using the `AbstractCMService` or the `AbstractService` abstract classes. You don't need to do that using the `@AbstractAnnotatedService` annotation. Keep in mind that the service returned it's a proxy class though. 
 
 == Tutorial 1: Hello World Service Example ==
  
-1 - Create an annotation with the default configuration needed for your service (id, singleton, resources... inherited from the `@AbstractAnnotatedService` annotation) + your custom attributes. It's like when you are writing a Spring bean configuration XML file, but with the annotations advantages: quite more reusable and easier to use than a XML file.
+1 - Create an annotation with the default configuration needed for your service (id, singleton, resources... inherited from the `@AbstractAnnotatedService` annotation) + your custom attributes. It's like when you are writing a Spring bean configuration XML file, but with the annotations advantages: more reusable and easier to use than a XML file.
 
 {{{
 @Retention(RetentionPolicy.RUNTIME)
@@ -73,6 +78,9 @@ public @interface HelloWorldAnnotatedService {
         
         //custom msg attribute
         String msg() default="${helloWorldService.msg}";
+      
+        String propertiesFile() default "META-INF/hello-service/hello-service.properties";
+
 }
 }}}
 
@@ -107,6 +115,15 @@ This value also can be populated using the properties service and a external pro
 {{{
 @Inject(val="${helloWorldService.msg"}
 }}}
+
+All the services has a pre-configured Properties Service available: META-INF/properties-service/properties-service.properties" but you can set up a custom one using the attribute propertiesFile:
+
+{{{
+ String propertiesFile() default "META-INF/hello-service/hello-service.properties";
+}}}
+
+Other option it's using the `AnnotatedPropertiesService` provided within the container, that will override all the previous configuration:
+
 
 4- Create a test unit using the jEmbedded integrations testing support.
 
