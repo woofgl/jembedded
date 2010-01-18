@@ -18,7 +18,6 @@
   * [jEmbeddedRIA jEmbedded RIA Support-GWT]
   * [JEmbeddedGwlet jEmbedded Portal - Gwlet/Widglet]
   * [jEmbeddedPlugin jEmbedded Maven Plugin]
-  * [jECaseStudy Lightweight SOA ESB case study]
+  * [jECaseStudy Lightweight SOA Case Study]
   * [jExamples jEmbedded Examples]
-    * [jECaseStudy Integration/ESB case study]
   * [jFaq jEmbedded FAQ]
