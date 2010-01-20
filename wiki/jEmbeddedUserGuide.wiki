@@ -19,6 +19,6 @@ What you can do with jEmbedded:
 
 - Standalone container: implementing services (just one or a layer hierarchy), that you can use in any application (for instance a Swing or a SWT based application).
 
-- Integrated with Spring: you can access Spring bean using the native integration provided by jEmbedded or just creating a`@SpringContext` as another service within the container. This service wraps a Spring Application Context giving easy access to its beans through the wrapper.
+- Integrated with Spring: you can access Spring bean using the native integration provided by jEmbedded or just creating a`@AnnotatedSpringRepository` as another service within the container. This service wraps a Spring Application Context giving easy access to its beans through the wrapper.
 
 - Easy prototyping: create services faster and test them with the test integration infrastructure included within the container and services. 
