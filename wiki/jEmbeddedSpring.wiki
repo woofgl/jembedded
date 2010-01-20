@@ -1,14 +1,19 @@
+
 = Introduction =
 
-jEmbedded it's a complete SOC container (IoC based) that you can use alone if you want or need becaue it provides a lot of different services that should cover most of the usual needs for a project (well, an integration/soa/ria project).
+jEmbedded it's a complete SOC container (IoC based) that you can use alone if you want or need because it provides a lot of different services that should cover most of the usual needs for a project (well, an Integration/lighweight SOA/RIA project).
 
 But it's highly likely that you won't use this alone but with other frameworks as a service provider etc... and for sure one of this frameworks would be Spring as that would let you to use jEmbedded with other frameworks using Spring as a bridge (for instance, I integrated  jEmbedded with Mule this way because Mule configuration files are in fact Spring context files).
 
 So I provided a few ways to integrate jEmbedded with Spring, one of them native through the jEmbedded context. In other words, jEmbedded integrates its context with the Spring Application Context allowing jEmbedded to have access to Spring beans and the Spring beans to the jEmbedded container. jEmbedded will use the Spring context for its injection process.
 
-In order to do this you'd need to use the one of the exporters provided (Spring beans that export the jEmbedded container or its services into the Spring Context) so the jEmbedded container could access the Spring context. For instance, in this case as you are exporting the whole container you could inject it to any Spring bean. But using it like this, I guess it's better letting jEmbedded access any Spring bean that it needs for injection. 
+In order to do this you'd need to use the one of the exporters provided (Spring beans that export the jEmbedded container or its services into the Spring Context) so the jEmbedded container could access the Spring context. 
 
-The other way it's using a `@SpringRepository` annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId").
+The other way it's using a `@AnnotatedSpringRepository` annotation to which you specify the location of the Spring context file you'd like to use. Then you could inject any bean of the Spring context to the jEmbedded services using the @Inject(ref="springBeanId").
+
+
+Note: the 0.2 RC1 version of jEmjebedded it's integrated with Spring 2.5.6 by default. You can
+
 
 
 == How to use the Spring integration ==
@@ -275,44 +280,44 @@ Of course you need to export the service to the Spring context to let the AOP me
 
 Now you can retrieve from Spring the proxied Invoices Service (not from the jEmbedded container!).
 
-== Embedding a Spring context: using the `@SpringRepository` annotation  ==
+== Embedding a Spring context: using the `@AnnotatedSpringRepository` annotation  ==
  
-I've already explained how to export any resource you'd need to a Spring context from jEmbedded: services, container and resources. In that case you'd already had (most likely) a Spring context you wanted to integrate with jEmbedded. But there are times when you just need a helper Spring context to use it with jEmbedded (to implement a complete persistence layer with Spring, for instance),  and let jEmbedded inject any beans from it to its own services. For that matter you can use the `@SpringRepository` annotation.
+I've already explained how to export any resource you'd need to a Spring context from jEmbedded: services, container and resources. In that case you'd already had (most likely) a Spring context you wanted to integrate with jEmbedded. But there are times when you just need a helper Spring context to use it with jEmbedded (to implement a complete persistence layer with Spring, for instance),  and let jEmbedded inject any beans from it to its own services. For that matter you can use the `@AnnotatedSpringRepository` annotation.
  
-@SpringRepository
+@AnnotatedSpringRepository
  
 || *Attribute* || *Description* || * Values * ||
 || id || Spring context service in the container|| "springRepository" by default||
 || configurationFile || location of the Spring configuration file|| ${springRepository.configurationFile} by default||
  
- 
-If you want this `@SpringRepository` will be used as an IocProvider by the jEmbedded container (so it can use the Spring beans to build the jEmbedded services or other components) you will need to declare a `@Repository` and add it to the `iocProviders` attribute:
 
-The definition would be something like this:
+Spring is the external IoC default provider used by jEmbedded, so you just need to add the `@AnnotatedSpringRepository` in any class to be used as an IocProvider by the jEmbedded container (so it can use the Spring beans to build the jEmbedded services or other.
 
 {{{
-@SpringRepository(configurationFile = "META-INF/invoices-service/embedded-database-service/persistence-layer.xml")
+@AnnotatedSpringRepository(configurationFile = "META-INF/invoices-service/embedded-database-service/persistence-layer.xml")
  
-@Repository(id="invoicesService",  resources={EmbeddedDatabase.class, MockDataGenerator.class}, iocProviders = {"springRepository"})
+@Include(resources={EmbeddedDatabase.class, MockDataGenerator.class})
 }}}
  
 And the complete example (from the invoices-service example):
 
 {{{
-@SpringRepository(configurationFile = "META-INF/invoices-service/embedded-database-service/persistence-layer.xml")
- 
-@Repository(id="invoicesService",  resources={EmbeddedDatabase.class, MockDataGenerator.class},
-                            iocProviders = {"springRepository"})
-@AbstractService(id="invoicesService", resources=InvoiceServiceImpl.class)
-public interface InvoiceService  extends Service {
-             
-              @ImplementedBy(ref="invoicesServiceImpl")
-              public Invoice generateInvoice(ReadingDTO dto);
+
+@AnnotatedAbstractService(id="invoicesService", resources={EmbeddedDatabase.class, MockDataGenerator.class})
+public abstract class InvoiceService {
+              
+              @Compose
+              @AnnotatedSpringRepository(configurationFile = "META-INF/persistence-layer.xml")
+              public abstract SpringRepository getSpringRepository();
+
+
+              @ImplementedBy(ref="invoicesService")
+              public abstract Invoice generateInvoice(ReadingDTO dto);
              
 }
 }}}
  
-In this case we use the `@SpringRepository` to create the persistence layer, daos, datasources etc...and then jEmbedded will inject some of that resources to its services (some are used by the `EmbeddedDatabase.class`).
+In this case we use the `@AnnotatedSpringRepository` to create the persistence layer, daos, datasources etc...and then jEmbedded will inject some of that resources to its services (some are used by the `EmbeddedDatabase.class`).
  
 In order to inject a Spring resource to a jEmbedded service or element you will need to use the `@Inject` annotation with the id of the bean (Spring resource):
  
@@ -328,7 +333,7 @@ private DataSource dataSource = null;
 Also this annotation resolves into a jEmbedded Service that you could retrieve and use as usual:
  
 {{{
-@SpringRepository(configurationFile="META-INF/invoices-service/invoices-service.xml")
+@AnnotatedSpringRepository(configurationFile="META-INF/invoices-service/invoices-service.xml")
 public class SpringTest {
  
 private EmbeddedHandler handler = null;
