@@ -1,8 +1,8 @@
 ==jEmbedded Services and Other Elements==
 
-Deprecated, please refer to the source code.
+Please also refer to the source code as part of this page it´s not up-to-dated.
 
-The jEmbedded container can handle many different elements as Services, Abstract Services, Components and beans. All of them can be created and managed through annotations.
+The jEmbedded container can handle many different elements as Services, Abstract Services, Components and Beans. All of them can be created and managed through annotations.
 
 Can be deduced from the name of the framework that there is one kind of "special element" and that it's the embedded service:
 
@@ -12,11 +12,14 @@ Many of the provided services within the container are embedded ones: JMS-Broker
 
 === Services ===
 
-Usually offers functionality to any potential clients (for instance, an application or other service), implementing an interface that provides the contract for the client.
+Usually offers functionality to any potential clients (for instance, an application or other service), implementing an interface (or not) that provides the contract for the client.
 
-All the services should implement the interface `Service`.
+All the Services created using the implements the interface `Service` meaning that 
 
 == Container Managed implemented Service ==
+
+The  Container Managed Service, it means that the container will managed it's lifecyle (init, start, stop, dispose).
+
 
 This is the standard service, implementing an interface and extending an abstract class to  get its functionality(this is changing and in the next version of `jService` there won't be any need of abstract classes, won't be deprecated though).
 
