@@ -4,9 +4,7 @@
   
 
 = Introduction =
-
-Please also have a look at the source code as I'm updating the documentation and examples. Some of the documentation still may refer to the previous version.
-
+.
 The jEmbedded framework it's build around the concept of a _Service Oriented Container_ or _SOC_
 that provides an infrastructure of storage, management, execution and support for  services and other elements (such as components, beans.. ): 
  
@@ -389,7 +387,36 @@ public String getMessage() {
 }}}
 
  
-=== Container Test infrastructure ===
+=== Container Test Infrastructure ===
 
+jEmbedded provides a test infrastructure based on jUnit 4 (annotations) that will enable you to test the services created with the core container and also the provided services.
 
- 
+All the services contain static Assert classes with convenient methods that will help to test them, depending of its kind; for instance the container has methods to test if a service exist, the http client methods to test the http response etc... check every Assert class to learn what methods you could use.
+
+The infrastructure lies within the container and the services, so you don´t need to import additional modules. I did this so the testing process would be integrated with the development. You would need to add the jUnit 4 jar as I left that as an optional dependency in the pom.xml.
+
+`Container static Assert`
+|| *Method* || *Description* ||
+
+|| assertExistService(id:String)|| Checks if a service exists within the container ||
+|| assertExistComponent(id:String)|| Checks if a component exists within the container ||
+|| assertExistBean(id:String)|| Checks if a component exists within the containerd ||
+
+|| getBean(id:String):Object|| Retrieves a bean by Id ||
+|| getComponent(id:String):Component|| Retrieves a component by Id ||
+|| getService(id:String):Service|| Retrieves a service by Id ||
+|| getContainer():EmbeddedContainer|| Retrieves the container attached to the thread ||
+
+For instance:
+
+{{{
+import org.jsemantic.jembedded.container.test.Assert;
+
+@Test
+public void test() {
+     assertExistService("fooService");                        
+}
+}}}
+
+You can create the unit/integration test like any jUnit 4 test class but using a different runner:
+
