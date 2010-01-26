@@ -356,11 +356,37 @@ The context allows to retrieve instances from the container without having to in
 
 `Context`
 || *Method* || *Description* || 
-|| getExternal():Object|| Retrieves a service by Id ||
+|| getExternal():Object|| Retrieves the external context if it exists, for instance a Spring Context ||
 || getInstance(id:String):Object|| Retrieve any instance by Id ||
-|| isWebContext():boolean|| Check if a instance exist within the container ||
+|| isWebContext():boolean|| Check if the executing context is running in a web environment ||
+
+{{{
+EmbeddedHandler container = EmbeddedHandlerFactory.getInstance(FooService.class);
+container.start();
+ 
+Context ctx = container.getContext();
+
+Service fooService = ctx.getInstance("fooService");
+}}}
+
+You can let the container injects the context in your service in order to do that just add the Context as a reference:
 
 
+{{{
+@AnnotatedAbstractService(id="fooService")
+public class FooService {
+
+private Context context = null;
+
+public void setContext(Context context) {
+    this.context = context;
+}
+
+public String getMessage() {
+  return "Hi I'm Foo Service";
+}
+}
+}}}
 
  
 === Container Test infrastructure ===
