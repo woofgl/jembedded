@@ -396,11 +396,9 @@ The infrastructure lies within the container and the services, so you don´t nee
 
 `Container static Assert`
 || *Method* || *Description* ||
-
 || assertExistService(id:String)|| Checks if a service exists within the container ||
 || assertExistComponent(id:String)|| Checks if a component exists within the container ||
 || assertExistBean(id:String)|| Checks if a component exists within the containerd ||
-
 || getBean(id:String):Object|| Retrieves a bean by Id ||
 || getComponent(id:String):Component|| Retrieves a component by Id ||
 || getService(id:String):Service|| Retrieves a service by Id ||
@@ -419,13 +417,13 @@ public void test() {
 
 You can create the unit/integration test like any jUnit 4 test class but using a different runner and of course adding the needed resources. 
 
-`jEmbedded Test Runner`
-@RunWith(IntegrationTestClassRunner.class)
+jEmbedded Test Runner
+`@RunWith(IntegrationTestClassRunner.class)`
 
 The runner needs to create a container that is attached to the thread in order to make the static Assert works (so it could access the container elements). So in addition to declare the runner you need to add the right container configuration:
 
-`Container configuration for unit testing` 
-@Container(instanceType = ContainerInstanceType.PROTOTYPE_BY_THREAD)
+Container configuration for unit testing
+`@Container(instanceType = ContainerInstanceType.PROTOTYPE_BY_THREAD)`
 
 Adding the resources can be done in many ways, like if you were creating any other element with jEmbedded: using `@Include`, a `@Repository` etc....
 
