@@ -8,7 +8,7 @@ The core dependency (jembedded-core).
                  <dependency>
 			<groupId>org.jsemantic</groupId>
 			<artifactId>jembedded-core</artifactId>
-                        <version>0.2.0</version>
+                        <version>0.2.0-RC1</version>
 		</dependency>
 }}}
 
