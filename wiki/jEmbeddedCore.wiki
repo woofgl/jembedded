@@ -243,7 +243,7 @@ public Service getPropertiesService() {
 }
 }}}
  
-Even the fields are included in the annottion space (only for `@Inject and @Compose`, though);
+Even the fields are included in the annotation space (only for `@Inject and @Compose`, though);
  
 {{{
 @WebClient
@@ -392,7 +392,7 @@ All the services contain static Assert classes with convenient methods that will
 
 The infrastructure lies within the container and the services, so you don´t need to import additional modules. I did this so the testing process would be integrated with the development. You would need to add the jUnit 4 jar as I left that as an optional dependency in the pom.xml.
 
-`Container static Assert`
+Container static Assert
 || *Method* || *Description* ||
 || assertExistService(id:String)|| Checks if a service exists within the container ||
 || assertExistComponent(id:String)|| Checks if a component exists within the container ||
