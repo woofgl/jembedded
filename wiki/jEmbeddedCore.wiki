@@ -78,11 +78,11 @@ The jEmbedded Container it's represented by a handler that wraps it and can be o
 EmbeddedHandler container = EmbeddedHandlerFactory.getInstance(FooService.class);
 container.start();
  
-FooBean  fooBean = (Foobean) container.getBean("fooBean");
+FooService  fooService = (FooService) container.getService("fooService");
 }}}
 
-`EmbeddedHandler`
 
+`EmbeddedHandler`
 || *Method* || *Description* || 
 || getInstance(classs:Classes[])|| Creates a container instance (handler) ||
 || getInstance(ctx:Context, Classes[])||  Creates a container instance with a given context||
@@ -172,7 +172,7 @@ Finally, if only one instance of the container is needed for the whole applicati
 jEmbedded gives you a lot of freedom to configure your elements (services etc..) as
 
 {{{
-@AnnotatedAbstractService(id="fooBean")
+@AnnotatedAbstractService(id="fooService")
 public class FooService {
  
 public String getMessage() {
@@ -183,7 +183,7 @@ public String getMessage() {
 EmbeddedHandler container = EmbeddedHandlerFactory.getInstance(FooService.class);
 container.start();
  
-Service fooService = container.getService("fooBean");
+Service fooService = container.getService("fooService");
 
 }}}
  
@@ -201,7 +201,7 @@ public class IntegrationContainerServiceTest {
               public void test() {
                  assertExistService("fooService");
                            
-                 FooService fooService = (FooBean) Assert.getService("fooService");
+                 FooService fooService = (FooService) Assert.getService("fooService");
                  fooService.getMessage();
               }
 }
@@ -243,7 +243,7 @@ public class IntegrationContainerServiceTest {
 @Include(resources={FooService.class})
 public class IntegrationContainerServicesTest {
  
-@PropertiesService <--- Annotation space.
+@AnnotatedPropertiesService <--- Annotation space.
 public Service getPropertiesService() {
 }
 }}}
@@ -348,13 +348,22 @@ public class IntegrationContainerServicesTest {
 If you have a look at the complete example you would realize that you have only implemented the FooService and the test. This is a good example of how the dynamic composition works, you can use any service included in the jEmbedded framework or any you have implemented to compose on the fly new services.
 
  
-
 === Container Context ===
- 
+
+The container creates a execution context that can be retrieved through the container handler or from any service or component.
+
+The context allows to retrieve instances from the container without having to inject/compose in the Service. This could be useful in some situations when you need to change the injected instances at runtime.
+
+`Context`
+|| *Method* || *Description* || 
+|| getExternal():Object|| Retrieves a service by Id ||
+|| getInstance(id:String):Object|| Retrieve any instance by Id ||
+|| isWebContext():boolean|| Check if a instance exist within the container ||
+
+
+
  
 === Container Test infrastructure ===
 
 
- 
- 
  
