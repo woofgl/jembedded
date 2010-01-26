@@ -124,8 +124,6 @@ The container configuration it's quite simple and it's made through annotations 
 
 Basically you can setup how the container is going to be created: one per thread, a singleton or as many as you need per vm.
 
-`@Container`
-
 @Container
 || *Attribute* || *Description* || * Values * ||
 || instanceType:ContainerInstanceType || Type of container instance ||PROTOTYPE_BY_THREAD, PROTOTYPE_BY_VM,  SINGLETON_VM||
@@ -351,7 +349,7 @@ The container creates a execution context that can be retrieved through the cont
 
 The context allows to retrieve instances from the container without having to inject/compose in the Service. This could be useful in some situations when you need to change the injected instances at runtime.
 
-`Context`
+Context
 || *Method* || *Description* || 
 || getExternal():Object|| Retrieves the external context if it exists, for instance a Spring Context ||
 || getInstance(id:String):Object|| Retrieve any instance by Id ||
