@@ -1,0 +1,6 @@
+  * [Web Integration Test](WebApplicationIntegrationTest.md)
+  * [Spring MVC Integration Test](SpringMVCIntegrationTest.md)
+  * [Database Integration Test](EmbeddedDatabaseIntegrationTest.md)
+  * [MyFaces Integration Test](JSFIntegrationTest.md)
+  * [ActiveMQ Integration Test](JMSIntegrationTest.md)
+  * [Mule ESB Integration Test](ESBIntegrationTest.md)
